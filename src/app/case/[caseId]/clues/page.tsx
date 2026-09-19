@@ -52,7 +52,25 @@ export default async function CluesPage({
                 padding: 14,
               }}
             >
-              <h3 style={{ marginBottom: 6, fontSize: 16 }}>{slot.clue.name}</h3>
+              <div
+                style={{
+                  width: "100%",
+                  aspectRatio: "1",
+                  background: "var(--color-surface-alt)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: 6,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 40,
+                  marginBottom: 8,
+                }}
+              >
+                🧩
+              </div>
+              <h3 style={{ marginBottom: 6, fontSize: 16, textAlign: "center" }}>
+                {slot.clue.name}
+              </h3>
               <p style={{ fontSize: 14, lineHeight: 1.5 }}>{slot.clue.description}</p>
             </div>
           ) : (
@@ -66,7 +84,24 @@ export default async function CluesPage({
                 textAlign: "center",
               }}
             >
-              <h3 style={{ color: "var(--color-text-muted)" }}>？</h3>
+              <div
+                style={{
+                  width: "100%",
+                  aspectRatio: "1",
+                  background: "var(--color-surface)",
+                  border: "1px dashed var(--color-border)",
+                  borderRadius: 6,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 40,
+                  color: "var(--color-text-muted)",
+                  marginBottom: 8,
+                }}
+              >
+                ？
+              </div>
+              <h3 style={{ color: "var(--color-text-muted)", fontSize: 16 }}>？</h3>
               <p style={{ fontSize: 13, color: "var(--color-text-muted)" }}>
                 まだ見つかっていない手がかりです
               </p>
