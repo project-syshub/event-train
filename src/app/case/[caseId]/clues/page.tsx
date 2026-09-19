@@ -40,7 +40,7 @@ export default async function CluesPage({
 
       <h1>🧩 手がかり一覧</h1>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
         {slots.map((slot, index) =>
           slot.found ? (
             <div
@@ -49,11 +49,11 @@ export default async function CluesPage({
                 background: "var(--color-surface)",
                 border: "1px solid var(--color-border)",
                 borderRadius: 8,
-                padding: 18,
+                padding: 14,
               }}
             >
-              <h3 style={{ marginBottom: 6 }}>{slot.clue.name}</h3>
-              <p style={{ fontSize: 16, lineHeight: 1.6 }}>{slot.clue.description}</p>
+              <h3 style={{ marginBottom: 6, fontSize: 16 }}>{slot.clue.name}</h3>
+              <p style={{ fontSize: 14, lineHeight: 1.5 }}>{slot.clue.description}</p>
             </div>
           ) : (
             <div
@@ -62,12 +62,12 @@ export default async function CluesPage({
                 background: "var(--color-surface-alt)",
                 border: "1px dashed var(--color-border)",
                 borderRadius: 8,
-                padding: 18,
+                padding: 14,
                 textAlign: "center",
               }}
             >
               <h3 style={{ color: "var(--color-text-muted)" }}>？</h3>
-              <p style={{ fontSize: 15, color: "var(--color-text-muted)" }}>
+              <p style={{ fontSize: 13, color: "var(--color-text-muted)" }}>
                 まだ見つかっていない手がかりです
               </p>
             </div>
