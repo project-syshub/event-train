@@ -1,6 +1,6 @@
 :root {
-  /* 名探偵コナン原作公式サイト風の配色（銅色・セピア調の背景 + 赤アクセント） */
-  --color-bg: #6b4a2c;
+  /* 名探偵コナン原作公式サイト風の配色（セピア調の単色背景 + 赤アクセント） */
+  --color-bg: #8a5a35;
   --color-bg-edge: #34210f;
   --color-surface: #4a2f18;
   --color-surface-alt: #5c3b1e;
@@ -31,10 +31,7 @@ body {
   display: flex;
   flex-direction: column;
   color: var(--color-text);
-  background-color: var(--color-bg-edge);
-  background-image: url("/textures/brick-bg.svg");
-  background-repeat: repeat;
-  background-size: 100px 50px;
+  background-color: var(--color-bg);
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
