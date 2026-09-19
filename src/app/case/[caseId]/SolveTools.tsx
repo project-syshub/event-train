@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
-import type { ClueItem } from "@/lib/clues";
+import Link from "next/link";
 import MagnifierOverlay from "./MagnifierOverlay";
-import CluesOverlay from "./CluesOverlay";
 
-type Tool = "magnifier" | "clues" | null;
+type Tool = "magnifier" | null;
 
 const barStyle: CSSProperties = {
   position: "fixed",
@@ -31,7 +30,7 @@ const toolButtonStyle: CSSProperties = {
   cursor: "pointer",
 };
 
-export default function SolveTools({ clues }: { clues: ClueItem[] }) {
+export default function SolveTools({ caseId }: { caseId: string }) {
   const [active, setActive] = useState<Tool>(null);
 
   return (
@@ -41,14 +40,13 @@ export default function SolveTools({ clues }: { clues: ClueItem[] }) {
           <span style={{ fontSize: 30 }}>🔍</span>
           <span style={{ fontSize: 14 }}>虫眼鏡</span>
         </button>
-        <button style={toolButtonStyle} onClick={() => setActive("clues")}>
+        <Link href={`/case/${caseId}/clues`} style={{ ...toolButtonStyle, textDecoration: "none" }}>
           <span style={{ fontSize: 30 }}>🧩</span>
           <span style={{ fontSize: 14 }}>手がかり</span>
-        </button>
+        </Link>
       </nav>
 
       {active === "magnifier" && <MagnifierOverlay onClose={() => setActive(null)} />}
-      {active === "clues" && <CluesOverlay items={clues} onClose={() => setActive(null)} />}
     </>
   );
 }

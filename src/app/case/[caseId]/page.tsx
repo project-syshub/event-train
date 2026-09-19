@@ -2,7 +2,6 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getSessionUserId } from "@/lib/session";
 import { mockCases, statusColor, statusLabel } from "@/lib/cases";
-import { getCluesForCase } from "@/lib/clues";
 import SolveTools from "./SolveTools";
 
 export default async function CasePage({
@@ -20,8 +19,6 @@ export default async function CasePage({
   if (!caseInfo) {
     notFound();
   }
-
-  const clues = getCluesForCase(caseInfo.stationKey);
 
   return (
     <main
@@ -60,7 +57,7 @@ export default async function CasePage({
         </p>
       </div>
 
-      <SolveTools clues={clues} />
+      <SolveTools caseId={caseId} />
     </main>
   );
 }

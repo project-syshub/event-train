@@ -26,3 +26,21 @@ export const mockClues: ClueItem[] = [
 export function getCluesForCase(caseId: StationKey): ClueItem[] {
   return mockClues.filter((clue) => clue.caseId === caseId);
 }
+
+// 1つの事件で見つけられる手がかりの総数（仮の固定値。未発見の分は「？」として一覧に表示する）
+export const CLUE_SLOTS_PER_CASE = 3;
+
+export type ClueSlot =
+  | { found: true; clue: ClueItem }
+  | { found: false };
+
+export function getClueSlotsForCase(caseId: StationKey): ClueSlot[] {
+  const found = getCluesForCase(caseId);
+  const slots: ClueSlot[] = found.map((clue) => ({ found: true, clue }));
+
+  while (slots.length < CLUE_SLOTS_PER_CASE) {
+    slots.push({ found: false });
+  }
+
+  return slots;
+}
