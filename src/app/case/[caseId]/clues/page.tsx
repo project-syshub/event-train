@@ -92,19 +92,18 @@ export default async function CluesPage({
                   border: "1px dashed var(--color-border)",
                   borderRadius: 6,
                   display: "flex",
+                  flexDirection: "column",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 40,
+                  gap: 4,
                   color: "var(--color-text-muted)",
                   marginBottom: 8,
                 }}
               >
-                ？
+                <span style={{ fontSize: 40 }}>？</span>
+                <span style={{ fontSize: 12 }}>まだ見つかっていません</span>
               </div>
               <h3 style={{ color: "var(--color-text-muted)", fontSize: 16 }}>？</h3>
-              <p style={{ fontSize: 13, color: "var(--color-text-muted)" }}>
-                まだ見つかっていない手がかりです
-              </p>
             </div>
           )
         )}
