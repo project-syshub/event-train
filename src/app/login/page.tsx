@@ -33,20 +33,20 @@ export default function LoginPage() {
   }
 
   return (
-    <main style={{ maxWidth: 360, margin: "80px auto", padding: "0 16px" }}>
+    <main style={{ maxWidth: 420, margin: "40px auto", padding: "0 16px 40px" }}>
       <div
         style={{
           background: "var(--color-surface)",
           border: "1px solid var(--color-border)",
           borderRadius: 8,
-          padding: 32,
+          padding: 28,
           boxShadow: "0 4px 16px rgba(0, 0, 0, 0.4)",
         }}
       >
-        <h1 style={{ marginBottom: 28, textAlign: "center" }}>ログイン</h1>
+        <h1 style={{ marginBottom: 24, fontSize: 26, textAlign: "center" }}>ログイン</h1>
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div>
-            <label htmlFor="loginId" style={{ display: "block", marginBottom: 8 }}>
+            <label htmlFor="loginId" style={{ display: "block", marginBottom: 8, fontSize: 15 }}>
               ID
             </label>
             <input
@@ -54,13 +54,12 @@ export default function LoginPage() {
               type="text"
               value={loginId}
               onChange={(event) => setLoginId(event.target.value)}
-              style={{ display: "block", width: "100%", boxSizing: "border-box" }}
               autoComplete="username"
               required
             />
           </div>
           <div>
-            <label htmlFor="password" style={{ display: "block", marginBottom: 8 }}>
+            <label htmlFor="password" style={{ display: "block", marginBottom: 8, fontSize: 15 }}>
               パスワード
             </label>
             <input
@@ -68,13 +67,12 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              style={{ display: "block", width: "100%", boxSizing: "border-box" }}
               autoComplete="current-password"
               required
             />
           </div>
           {error && (
-            <p role="alert" style={{ color: "var(--color-danger)" }}>
+            <p role="alert" style={{ color: "var(--color-danger)", fontSize: 15 }}>
               {error}
             </p>
           )}
