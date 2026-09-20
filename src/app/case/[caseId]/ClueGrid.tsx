@@ -5,7 +5,13 @@ import type { ClueItem, ClueSlot } from "@/lib/clues";
 import { CloseIcon, PuzzleIcon } from "@/components/icons";
 import { overlayStyle, closeButtonStyle } from "./overlayStyles";
 
+const CAPTION_FONT_SIZE = 14;
+const CAPTION_LINE_HEIGHT = 1.3;
+// タイトルが1行でも2行でもカードの高さが変わらないよう、2行ぶんで固定する
+const CAPTION_HEIGHT = Math.round(CAPTION_FONT_SIZE * CAPTION_LINE_HEIGHT * 2) + 8;
+
 const cardStyle: CSSProperties = {
+  position: "relative",
   background: "var(--color-surface)",
   border: "1px solid var(--color-border)",
   borderRadius: 8,
@@ -15,17 +21,9 @@ const cardStyle: CSSProperties = {
   textAlign: "center",
 };
 
-// 写真プリント風の白い枠。写真とタイトルをまとめて囲む
-const printStyle: CSSProperties = {
-  background: "#ffffff",
-  padding: 5,
-  borderRadius: 2,
-};
-
 const photoStyle: CSSProperties = {
   width: "100%",
   aspectRatio: "1",
-  background: "var(--color-surface-alt)",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -35,10 +33,57 @@ const photoStyle: CSSProperties = {
 const captionStyle: CSSProperties = {
   color: "var(--color-accent)",
   fontWeight: 700,
-  fontSize: 14,
-  lineHeight: 1.3,
+  fontSize: CAPTION_FONT_SIZE,
+  lineHeight: CAPTION_LINE_HEIGHT,
   padding: "6px 2px 2px",
+  height: CAPTION_HEIGHT,
+  overflow: "hidden",
 };
+
+// 未発見の枠も同じ構造で描画することで、写真入りのカードと高さを揃える
+function ClueCardBody({ clue }: { clue: ClueItem | null }) {
+  const found = clue !== null;
+
+  return (
+    <>
+      <div
+        style={{
+          background: found ? "#ffffff" : "transparent",
+          padding: 5,
+          borderRadius: 2,
+        }}
+      >
+        <div
+          style={{
+            ...photoStyle,
+            background: found ? "var(--color-surface-alt)" : "transparent",
+          }}
+        >
+          {found && <PuzzleIcon size={40} />}
+        </div>
+        <p style={{ ...captionStyle, visibility: found ? "visible" : "hidden" }}>
+          {found ? clue.name : " "}
+        </p>
+      </div>
+
+      {!found && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 38,
+            fontWeight: 700,
+          }}
+        >
+          ？
+        </div>
+      )}
+    </>
+  );
+}
 
 export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
   const [selected, setSelected] = useState<ClueItem | null>(null);
@@ -54,27 +99,11 @@ export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
               style={cardStyle}
               aria-label={`${slot.clue.name}の詳細を見る`}
             >
-              <div style={printStyle}>
-                <div style={photoStyle}>
-                  <PuzzleIcon size={40} />
-                </div>
-                <p style={captionStyle}>{slot.clue.name}</p>
-              </div>
+              <ClueCardBody clue={slot.clue} />
             </button>
           ) : (
-            <div
-              key={`unknown-${index}`}
-              style={{
-                ...cardStyle,
-                minHeight: 130,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 38,
-                fontWeight: 700,
-              }}
-            >
-              ？
+            <div key={`unknown-${index}`} style={cardStyle}>
+              <ClueCardBody clue={null} />
             </div>
           )
         )}
@@ -104,11 +133,22 @@ export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
               gap: 14,
             }}
           >
-            <div style={printStyle}>
-              <div style={photoStyle}>
+            <div style={{ background: "#ffffff", padding: 5, borderRadius: 2 }}>
+              <div style={{ ...photoStyle, background: "var(--color-surface-alt)" }}>
                 <PuzzleIcon size={64} />
               </div>
-              <p style={{ ...captionStyle, fontSize: 16 }}>{selected.name}</p>
+              <p
+                style={{
+                  color: "var(--color-accent)",
+                  fontWeight: 700,
+                  fontSize: 16,
+                  lineHeight: 1.3,
+                  padding: "8px 2px 2px",
+                  textAlign: "center",
+                }}
+              >
+                {selected.name}
+              </p>
             </div>
             <p style={{ fontSize: 15, lineHeight: 1.7 }}>{selected.description}</p>
           </div>
