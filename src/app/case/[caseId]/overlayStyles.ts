@@ -13,17 +13,11 @@ export const overlayStyle: CSSProperties = {
   zIndex: 100,
 };
 
+// 見た目・中央揃えはグローバルの .icon-button クラス側で指定する（位置とサイズのみここで指定）
 export const closeButtonStyle: CSSProperties = {
   position: "absolute",
   top: 16,
   right: 16,
   width: 40,
   height: 40,
-  borderRadius: "50%",
-  border: "1px solid var(--color-accent)",
-  background: "var(--color-surface)",
-  color: "var(--color-accent-strong)",
-  fontSize: 20,
-  lineHeight: 1,
-  cursor: "pointer",
 };

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { GearIcon } from "@/components/icons";
 
 export default function AccountMenu({ loginId }: { loginId: string }) {
   const router = useRouter();
@@ -15,20 +16,13 @@ export default function AccountMenu({ loginId }: { loginId: string }) {
   return (
     <div style={{ position: "relative" }}>
       <button
+        className="icon-button"
         onClick={() => setOpen((value) => !value)}
         aria-label="設定"
-        style={{
-          width: 40,
-          height: 40,
-          padding: 0,
-          borderRadius: "50%",
-          background: "var(--color-surface-alt)",
-          border: "1px solid var(--color-border)",
-          fontSize: 18,
-          lineHeight: 1,
-        }}
+        aria-expanded={open}
+        style={{ width: 40, height: 40 }}
       >
-        ⚙️
+        <GearIcon />
       </button>
 
       {open && (

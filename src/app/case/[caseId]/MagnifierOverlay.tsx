@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { CloseIcon } from "@/components/icons";
 import { overlayStyle, closeButtonStyle } from "./overlayStyles";
 
 // レンズ（丸）の寸法（6.0インチ程度のモバイル画面幅を想定したサイズ）
@@ -67,8 +68,8 @@ export default function MagnifierOverlay({ onClose }: { onClose: () => void }) {
 
   return (
     <div style={overlayStyle}>
-      <button onClick={onClose} style={closeButtonStyle} aria-label="閉じる">
-        ×
+      <button className="icon-button" onClick={onClose} style={closeButtonStyle} aria-label="閉じる">
+        <CloseIcon />
       </button>
 
       <div style={{ position: "relative", width: ICON_WIDTH, height: ICON_HEIGHT }}>

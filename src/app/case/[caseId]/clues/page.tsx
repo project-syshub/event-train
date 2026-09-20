@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getSessionUserId } from "@/lib/session";
 import { mockCases } from "@/lib/cases";
 import { getClueSlotsForCase } from "@/lib/clues";
+import { PuzzleIcon } from "@/components/icons";
 
 export default async function CluesPage({
   params,
@@ -37,7 +38,10 @@ export default async function CluesPage({
         <button>← {caseInfo.title}に戻る</button>
       </Link>
 
-      <h1>🧩 手がかり一覧</h1>
+      <h1 style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <PuzzleIcon size={26} />
+        手がかり一覧
+      </h1>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
         {slots.map((slot, index) =>
@@ -61,11 +65,11 @@ export default async function CluesPage({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 40,
+                  color: "var(--color-text)",
                   marginBottom: 8,
                 }}
               >
-                🧩
+                <PuzzleIcon size={44} />
               </div>
               <h3 style={{ marginBottom: 6, fontSize: 16, textAlign: "center" }}>
                 {slot.clue.name}

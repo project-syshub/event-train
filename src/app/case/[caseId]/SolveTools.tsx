@@ -2,6 +2,7 @@
 
 import { useState, type CSSProperties } from "react";
 import Link from "next/link";
+import { MagnifierIcon, PuzzleIcon } from "@/components/icons";
 import MagnifierOverlay from "./MagnifierOverlay";
 
 type Tool = "magnifier" | null;
@@ -23,9 +24,11 @@ const toolButtonStyle: CSSProperties = {
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: 2,
+  gap: 4,
+  padding: "6px 16px",
   border: "none",
   background: "none",
+  boxShadow: "none",
   color: "var(--color-text)",
   cursor: "pointer",
 };
@@ -37,11 +40,11 @@ export default function SolveTools({ caseId }: { caseId: string }) {
     <>
       <nav style={barStyle}>
         <button style={toolButtonStyle} onClick={() => setActive("magnifier")}>
-          <span style={{ fontSize: 30 }}>🔍</span>
+          <MagnifierIcon />
           <span style={{ fontSize: 14 }}>虫眼鏡</span>
         </button>
         <Link href={`/case/${caseId}/clues`} style={{ ...toolButtonStyle, textDecoration: "none" }}>
-          <span style={{ fontSize: 30 }}>🧩</span>
+          <PuzzleIcon />
           <span style={{ fontSize: 14 }}>手がかり</span>
         </Link>
       </nav>

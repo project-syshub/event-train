@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { CaseStatus } from "@/lib/cases";
+import { CloseIcon } from "@/components/icons";
 import { allRouteStations, targetStationKeys, VIEW_WIDTH, VIEW_HEIGHT } from "@/lib/stations";
 
 export type MapMarker = {
@@ -112,22 +113,25 @@ export default function TramMap({ markers }: { markers: MapMarker[] }) {
             zIndex: 10,
           }}
         >
-          <button
-            onClick={() => setSelectedKey(null)}
-            aria-label="閉じる"
+          <div
             style={{
-              float: "right",
-              border: "none",
-              background: "none",
-              cursor: "pointer",
-              fontSize: 16,
-              lineHeight: 1,
-              color: "var(--color-text-muted)",
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              gap: 8,
+              marginBottom: 10,
             }}
           >
-            ×
-          </button>
-          <h3 style={{ margin: "0 0 10px", fontSize: 17 }}>{selected.title}</h3>
+            <h3 style={{ margin: 0, fontSize: 17 }}>{selected.title}</h3>
+            <button
+              className="icon-button"
+              onClick={() => setSelectedKey(null)}
+              aria-label="閉じる"
+              style={{ width: 28, height: 28, flexShrink: 0, boxShadow: "none" }}
+            >
+              <CloseIcon size={14} />
+            </button>
+          </div>
           <p style={{ margin: "0 0 10px", fontSize: 15, color: selected.color, fontWeight: "bold" }}>
             {selected.statusLabel}
           </p>
