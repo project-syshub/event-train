@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getSessionUserId } from "@/lib/session";
 import { findUserById } from "@/lib/users";
 import { stations } from "@/lib/stations";
-import { mockCases, statusColor, statusLabel } from "@/lib/cases";
+import { mockCases, statusColor } from "@/lib/cases";
 import TramMap, { type MapMarker } from "./TramMap";
 import AccountMenu from "./AccountMenu";
 
@@ -29,11 +29,7 @@ export default async function HomePage() {
       x: station.x,
       y: station.y,
       caseId: caseInfo.id,
-      title: caseInfo.title,
-      status: caseInfo.status,
-      statusLabel: statusLabel[caseInfo.status],
       color: statusColor[caseInfo.status],
-      summary: caseInfo.summary,
     };
   });
 
@@ -53,7 +49,7 @@ export default async function HomePage() {
         <AccountMenu loginId={user.loginId} />
       </div>
       <p style={{ fontSize: 17, fontWeight: 600, color: "var(--color-text)", lineHeight: 1.7 }}>
-        路線図上の駅マーカーをクリックすると、その付近で起きた事件の情報が表示されます。
+        路線図上の駅マーカーを押すと、その付近で起きた事件の捜査がはじまります。
       </p>
       <div
         style={{

@@ -35,9 +35,13 @@ const captionStyle: CSSProperties = {
   fontWeight: 700,
   fontSize: CAPTION_FONT_SIZE,
   lineHeight: CAPTION_LINE_HEIGHT,
-  padding: "6px 2px 2px",
   height: CAPTION_HEIGHT,
+  padding: "2px 4px",
   overflow: "hidden",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center",
 };
 
 // 未発見の枠も同じ構造で描画することで、写真入りのカードと高さを揃える
