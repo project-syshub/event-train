@@ -12,9 +12,9 @@ export type RouteStation = {
 // 路線図の全駅。ループの並び順（1周する順序）で定義する。
 // SC01(西4丁目)を起点に、SC02→…→SC24(狸小路)→SC01 の順。
 export const allRouteStations: RouteStation[] = [
-  { key: "nishi-4-choume", name: "西4丁目", x: 276, y: 54 },
-  { key: "nishi-8-choume", name: "西8丁目", x: 213, y: 54 },
-  { key: "chuo-kuyakusho-mae", name: "中央区役所前", x: 149, y: 54 },
+  { key: "nishi-4-choume", name: "西4丁目", x: 286, y: 46 },
+  { key: "nishi-8-choume", name: "西8丁目", x: 218, y: 40 },
+  { key: "chuo-kuyakusho-mae", name: "中央区役所前", x: 150, y: 40 },
   { key: "nishi-15-choume", name: "西15丁目", x: 54, y: 54 },
   { key: "nishisen-6jo", name: "西線6条", x: 32, y: 117 },
   { key: "nishisen-9jo-asahiyama-koen-dori", name: "西線9条旭山公園通", x: 32, y: 160 },
@@ -26,16 +26,16 @@ export const allRouteStations: RouteStation[] = [
   { key: "chuo-toshokan-mae", name: "中央図書館前", x: 54, y: 425 },
   { key: "ishiyama-dori", name: "石山通", x: 96, y: 425 },
   { key: "higashi-tonden-dori", name: "東屯田通", x: 149, y: 425 },
-  { key: "konan-shogakko-mae", name: "幌南小学校前", x: 202, y: 409 },
-  { key: "yamahana-19jo", name: "山鼻19条", x: 202, y: 377 },
-  { key: "seishugakuen-mae", name: "静修学園前", x: 202, y: 340 },
-  { key: "gyokei-dori", name: "行啓通", x: 202, y: 298 },
-  { key: "nakajima-koen-dori", name: "中島公園通", x: 202, y: 255 },
-  { key: "yamahana-9jo", name: "山鼻9条", x: 202, y: 213 },
-  { key: "higashi-honganji-mae", name: "東本願寺前", x: 202, y: 170 },
-  { key: "shiseikan-shogakko-mae", name: "資生館小学校前", x: 202, y: 122 },
-  { key: "susukino", name: "すすきの", x: 266, y: 133 },
-  { key: "tanuki-koji", name: "狸小路", x: 309, y: 90 },
+  { key: "konan-shogakko-mae", name: "幌南小学校前", x: 210, y: 412 },
+  { key: "yamahana-19jo", name: "山鼻19条", x: 210, y: 380 },
+  { key: "seishugakuen-mae", name: "静修学園前", x: 210, y: 345 },
+  { key: "gyokei-dori", name: "行啓通", x: 208, y: 300 },
+  { key: "nakajima-koen-dori", name: "中島公園通", x: 206, y: 258 },
+  { key: "yamahana-9jo", name: "山鼻9条", x: 204, y: 216 },
+  { key: "higashi-honganji-mae", name: "東本願寺前", x: 210, y: 174 },
+  { key: "shiseikan-shogakko-mae", name: "資生館小学校前", x: 220, y: 130 },
+  { key: "susukino", name: "すすきの", x: 260, y: 110 },
+  { key: "tanuki-koji", name: "狸小路", x: 288, y: 82 },
 ];
 
 export const VIEW_WIDTH = 340;
