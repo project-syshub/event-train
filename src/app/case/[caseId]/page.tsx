@@ -23,7 +23,7 @@ export default async function CasePage({
   return (
     <main
       style={{
-        maxWidth: 480,
+        maxWidth: 420,
         margin: "40px auto",
         padding: "0 16px 96px",
         fontFamily: "sans-serif",

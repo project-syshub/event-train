@@ -65,7 +65,7 @@ export default function TramMap({ markers }: { markers: MapMarker[] }) {
             key={marker.key}
             cx={marker.x}
             cy={marker.y}
-            r={9}
+            r={8}
             fill={marker.color}
             stroke="#f5ead8"
             strokeWidth={2}
@@ -84,8 +84,8 @@ export default function TramMap({ markers }: { markers: MapMarker[] }) {
             position: "absolute",
             left: `${(marker.x / VIEW_WIDTH) * 100}%`,
             top: `${(marker.y / VIEW_HEIGHT) * 100}%`,
-            transform: "translate(-50%, 28px)",
-            fontSize: 19,
+            transform: "translate(-50%, 24px)",
+            fontSize: 16,
             fontWeight: 700,
             color: "var(--color-text)",
             whiteSpace: "nowrap",
@@ -106,8 +106,8 @@ export default function TramMap({ markers }: { markers: MapMarker[] }) {
             background: "var(--color-surface)",
             border: "1px solid var(--color-border)",
             borderRadius: 6,
-            padding: 18,
-            width: 260,
+            padding: 16,
+            width: 220,
             boxShadow: "0 4px 16px rgba(0, 0, 0, 0.5)",
             zIndex: 10,
           }}

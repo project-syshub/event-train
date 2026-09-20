@@ -33,7 +33,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main style={{ maxWidth: 320, margin: "80px auto", padding: "0 16px", fontFamily: "sans-serif" }}>
+    <main style={{ maxWidth: 360, margin: "80px auto", padding: "0 16px", fontFamily: "sans-serif" }}>
       <div
         style={{
           background: "var(--color-surface)",

@@ -34,7 +34,7 @@ export default async function HomePage() {
   return (
     <main
       style={{
-        maxWidth: 480,
+        maxWidth: 420,
         margin: "40px auto",
         padding: "0 16px 40px",
         fontFamily: "sans-serif",
@@ -55,7 +55,7 @@ export default async function HomePage() {
           background: "var(--color-surface)",
           border: "1px solid var(--color-border)",
           borderRadius: 8,
-          padding: "24px 32px 56px",
+          padding: "20px 24px 44px",
         }}
       >
         <TramMap markers={markers} />
