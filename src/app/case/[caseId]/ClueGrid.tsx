@@ -114,7 +114,7 @@ export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
       </div>
 
       {selected && (
-        <div style={overlayStyle}>
+        <div style={overlayStyle} onClick={() => setSelected(null)}>
           <button
             className="icon-button"
             onClick={() => setSelected(null)}
@@ -125,6 +125,7 @@ export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
           </button>
 
           <div
+            onClick={(e) => e.stopPropagation()}
             style={{
               background: "var(--color-surface)",
               border: "1px solid var(--color-border)",

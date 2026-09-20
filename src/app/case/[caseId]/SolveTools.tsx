@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
-import { MagnifierIcon } from "@/components/icons";
+import { GoldMagnifierIcon } from "@/components/icons";
 import MagnifierOverlay from "./MagnifierOverlay";
 
 // 画面右下に浮かせる丸ボタン
@@ -26,7 +26,7 @@ export default function SolveTools() {
   return (
     <>
       <button style={floatingButtonStyle} onClick={() => setOpen(true)} aria-label="虫眼鏡で調べる">
-        <MagnifierIcon size={30} />
+        <GoldMagnifierIcon size={40} />
       </button>
 
       {open && <MagnifierOverlay onClose={() => setOpen(false)} />}

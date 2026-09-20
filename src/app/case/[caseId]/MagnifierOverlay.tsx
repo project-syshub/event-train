@@ -67,12 +67,15 @@ export default function MagnifierOverlay({ onClose }: { onClose: () => void }) {
   }, []);
 
   return (
-    <div style={overlayStyle}>
+    <div style={overlayStyle} onClick={onClose}>
       <button className="icon-button" onClick={onClose} style={closeButtonStyle} aria-label="閉じる">
         <CloseIcon />
       </button>
 
-      <div style={{ position: "relative", width: ICON_WIDTH, height: ICON_HEIGHT }}>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{ position: "relative", width: ICON_WIDTH, height: ICON_HEIGHT }}
+      >
         {/* 縁（銀色の金属リング） */}
         <div
           style={{
