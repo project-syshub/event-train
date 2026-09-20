@@ -1,7 +1,10 @@
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getSessionUserId } from "@/lib/session";
-import { mockCases, statusColor, statusLabel } from "@/lib/cases";
+import { mockCases } from "@/lib/cases";
+import { getClueSlotsForCase } from "@/lib/clues";
+import { ChevronLeftIcon } from "@/components/icons";
+import ClueGrid from "./ClueGrid";
 import SolveTools from "./SolveTools";
 
 export default async function CasePage({
@@ -20,43 +23,36 @@ export default async function CasePage({
     notFound();
   }
 
+  const slots = getClueSlotsForCase(caseInfo.stationKey, caseInfo.clueSlots);
+
   return (
     <main
       style={{
         maxWidth: 420,
-        margin: "40px auto",
+        margin: "24px auto",
         padding: "0 16px 96px",
         display: "flex",
         flexDirection: "column",
         gap: 20,
       }}
     >
-      <Link href="/home">
-        <button>← ホームに戻る</button>
-      </Link>
-
-      <div
-        style={{
-          background: "var(--color-surface)",
-          border: "1px solid var(--color-border)",
-          borderRadius: 8,
-          padding: 28,
-          display: "flex",
-          flexDirection: "column",
-          gap: 16,
-        }}
-      >
-        <h1>{caseInfo.title}</h1>
-        <p style={{ fontWeight: "bold", fontSize: 18, color: statusColor[caseInfo.status] }}>
-          ステータス: {statusLabel[caseInfo.status]}
-        </p>
-        <p style={{ fontSize: 17, lineHeight: 1.7 }}>{caseInfo.summary}</p>
-        <p style={{ color: "var(--color-text-muted)", fontSize: 15 }}>
-          （事件の詳細本文・捜査コンテンツは今後の設計対象です）
-        </p>
+      <div>
+        <Link href="/home">
+          <button className="button-secondary">
+            <ChevronLeftIcon />
+            ホームにもどる
+          </button>
+        </Link>
       </div>
 
-      <SolveTools caseId={caseId} />
+      <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 10 }}>
+        <h1 style={{ fontSize: 26 }}>{caseInfo.title}</h1>
+        <p style={{ fontSize: 15 }}>すべての手がかりを見つけよう！</p>
+      </div>
+
+      <ClueGrid slots={slots} />
+
+      <SolveTools />
     </main>
   );
 }

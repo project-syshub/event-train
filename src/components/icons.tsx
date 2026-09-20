@@ -60,6 +60,25 @@ export function PuzzleIcon({ size = 26 }: { size?: number }) {
   );
 }
 
+export function ChevronLeftIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.4}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M15 5 8 12l7 7" />
+    </svg>
+  );
+}
+
 export function CloseIcon({ size = 18 }: { size?: number }) {
   return (
     <svg

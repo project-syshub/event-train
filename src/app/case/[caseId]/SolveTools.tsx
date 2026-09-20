@@ -1,11 +1,8 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
-import Link from "next/link";
-import { MagnifierIcon, PuzzleIcon } from "@/components/icons";
+import { MagnifierIcon } from "@/components/icons";
 import MagnifierOverlay from "./MagnifierOverlay";
-
-type Tool = "magnifier" | null;
 
 const barStyle: CSSProperties = {
   position: "fixed",
@@ -13,7 +10,7 @@ const barStyle: CSSProperties = {
   left: 0,
   right: 0,
   display: "flex",
-  justifyContent: "space-around",
+  justifyContent: "center",
   padding: "10px 0",
   background: "var(--color-surface)",
   borderTop: "1px solid var(--color-border)",
@@ -33,23 +30,19 @@ const toolButtonStyle: CSSProperties = {
   cursor: "pointer",
 };
 
-export default function SolveTools({ caseId }: { caseId: string }) {
-  const [active, setActive] = useState<Tool>(null);
+export default function SolveTools() {
+  const [open, setOpen] = useState(false);
 
   return (
     <>
       <nav style={barStyle}>
-        <button style={toolButtonStyle} onClick={() => setActive("magnifier")}>
+        <button style={toolButtonStyle} onClick={() => setOpen(true)}>
           <MagnifierIcon />
           <span style={{ fontSize: 14 }}>虫眼鏡</span>
         </button>
-        <Link href={`/case/${caseId}/clues`} style={{ ...toolButtonStyle, textDecoration: "none" }}>
-          <PuzzleIcon />
-          <span style={{ fontSize: 14 }}>手がかり</span>
-        </Link>
       </nav>
 
-      {active === "magnifier" && <MagnifierOverlay onClose={() => setActive(null)} />}
+      {open && <MagnifierOverlay onClose={() => setOpen(false)} />}
     </>
   );
 }
