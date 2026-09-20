@@ -7,25 +7,25 @@ import { overlayStyle, closeButtonStyle } from "./overlayStyles";
 // レンズ（丸）の寸法（6.0インチ程度のモバイル画面幅を想定したサイズ）
 const LENS_LEFT = 16;
 const LENS_TOP = 10;
-const LENS_SIZE = 200;
-const RIM_THICKNESS = 12; // 縁を少し細くし、ガラス部分を相対的に大きく見せる
+const LENS_SIZE = 220;
+const RIM_THICKNESS = 13; // 縁を少し細くし、ガラス部分を相対的に大きく見せる
 const LENS_RADIUS = LENS_SIZE / 2;
 const LENS_CENTER_X = LENS_LEFT + LENS_RADIUS;
 const LENS_CENTER_Y = LENS_TOP + LENS_RADIUS;
 
 // 持ち手（レンズの縁の1点を起点に、外向きに回転させる）
 const HANDLE_ANGLE_DEG = 45;
-const HANDLE_WIDTH = 18;
-const COLLAR_LENGTH = 14; // 金の接続部
-const WOOD_LENGTH = 90; // 木製の持ち手
-const HANDLE_INSET = 5; // 縁の少し内側を起点にして継ぎ目の隙間をなくす
+const HANDLE_WIDTH = 20;
+const COLLAR_LENGTH = 15; // 金の接続部
+const WOOD_LENGTH = 100; // 木製の持ち手
+const HANDLE_INSET = 6; // 縁の少し内側を起点にして継ぎ目の隙間をなくす
 
 const angleRad = (HANDLE_ANGLE_DEG * Math.PI) / 180;
 const HANDLE_ANCHOR_X = LENS_CENTER_X + (LENS_RADIUS - HANDLE_INSET) * Math.cos(angleRad);
 const HANDLE_ANCHOR_Y = LENS_CENTER_Y + (LENS_RADIUS - HANDLE_INSET) * Math.sin(angleRad);
 
-const ICON_WIDTH = 290;
-const ICON_HEIGHT = 270;
+const ICON_WIDTH = 310;
+const ICON_HEIGHT = 300;
 
 export default function MagnifierOverlay({ onClose }: { onClose: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
