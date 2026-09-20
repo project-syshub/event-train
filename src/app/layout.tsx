@@ -1,9 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Morigen",
   description: "札幌市電を舞台にした探偵風Webアプリ",
+};
+
+// スマホのブラウザ（Safari等）はアドレスバー部分をページの背景色に合わせて着色するため、
+// テクスチャの基調色と明示的に一致させ、境目が目立たないようにする
+export const viewport: Viewport = {
+  themeColor: "#e2542a",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
