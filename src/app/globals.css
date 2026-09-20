@@ -19,6 +19,15 @@ html {
   height: 100%;
   color-scheme: dark;
   font-size: 18px;
+  /*
+    iOS Safariは html と body の背景を別々に扱い、
+    伸縮するツールバー周辺やオーバースクロール時に html 側の背景がのぞくことがある。
+    body と全く同じ背景をここにも指定し、どちらが見えても継ぎ目が出ないようにする。
+  */
+  background-color: var(--color-bg);
+  background-image: url("/textures/grain.svg");
+  background-repeat: repeat;
+  background-size: 400px 400px;
 }
 
 html,
