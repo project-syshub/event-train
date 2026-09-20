@@ -18,3 +18,7 @@ export const mockUsers: User[] = [
 export function findUserByLoginId(loginId: string): User | undefined {
   return mockUsers.find((user) => user.loginId === loginId);
 }
+
+export function findUserById(id: string): User | undefined {
+  return mockUsers.find((user) => user.id === id);
+}
