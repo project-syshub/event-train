@@ -28,7 +28,6 @@ export default async function CluesPage({
         maxWidth: 420,
         margin: "40px auto",
         padding: "0 16px 40px",
-        fontFamily: "sans-serif",
         display: "flex",
         flexDirection: "column",
         gap: 20,
