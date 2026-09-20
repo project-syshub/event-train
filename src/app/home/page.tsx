@@ -46,7 +46,7 @@ export default async function HomePage() {
         <h1>ホーム</h1>
         <LogoutButton />
       </div>
-      <p style={{ fontSize: 17, fontWeight: 600, color: "var(--color-bg-edge)", lineHeight: 1.7 }}>
+      <p style={{ fontSize: 17, fontWeight: 600, color: "var(--color-text)", lineHeight: 1.7 }}>
         路線図上の駅マーカーをクリックすると、その付近で起きた事件の情報が表示されます。
       </p>
       <div

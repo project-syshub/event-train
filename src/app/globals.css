@@ -6,7 +6,7 @@
   --color-surface-alt: #5c3b1e;
   --color-border: #8a6239;
   --color-text: #ffffff;
-  --color-text-muted: #e0e0e0;
+  --color-text-muted: #ffffff;
   --color-accent: #e2211c;
   --color-accent-strong: #ff5a52;
   --color-danger: #e2211c;
@@ -51,11 +51,11 @@ h2,
 h3 {
   font-weight: 800;
   letter-spacing: 0.02em;
-  color: var(--color-accent-strong);
+  color: var(--color-text);
 }
 
 a {
-  color: var(--color-accent-strong);
+  color: var(--color-text);
   text-decoration: none;
 }
 
