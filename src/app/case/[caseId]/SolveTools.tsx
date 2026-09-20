@@ -4,30 +4,20 @@ import { useState, type CSSProperties } from "react";
 import { MagnifierIcon } from "@/components/icons";
 import MagnifierOverlay from "./MagnifierOverlay";
 
-const barStyle: CSSProperties = {
+// 画面右下に浮かせる丸ボタン
+const floatingButtonStyle: CSSProperties = {
   position: "fixed",
-  bottom: 0,
-  left: 0,
-  right: 0,
+  right: 18,
+  bottom: 18,
+  width: 62,
+  height: 62,
+  padding: 0,
+  borderRadius: "50%",
   display: "flex",
-  justifyContent: "center",
-  padding: "10px 0",
-  background: "var(--color-surface)",
-  borderTop: "1px solid var(--color-border)",
-  zIndex: 50,
-};
-
-const toolButtonStyle: CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
   alignItems: "center",
-  gap: 4,
-  padding: "6px 16px",
-  border: "none",
-  background: "none",
-  boxShadow: "none",
-  color: "var(--color-text)",
-  cursor: "pointer",
+  justifyContent: "center",
+  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.18)",
+  zIndex: 50,
 };
 
 export default function SolveTools() {
@@ -35,12 +25,9 @@ export default function SolveTools() {
 
   return (
     <>
-      <nav style={barStyle}>
-        <button style={toolButtonStyle} onClick={() => setOpen(true)}>
-          <MagnifierIcon />
-          <span style={{ fontSize: 14 }}>虫眼鏡</span>
-        </button>
-      </nav>
+      <button style={floatingButtonStyle} onClick={() => setOpen(true)} aria-label="虫眼鏡で調べる">
+        <MagnifierIcon size={30} />
+      </button>
 
       {open && <MagnifierOverlay onClose={() => setOpen(false)} />}
     </>
