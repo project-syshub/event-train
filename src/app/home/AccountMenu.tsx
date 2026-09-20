@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { GearIcon } from "@/components/icons";
+import { FiSettings } from "react-icons/fi";
 
 export default function AccountMenu({ loginId }: { loginId: string }) {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function AccountMenu({ loginId }: { loginId: string }) {
         aria-expanded={open}
         style={{ width: 40, height: 40 }}
       >
-        <GearIcon />
+        <FiSettings size={20} />
       </button>
 
       {open && (
@@ -33,11 +33,11 @@ export default function AccountMenu({ loginId }: { loginId: string }) {
             style={{ position: "fixed", inset: 0, zIndex: 15 }}
           />
           <div
+            className="surface-panel"
             style={{
               position: "absolute",
               top: "calc(100% + 8px)",
               right: 0,
-              background: "var(--color-surface)",
               border: "1px solid var(--color-border)",
               borderRadius: 8,
               padding: 16,

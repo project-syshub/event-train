@@ -12,7 +12,6 @@ const CAPTION_HEIGHT = Math.round(CAPTION_FONT_SIZE * CAPTION_LINE_HEIGHT * 2) +
 
 const cardStyle: CSSProperties = {
   position: "relative",
-  background: "var(--color-surface)",
   border: "1px solid var(--color-border)",
   borderRadius: 8,
   padding: 10,
@@ -99,6 +98,7 @@ export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
           slot.found ? (
             <button
               key={slot.clue.id}
+              className="surface-panel"
               onClick={() => setSelected(slot.clue)}
               style={cardStyle}
               aria-label={`${slot.clue.name}の詳細を見る`}
@@ -106,7 +106,7 @@ export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
               <ClueCardBody clue={slot.clue} />
             </button>
           ) : (
-            <div key={`unknown-${index}`} style={cardStyle}>
+            <div key={`unknown-${index}`} className="surface-panel" style={cardStyle}>
               <ClueCardBody clue={null} />
             </div>
           )
@@ -125,9 +125,9 @@ export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
           </button>
 
           <div
+            className="surface-panel"
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: "var(--color-surface)",
               border: "1px solid var(--color-border)",
               borderRadius: 8,
               padding: 20,

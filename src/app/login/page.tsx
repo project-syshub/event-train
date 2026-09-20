@@ -35,8 +35,8 @@ export default function LoginPage() {
   return (
     <main style={{ maxWidth: 420, margin: "40px auto", padding: "0 16px 40px" }}>
       <div
+        className="surface-panel"
         style={{
-          background: "var(--color-surface)",
           border: "1px solid var(--color-border)",
           borderRadius: 8,
           padding: 28,

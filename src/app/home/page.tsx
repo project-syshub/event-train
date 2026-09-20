@@ -52,8 +52,8 @@ export default async function HomePage() {
         路線図上の駅マーカーを押すと、その付近で起きた事件の捜査がはじまります。
       </p>
       <div
+        className="surface-panel"
         style={{
-          background: "var(--color-surface)",
           border: "1px solid var(--color-border)",
           borderRadius: 8,
           padding: "20px 24px 44px",

@@ -1,26 +1,6 @@
 // 丸ボタンの中でずれないよう、左右上下対称なviewBoxのSVGアイコンとして定義する。
 // 色はstroke="currentColor"で親要素の文字色を継承する。
 
-export function GearIcon({ size = 20 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <circle cx="12" cy="12" r="3.2" />
-      <path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.65 5.35l-1.56 1.56M6.91 17.09l-1.56 1.56M18.65 18.65l-1.56-1.56M6.91 6.91L5.35 5.35" />
-    </svg>
-  );
-}
-
 export function MagnifierIcon({ size = 26 }: { size?: number }) {
   return (
     <svg
