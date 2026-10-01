@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { decodeToken, encodeToken } from "./session";
 
-const FOUND_CLUES_COOKIE_NAME = "found_clues";
+// 名前を変えると以前のCookieを読まなくなり、全員の発見記録がリセットされる
+const FOUND_CLUES_COOKIE_NAME = "found_clues_v2";
 const FOUND_CLUES_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
 
 // 別のユーザーで同じブラウザからログインしたときに記録が混ざらないよう、userIdも署名に含める

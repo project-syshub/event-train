@@ -41,9 +41,9 @@ export const mockCases: CaseInfo[] = [
     id: "nakajima-koen-dori",
     stationKey: "nakajima-koen-dori",
     title: "公園通りの目撃者",
-    status: "solved",
+    status: "unsolved",
     summary:
-      "中島公園通沿いのビルで起きた騒動。複数の目撃証言から犯人が特定され、事件は解決に至った。",
+      "中島公園通沿いのビルで起きた騒動。複数の目撃証言が寄せられているが、犯人はまだ分かっていない。",
     clueSlots: 4,
   },
   {
