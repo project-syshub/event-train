@@ -22,7 +22,10 @@ export async function POST(request: NextRequest) {
   }
 
   const isNew = await addFoundClue(userId, clue.id);
-  const caseTitle = mockCases.find((c) => c.stationKey === clue.caseId)?.title ?? "";
+  const caseInfo = mockCases.find((c) => c.stationKey === clue.caseId);
+  const caseTitle = caseInfo?.title ?? "";
+  // 読み取った手がかりの事件ページ（虫眼鏡を閉じたあとに移動する）
+  const casePath = caseInfo ? `/case/${caseInfo.id}` : null;
 
-  return NextResponse.json({ clue, caseTitle, isNew });
+  return NextResponse.json({ clue, caseTitle, casePath, isNew });
 }

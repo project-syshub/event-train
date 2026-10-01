@@ -19,7 +19,7 @@ const FAILED_RESUME_DELAY_MS = 2000;
 type ScanState =
   | { kind: "scanning" }
   | { kind: "checking" }
-  | { kind: "found"; clue: ClueItem; caseTitle: string; isNew: boolean }
+  | { kind: "found"; clue: ClueItem; caseTitle: string; casePath: string | null; isNew: boolean }
   | { kind: "failed"; message: string };
 
 // レンズ（丸）の寸法（6.0インチ程度のモバイル画面幅を想定したサイズ）
@@ -73,8 +73,14 @@ export default function MagnifierOverlay({
       return;
     }
 
-    setScanState({ kind: "found", clue: data.clue, caseTitle: data.caseTitle, isNew: data.isNew });
-    if (data.isNew) {
+    setScanState({
+      kind: "found",
+      clue: data.clue,
+      caseTitle: data.caseTitle,
+      casePath: data.casePath ?? null,
+      isNew: data.isNew,
+    });
+    if (data.isNew && data.clue.caseId === caseId) {
       // 背後の手がかり一覧を最新の発見状況で描画し直す
       router.refresh();
     }
@@ -108,12 +114,18 @@ export default function MagnifierOverlay({
     return () => clearInterval(timer);
   }, [scanState.kind, error]);
 
-  const closeOverlay = useEffectEvent(onClose);
+  // 虫眼鏡を閉じ、別の事件の手がかりだったらその事件のページへ移動する
+  const finishWithClue = useEffectEvent(() => {
+    if (scanState.kind === "found" && scanState.clue.caseId !== caseId && scanState.casePath) {
+      router.push(scanState.casePath);
+    }
+    onClose();
+  });
 
   // 結果をレンズに少し表示したあと、手がかりなら虫眼鏡を閉じ、対象外なら読み取りを再開する
   useEffect(() => {
     if (scanState.kind === "found") {
-      const timer = setTimeout(() => closeOverlay(), FOUND_CLOSE_DELAY_MS);
+      const timer = setTimeout(() => finishWithClue(), FOUND_CLOSE_DELAY_MS);
       return () => clearTimeout(timer);
     }
     if (scanState.kind === "failed") {
