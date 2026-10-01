@@ -13,6 +13,19 @@ export default function AccountMenu({ loginId }: { loginId: string }) {
     router.push("/login");
   }
 
+  // TODO: テスト用。不要になったらボタンごと削除する
+  async function handleResetClues() {
+    if (!window.confirm("すべての事件の手がかりを削除して、最初の状態に戻します。よろしいですか？")) return;
+
+    const response = await fetch("/api/clues/reset", { method: "POST" }).catch(() => null);
+    if (!response?.ok) {
+      window.alert("リセットに失敗しました。もう一度試してください。");
+      return;
+    }
+    setOpen(false);
+    router.refresh();
+  }
+
   return (
     <div style={{ position: "relative" }}>
       <button
@@ -50,6 +63,13 @@ export default function AccountMenu({ loginId }: { loginId: string }) {
               ログイン中
             </p>
             <p style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>{loginId}</p>
+            <button
+              className="button-secondary"
+              onClick={handleResetClues}
+              style={{ width: "100%", marginBottom: 10 }}
+            >
+              手がかりをリセット
+            </button>
             <button onClick={handleLogout} style={{ width: "100%" }}>
               ログアウト
             </button>

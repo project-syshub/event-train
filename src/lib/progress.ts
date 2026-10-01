@@ -23,6 +23,12 @@ export async function getFoundClueIds(userId: string): Promise<string[]> {
   return payload.clueIds;
 }
 
+// Route Handler内でのみ呼び出せる。すべての事件の発見記録を消す（設定メニューのリセット用）
+export async function clearFoundClues(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete(FOUND_CLUES_COOKIE_NAME);
+}
+
 // Route Handler内でのみ呼び出せる（Cookieの書き込みを伴うため）。すでに発見済みならfalseを返す
 export async function addFoundClue(userId: string, clueId: string): Promise<boolean> {
   const clueIds = await getFoundClueIds(userId);
