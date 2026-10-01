@@ -22,30 +22,39 @@ type ScanState =
   | { kind: "found"; clue: ClueItem; caseTitle: string; casePath: string | null; isNew: boolean }
   | { kind: "failed"; message: string };
 
-// レンズ（丸）の寸法（幅430px程度の画面で原寸。狭い画面では全体を縮小して表示する）
-const LENS_LEFT = 16;
+// レンズ（丸）の寸法（幅390px程度の画面で原寸。収まらない画面では全体を縮小して表示する）
+const LENS_LEFT = 4; // 縁の影が切れないぶんだけ空ける
 const LENS_TOP = 10;
-const LENS_SIZE = 290;
-const RIM_THICKNESS = 16; // 縁を少し細くし、ガラス部分を相対的に大きく見せる
+const LENS_SIZE = 340;
+const RIM_THICKNESS = 18; // 縁を少し細くし、ガラス部分を相対的に大きく見せる
 const LENS_RADIUS = LENS_SIZE / 2;
 const LENS_CENTER_X = LENS_LEFT + LENS_RADIUS;
 const LENS_CENTER_Y = LENS_TOP + LENS_RADIUS;
 
-// 持ち手（レンズの縁の1点を起点に、外向きに回転させる）
-const HANDLE_ANGLE_DEG = 45;
-const HANDLE_WIDTH = 24;
-const COLLAR_LENGTH = 18; // 金の接続部
-const WOOD_LENGTH = 125; // 木製の持ち手
-const HANDLE_INSET = 8; // 縁の少し内側を起点にして継ぎ目の隙間をなくす
+// 持ち手（レンズの縁の1点を起点に、外向きに回転させる）。
+// 角度を立てる（真下に近づける）ほど横への張り出しが減り、そのぶんレンズを大きくできる
+const HANDLE_ANGLE_DEG = 60;
+const HANDLE_WIDTH = 26;
+const COLLAR_LENGTH = 20; // 金の接続部
+const WOOD_LENGTH = 140; // 木製の持ち手
+const HANDLE_INSET = 9; // 縁の少し内側を起点にして継ぎ目の隙間をなくす
 
 const angleRad = (HANDLE_ANGLE_DEG * Math.PI) / 180;
 const HANDLE_ANCHOR_X = LENS_CENTER_X + (LENS_RADIUS - HANDLE_INSET) * Math.cos(angleRad);
 const HANDLE_ANCHOR_Y = LENS_CENTER_Y + (LENS_RADIUS - HANDLE_INSET) * Math.sin(angleRad);
 
-const ICON_WIDTH = 372;
-const ICON_HEIGHT = 366;
-// 画面の左右に残す余白（虫眼鏡が収まらない幅の端末では全体を縮小する）
+// 持ち手の先端（幅のぶんも含む）まで収まるよう、虫眼鏡全体の大きさを寸法から求める
+const HANDLE_LENGTH = COLLAR_LENGTH + WOOD_LENGTH;
+const HANDLE_TIP_X =
+  HANDLE_ANCHOR_X + HANDLE_LENGTH * Math.cos(angleRad) + (HANDLE_WIDTH / 2) * Math.sin(angleRad);
+const HANDLE_TIP_Y =
+  HANDLE_ANCHOR_Y + HANDLE_LENGTH * Math.sin(angleRad) + (HANDLE_WIDTH / 2) * Math.cos(angleRad);
+const ICON_WIDTH = Math.ceil(Math.max(LENS_LEFT * 2 + LENS_SIZE, HANDLE_TIP_X + LENS_LEFT));
+const ICON_HEIGHT = Math.ceil(HANDLE_TIP_Y + LENS_LEFT);
+
+// 画面の左右に残す余白と、閉じるボタン・案内文などのために縦に確保する高さ
 const SIDE_PADDING = 16;
+const RESERVED_HEIGHT = 200;
 
 export default function MagnifierOverlay({
   caseId,
@@ -59,9 +68,13 @@ export default function MagnifierOverlay({
   const streamRef = useRef<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [scanState, setScanState] = useState<ScanState>({ kind: "scanning" });
-  // 虫眼鏡は開いたときにだけ描画されるため、初期化時に画面幅を参照できる
+  // 虫眼鏡は開いたときにだけ描画されるため、初期化時に画面サイズを参照できる
   const [iconScale] = useState(() =>
-    Math.min(1, (window.innerWidth - SIDE_PADDING * 2) / ICON_WIDTH)
+    Math.min(
+      1,
+      (window.innerWidth - SIDE_PADDING * 2) / ICON_WIDTH,
+      (window.innerHeight - RESERVED_HEIGHT) / ICON_HEIGHT
+    )
   );
 
   const onQrDetected = useEffectEvent(async (qrText: string) => {
