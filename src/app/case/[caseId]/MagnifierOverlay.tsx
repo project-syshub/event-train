@@ -25,25 +25,25 @@ type ScanState =
 // レンズ（丸）の寸法（6.0インチ程度のモバイル画面幅を想定したサイズ）
 const LENS_LEFT = 16;
 const LENS_TOP = 10;
-const LENS_SIZE = 220;
-const RIM_THICKNESS = 13; // 縁を少し細くし、ガラス部分を相対的に大きく見せる
+const LENS_SIZE = 250;
+const RIM_THICKNESS = 14; // 縁を少し細くし、ガラス部分を相対的に大きく見せる
 const LENS_RADIUS = LENS_SIZE / 2;
 const LENS_CENTER_X = LENS_LEFT + LENS_RADIUS;
 const LENS_CENTER_Y = LENS_TOP + LENS_RADIUS;
 
 // 持ち手（レンズの縁の1点を起点に、外向きに回転させる）
 const HANDLE_ANGLE_DEG = 45;
-const HANDLE_WIDTH = 20;
-const COLLAR_LENGTH = 15; // 金の接続部
-const WOOD_LENGTH = 100; // 木製の持ち手
-const HANDLE_INSET = 6; // 縁の少し内側を起点にして継ぎ目の隙間をなくす
+const HANDLE_WIDTH = 22;
+const COLLAR_LENGTH = 16; // 金の接続部
+const WOOD_LENGTH = 110; // 木製の持ち手
+const HANDLE_INSET = 7; // 縁の少し内側を起点にして継ぎ目の隙間をなくす
 
 const angleRad = (HANDLE_ANGLE_DEG * Math.PI) / 180;
 const HANDLE_ANCHOR_X = LENS_CENTER_X + (LENS_RADIUS - HANDLE_INSET) * Math.cos(angleRad);
 const HANDLE_ANCHOR_Y = LENS_CENTER_Y + (LENS_RADIUS - HANDLE_INSET) * Math.sin(angleRad);
 
-const ICON_WIDTH = 310;
-const ICON_HEIGHT = 300;
+const ICON_WIDTH = 325;
+const ICON_HEIGHT = 320;
 
 export default function MagnifierOverlay({
   caseId,
@@ -171,7 +171,8 @@ export default function MagnifierOverlay({
   }, []);
 
   return (
-    <div style={overlayStyle} onClick={onClose}>
+    // 幅の狭い端末でも持ち手まで収まるよう、左右の余白を詰める
+    <div style={{ ...overlayStyle, paddingLeft: 16, paddingRight: 16 }} onClick={onClose}>
       <button className="icon-button" onClick={onClose} style={closeButtonStyle} aria-label="閉じる">
         <CloseIcon />
       </button>
