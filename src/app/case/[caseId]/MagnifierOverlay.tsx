@@ -22,28 +22,30 @@ type ScanState =
   | { kind: "found"; clue: ClueItem; caseTitle: string; casePath: string | null; isNew: boolean }
   | { kind: "failed"; message: string };
 
-// レンズ（丸）の寸法（6.0インチ程度のモバイル画面幅を想定したサイズ）
+// レンズ（丸）の寸法（幅430px程度の画面で原寸。狭い画面では全体を縮小して表示する）
 const LENS_LEFT = 16;
 const LENS_TOP = 10;
-const LENS_SIZE = 250;
-const RIM_THICKNESS = 14; // 縁を少し細くし、ガラス部分を相対的に大きく見せる
+const LENS_SIZE = 290;
+const RIM_THICKNESS = 16; // 縁を少し細くし、ガラス部分を相対的に大きく見せる
 const LENS_RADIUS = LENS_SIZE / 2;
 const LENS_CENTER_X = LENS_LEFT + LENS_RADIUS;
 const LENS_CENTER_Y = LENS_TOP + LENS_RADIUS;
 
 // 持ち手（レンズの縁の1点を起点に、外向きに回転させる）
 const HANDLE_ANGLE_DEG = 45;
-const HANDLE_WIDTH = 22;
-const COLLAR_LENGTH = 16; // 金の接続部
-const WOOD_LENGTH = 110; // 木製の持ち手
-const HANDLE_INSET = 7; // 縁の少し内側を起点にして継ぎ目の隙間をなくす
+const HANDLE_WIDTH = 24;
+const COLLAR_LENGTH = 18; // 金の接続部
+const WOOD_LENGTH = 125; // 木製の持ち手
+const HANDLE_INSET = 8; // 縁の少し内側を起点にして継ぎ目の隙間をなくす
 
 const angleRad = (HANDLE_ANGLE_DEG * Math.PI) / 180;
 const HANDLE_ANCHOR_X = LENS_CENTER_X + (LENS_RADIUS - HANDLE_INSET) * Math.cos(angleRad);
 const HANDLE_ANCHOR_Y = LENS_CENTER_Y + (LENS_RADIUS - HANDLE_INSET) * Math.sin(angleRad);
 
-const ICON_WIDTH = 325;
-const ICON_HEIGHT = 320;
+const ICON_WIDTH = 372;
+const ICON_HEIGHT = 366;
+// 画面の左右に残す余白（虫眼鏡が収まらない幅の端末では全体を縮小する）
+const SIDE_PADDING = 16;
 
 export default function MagnifierOverlay({
   caseId,
@@ -57,6 +59,10 @@ export default function MagnifierOverlay({
   const streamRef = useRef<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [scanState, setScanState] = useState<ScanState>({ kind: "scanning" });
+  // 虫眼鏡は開いたときにだけ描画されるため、初期化時に画面幅を参照できる
+  const [iconScale] = useState(() =>
+    Math.min(1, (window.innerWidth - SIDE_PADDING * 2) / ICON_WIDTH)
+  );
 
   const onQrDetected = useEffectEvent(async (qrText: string) => {
     setScanState({ kind: "checking" });
@@ -171,126 +177,135 @@ export default function MagnifierOverlay({
   }, []);
 
   return (
-    // 幅の狭い端末でも持ち手まで収まるよう、左右の余白を詰める
-    <div style={{ ...overlayStyle, paddingLeft: 16, paddingRight: 16 }} onClick={onClose}>
+    <div style={{ ...overlayStyle, paddingLeft: SIDE_PADDING, paddingRight: SIDE_PADDING }} onClick={onClose}>
       <button className="icon-button" onClick={onClose} style={closeButtonStyle} aria-label="閉じる">
         <CloseIcon />
       </button>
 
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ position: "relative", width: ICON_WIDTH, height: ICON_HEIGHT }}
+        style={{ width: ICON_WIDTH * iconScale, height: ICON_HEIGHT * iconScale, flexShrink: 0 }}
       >
-        {/* 縁（銀色の金属リング） */}
         <div
           style={{
-            position: "absolute",
-            top: LENS_TOP,
-            left: LENS_LEFT,
-            width: LENS_SIZE,
-            height: LENS_SIZE,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle at 32% 28%, #f5f5f5 0%, #cfcfcf 35%, #8c8c8c 65%, #4a4a4a 90%, #2c2c2c 100%)",
-            boxShadow: "0 3px 8px rgba(0, 0, 0, 0.5)",
+            position: "relative",
+            width: ICON_WIDTH,
+            height: ICON_HEIGHT,
+            transform: `scale(${iconScale})`,
+            transformOrigin: "top left",
           }}
         >
-          {/* レンズ内側（丸くクリップしたカメラ映像） */}
+          {/* 縁（銀色の金属リング） */}
           <div
             style={{
               position: "absolute",
-              inset: RIM_THICKNESS,
+              top: LENS_TOP,
+              left: LENS_LEFT,
+              width: LENS_SIZE,
+              height: LENS_SIZE,
               borderRadius: "50%",
-              overflow: "hidden",
-              background: "#111",
+              background:
+                "radial-gradient(circle at 32% 28%, #f5f5f5 0%, #cfcfcf 35%, #8c8c8c 65%, #4a4a4a 90%, #2c2c2c 100%)",
+              boxShadow: "0 3px 8px rgba(0, 0, 0, 0.5)",
             }}
           >
-            {error ? (
-              <p style={{ color: "white", fontSize: 14, padding: 12, textAlign: "center" }}>{error}</p>
-            ) : (
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            )}
-
-            {/* ガラスの光沢ハイライト */}
+            {/* レンズ内側（丸くクリップしたカメラ映像） */}
             <div
               style={{
                 position: "absolute",
-                top: "8%",
-                left: "14%",
-                width: "55%",
-                height: "26%",
-                background: "rgba(255, 255, 255, 0.35)",
+                inset: RIM_THICKNESS,
                 borderRadius: "50%",
-                filter: "blur(6px)",
-                transform: "rotate(-15deg)",
-                pointerEvents: "none",
+                overflow: "hidden",
+                background: "#111",
               }}
-            />
+            >
+              {error ? (
+                <p style={{ color: "white", fontSize: 14, padding: 12, textAlign: "center" }}>{error}</p>
+              ) : (
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              )}
 
-            {/* 読み取り結果（レンズの中央に表示する） */}
-            {lensMessage && (
+              {/* ガラスの光沢ハイライト */}
               <div
                 style={{
                   position: "absolute",
-                  inset: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: 24,
-                  background: "rgba(0, 0, 0, 0.55)",
-                  color: "white",
-                  fontSize: lensMessage.emphasis ? 22 : 15,
-                  fontWeight: 700,
-                  lineHeight: 1.4,
-                  textAlign: "center",
-                  textShadow: "0 1px 3px rgba(0, 0, 0, 0.8)",
+                  top: "8%",
+                  left: "14%",
+                  width: "55%",
+                  height: "26%",
+                  background: "rgba(255, 255, 255, 0.35)",
+                  borderRadius: "50%",
+                  filter: "blur(6px)",
+                  transform: "rotate(-15deg)",
+                  pointerEvents: "none",
                 }}
-              >
-                {lensMessage.text}
-              </div>
-            )}
-          </div>
-        </div>
+              />
 
-        {/*
-          持ち手（金の接続部 + 木製グリップ）。
-          transform-originを回転の不動点にできるよう、要素の左上をあらかじめ
-          「アンカー座標 - 幅の半分」に置いてから回転する（translateとの組み合わせによる
-          回転方向のズレを避けるため）。CSSのrotate()は画面座標（x:右, y:下）で時計回りに
-          角度を加算するため、真下（90°相当）から目的の角度(HANDLE_ANGLE_DEG)へ向けるには
-          差分の (HANDLE_ANGLE_DEG - 90) 度だけ回転させる。
-        */}
-        <div
-          style={{
-            position: "absolute",
-            left: HANDLE_ANCHOR_X - HANDLE_WIDTH / 2,
-            top: HANDLE_ANCHOR_Y,
-            width: HANDLE_WIDTH,
-            transform: `rotate(${HANDLE_ANGLE_DEG - 90}deg)`,
-            transformOrigin: "top center",
-          }}
-        >
+              {/* 読み取り結果（レンズの中央に表示する） */}
+              {lensMessage && (
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: 24,
+                    background: "rgba(0, 0, 0, 0.55)",
+                    color: "white",
+                    fontSize: lensMessage.emphasis ? 22 : 15,
+                    fontWeight: 700,
+                    lineHeight: 1.4,
+                    textAlign: "center",
+                    textShadow: "0 1px 3px rgba(0, 0, 0, 0.8)",
+                  }}
+                >
+                  {lensMessage.text}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/*
+            持ち手（金の接続部 + 木製グリップ）。
+            transform-originを回転の不動点にできるよう、要素の左上をあらかじめ
+            「アンカー座標 - 幅の半分」に置いてから回転する（translateとの組み合わせによる
+            回転方向のズレを避けるため）。CSSのrotate()は画面座標（x:右, y:下）で時計回りに
+            角度を加算するため、真下（90°相当）から目的の角度(HANDLE_ANGLE_DEG)へ向けるには
+            差分の (HANDLE_ANGLE_DEG - 90) 度だけ回転させる。
+          */}
           <div
             style={{
-              width: "100%",
-              height: COLLAR_LENGTH,
-              background: "linear-gradient(90deg, #9c7a1f, #f0d878 45%, #9c7a1f)",
+              position: "absolute",
+              left: HANDLE_ANCHOR_X - HANDLE_WIDTH / 2,
+              top: HANDLE_ANCHOR_Y,
+              width: HANDLE_WIDTH,
+              transform: `rotate(${HANDLE_ANGLE_DEG - 90}deg)`,
+              transformOrigin: "top center",
             }}
-          />
-          <div
-            style={{
-              width: "100%",
-              height: WOOD_LENGTH,
-              background: "linear-gradient(90deg, #5c3818, #9c6b3e 45%, #5c3818 75%, #3f2611)",
-              borderRadius: `0 0 ${HANDLE_WIDTH / 2}px ${HANDLE_WIDTH / 2}px`,
-            }}
-          />
+          >
+            <div
+              style={{
+                width: "100%",
+                height: COLLAR_LENGTH,
+                background: "linear-gradient(90deg, #9c7a1f, #f0d878 45%, #9c7a1f)",
+              }}
+            />
+            <div
+              style={{
+                width: "100%",
+                height: WOOD_LENGTH,
+                background: "linear-gradient(90deg, #5c3818, #9c6b3e 45%, #5c3818 75%, #3f2611)",
+                borderRadius: `0 0 ${HANDLE_WIDTH / 2}px ${HANDLE_WIDTH / 2}px`,
+              }}
+            />
+          </div>
         </div>
       </div>
 
