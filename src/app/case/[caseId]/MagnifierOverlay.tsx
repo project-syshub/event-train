@@ -7,11 +7,14 @@ import type { ClueItem } from "@/lib/clues";
 import type { StationKey } from "@/lib/stations";
 import { CloseIcon } from "@/components/icons";
 import { overlayStyle, closeButtonStyle } from "./overlayStyles";
-import CluePhoto from "./CluePhoto";
 
 // 読み取りの間隔と、解析用に縮小する映像の最大辺（端末の負荷を抑えるため）
 const SCAN_INTERVAL_MS = 250;
 const SCAN_MAX_DIMENSION = 640;
+
+// 読み取り結果をレンズに表示しておく時間
+const FOUND_CLOSE_DELAY_MS = 1500;
+const FAILED_RESUME_DELAY_MS = 2000;
 
 type ScanState =
   | { kind: "scanning" }
@@ -105,9 +108,21 @@ export default function MagnifierOverlay({
     return () => clearInterval(timer);
   }, [scanState.kind, error]);
 
-  function resumeScanning() {
-    setScanState({ kind: "scanning" });
-  }
+  const closeOverlay = useEffectEvent(onClose);
+
+  // 結果をレンズに少し表示したあと、手がかりなら虫眼鏡を閉じ、対象外なら読み取りを再開する
+  useEffect(() => {
+    if (scanState.kind === "found") {
+      const timer = setTimeout(() => closeOverlay(), FOUND_CLOSE_DELAY_MS);
+      return () => clearTimeout(timer);
+    }
+    if (scanState.kind === "failed") {
+      const timer = setTimeout(() => setScanState({ kind: "scanning" }), FAILED_RESUME_DELAY_MS);
+      return () => clearTimeout(timer);
+    }
+  }, [scanState.kind]);
+
+  const lensMessage = getLensMessage(scanState, caseId);
 
   useEffect(() => {
     let cancelled = false;
@@ -204,6 +219,29 @@ export default function MagnifierOverlay({
                 pointerEvents: "none",
               }}
             />
+
+            {/* 読み取り結果（レンズの中央に表示する） */}
+            {lensMessage && (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 24,
+                  background: "rgba(0, 0, 0, 0.55)",
+                  color: "white",
+                  fontSize: lensMessage.emphasis ? 22 : 15,
+                  fontWeight: 700,
+                  lineHeight: 1.4,
+                  textAlign: "center",
+                  textShadow: "0 1px 3px rgba(0, 0, 0, 0.8)",
+                }}
+              >
+                {lensMessage.text}
+              </div>
+            )}
           </div>
         </div>
 
@@ -243,70 +281,38 @@ export default function MagnifierOverlay({
         </div>
       </div>
 
-      <ScanResult state={scanState} caseId={caseId} onResume={resumeScanning} />
+      {/* 結果表示中も位置がずれないよう、案内文の場所は確保しておく */}
+      <p
+        style={{
+          color: "white",
+          fontSize: 15,
+          textAlign: "center",
+          maxWidth: 280,
+          visibility: scanState.kind === "scanning" && !error ? "visible" : "hidden",
+        }}
+      >
+        レンズの中に現地のQRコードを写してください
+      </p>
     </div>
   );
 }
 
-function ScanResult({
-  state,
-  caseId,
-  onResume,
-}: {
-  state: ScanState;
-  caseId: StationKey;
-  onResume: () => void;
-}) {
-  if (state.kind === "scanning" || state.kind === "checking") {
-    return (
-      <p style={{ color: "white", fontSize: 15, textAlign: "center", maxWidth: 280 }}>
-        {state.kind === "scanning" ? "レンズの中に現地のQRコードを写してください" : "調べています..."}
-      </p>
-    );
+function getLensMessage(
+  state: ScanState,
+  caseId: StationKey
+): { text: string; emphasis: boolean } | null {
+  switch (state.kind) {
+    case "scanning":
+      return null;
+    case "checking":
+      return { text: "調べています...", emphasis: false };
+    case "failed":
+      return { text: state.message, emphasis: false };
+    case "found":
+      if (!state.isNew) return { text: "この手がかりはもう見つけている", emphasis: false };
+      if (state.clue.caseId !== caseId) {
+        return { text: `「${state.caseTitle}」の手がかりを発見！`, emphasis: false };
+      }
+      return { text: "手がかりを発見！", emphasis: true };
   }
-
-  let heading: string;
-  if (state.kind === "failed") {
-    heading = state.message;
-  } else if (!state.isNew) {
-    heading = "この手がかりはもう見つけている";
-  } else if (state.clue.caseId !== caseId) {
-    heading = `「${state.caseTitle}」の手がかりを発見！`;
-  } else {
-    heading = "手がかりを発見！";
-  }
-
-  return (
-    <div
-      className="surface-panel"
-      onClick={(e) => e.stopPropagation()}
-      style={{
-        border: "1px solid var(--color-border)",
-        borderRadius: 8,
-        padding: 16,
-        width: "100%",
-        maxWidth: 300,
-        display: "flex",
-        flexDirection: "column",
-        gap: 10,
-        textAlign: "center",
-      }}
-    >
-      <p style={{ fontSize: 16, fontWeight: 700 }}>{heading}</p>
-      {state.kind === "found" && (
-        <>
-          {state.clue.image && (
-            <div style={{ background: "#ffffff", padding: 5, borderRadius: 2 }}>
-              <CluePhoto clue={state.clue} iconSize={64} sizes="300px" />
-            </div>
-          )}
-          <p style={{ color: "var(--color-accent)", fontWeight: 700, fontSize: 16 }}>{state.clue.name}</p>
-          <p style={{ fontSize: 14, lineHeight: 1.7, textAlign: "left" }}>{state.clue.description}</p>
-        </>
-      )}
-      <button className="button-secondary" onClick={onResume}>
-        続けて調べる
-      </button>
-    </div>
-  );
 }
