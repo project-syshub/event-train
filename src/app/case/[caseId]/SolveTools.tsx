@@ -2,6 +2,7 @@
 
 import { useState, type CSSProperties } from "react";
 import { GoldMagnifierIcon } from "@/components/icons";
+import type { StationKey } from "@/lib/stations";
 import MagnifierOverlay from "./MagnifierOverlay";
 
 // 画面右下に浮かせる丸ボタン
@@ -20,7 +21,7 @@ const floatingButtonStyle: CSSProperties = {
   zIndex: 50,
 };
 
-export default function SolveTools() {
+export default function SolveTools({ caseId }: { caseId: StationKey }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -29,7 +30,7 @@ export default function SolveTools() {
         <GoldMagnifierIcon size={40} />
       </button>
 
-      {open && <MagnifierOverlay onClose={() => setOpen(false)} />}
+      {open && <MagnifierOverlay caseId={caseId} onClose={() => setOpen(false)} />}
     </>
   );
 }

@@ -31,6 +31,7 @@
 |  |  Route Handlers (API)    |  |
 |  |   - /api/login           |  |
 |  |   - /api/logout          |  |
+|  |   - /api/clues/discover  |  |
 |  +--------------------------+  |
 +---------------|----------------+
                 | SQL

@@ -2,8 +2,9 @@
 
 import { useState, type CSSProperties } from "react";
 import type { ClueItem, ClueSlot } from "@/lib/clues";
-import { CloseIcon, PuzzleIcon } from "@/components/icons";
+import { CloseIcon } from "@/components/icons";
 import { overlayStyle, closeButtonStyle } from "./overlayStyles";
+import CluePhoto from "./CluePhoto";
 
 const CAPTION_FONT_SIZE = 14;
 const CAPTION_LINE_HEIGHT = 1.3;
@@ -20,13 +21,10 @@ const cardStyle: CSSProperties = {
   textAlign: "center",
 };
 
+// 未発見の枠の写真部分（写真入りのカードと高さを揃えるための空白）
 const photoStyle: CSSProperties = {
   width: "100%",
   aspectRatio: "1",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  color: "var(--color-text)",
 };
 
 const captionStyle: CSSProperties = {
@@ -56,14 +54,11 @@ function ClueCardBody({ clue }: { clue: ClueItem | null }) {
           borderRadius: 2,
         }}
       >
-        <div
-          style={{
-            ...photoStyle,
-            background: found ? "var(--color-surface-alt)" : "transparent",
-          }}
-        >
-          {found && <PuzzleIcon size={40} />}
-        </div>
+        {found ? (
+          <CluePhoto clue={clue} iconSize={40} sizes="200px" />
+        ) : (
+          <div style={photoStyle} />
+        )}
         <p style={{ ...captionStyle, visibility: found ? "visible" : "hidden" }}>
           {found ? clue.name : " "}
         </p>
@@ -139,9 +134,7 @@ export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
             }}
           >
             <div style={{ background: "#ffffff", padding: 5, borderRadius: 2 }}>
-              <div style={{ ...photoStyle, background: "var(--color-surface-alt)" }}>
-                <PuzzleIcon size={64} />
-              </div>
+              <CluePhoto clue={selected} iconSize={64} sizes="300px" />
               <p
                 style={{
                   color: "var(--color-accent)",

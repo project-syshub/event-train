@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getSessionUserId } from "@/lib/session";
 import { mockCases } from "@/lib/cases";
 import { getClueSlotsForCase } from "@/lib/clues";
+import { getFoundClueIds } from "@/lib/progress";
 import { ChevronLeftIcon } from "@/components/icons";
 import ClueGrid from "./ClueGrid";
 import SolveTools from "./SolveTools";
@@ -23,7 +24,8 @@ export default async function CasePage({
     notFound();
   }
 
-  const slots = getClueSlotsForCase(caseInfo.stationKey, caseInfo.clueSlots);
+  const foundClueIds = await getFoundClueIds(userId);
+  const slots = getClueSlotsForCase(caseInfo.stationKey, caseInfo.clueSlots, foundClueIds);
 
   return (
     <main
@@ -52,7 +54,7 @@ export default async function CasePage({
 
       <ClueGrid slots={slots} />
 
-      <SolveTools />
+      <SolveTools caseId={caseInfo.stationKey} />
     </main>
   );
 }

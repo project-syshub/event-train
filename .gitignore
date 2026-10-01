@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+!.env.example
+
+# 生成したQRコード画像（npm run qr）
+/qr-codes/

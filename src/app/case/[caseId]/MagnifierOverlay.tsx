@@ -1,8 +1,23 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import jsQR from "jsqr";
+import type { ClueItem } from "@/lib/clues";
+import type { StationKey } from "@/lib/stations";
 import { CloseIcon } from "@/components/icons";
 import { overlayStyle, closeButtonStyle } from "./overlayStyles";
+import CluePhoto from "./CluePhoto";
+
+// 読み取りの間隔と、解析用に縮小する映像の最大辺（端末の負荷を抑えるため）
+const SCAN_INTERVAL_MS = 250;
+const SCAN_MAX_DIMENSION = 640;
+
+type ScanState =
+  | { kind: "scanning" }
+  | { kind: "checking" }
+  | { kind: "found"; clue: ClueItem; caseTitle: string; isNew: boolean }
+  | { kind: "failed"; message: string };
 
 // レンズ（丸）の寸法（6.0インチ程度のモバイル画面幅を想定したサイズ）
 const LENS_LEFT = 16;
@@ -27,10 +42,72 @@ const HANDLE_ANCHOR_Y = LENS_CENTER_Y + (LENS_RADIUS - HANDLE_INSET) * Math.sin(
 const ICON_WIDTH = 310;
 const ICON_HEIGHT = 300;
 
-export default function MagnifierOverlay({ onClose }: { onClose: () => void }) {
+export default function MagnifierOverlay({
+  caseId,
+  onClose,
+}: {
+  caseId: StationKey;
+  onClose: () => void;
+}) {
+  const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [scanState, setScanState] = useState<ScanState>({ kind: "scanning" });
+
+  const onQrDetected = useEffectEvent(async (qrText: string) => {
+    setScanState({ kind: "checking" });
+
+    const response = await fetch("/api/clues/discover", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ qrText }),
+    }).catch(() => null);
+    const data = await response?.json().catch(() => null);
+
+    if (!response?.ok || !data?.clue) {
+      setScanState({ kind: "failed", message: data?.error ?? "読み取りに失敗しました。もう一度試してください。" });
+      return;
+    }
+
+    setScanState({ kind: "found", clue: data.clue, caseTitle: data.caseTitle, isNew: data.isNew });
+    if (data.isNew) {
+      // 背後の手がかり一覧を最新の発見状況で描画し直す
+      router.refresh();
+    }
+  });
+
+  // 映像のフレームを定期的に切り出してQRコードを探す
+  useEffect(() => {
+    if (scanState.kind !== "scanning" || error) return;
+
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) return;
+
+    const timer = setInterval(() => {
+      const video = videoRef.current;
+      if (!video || video.readyState < video.HAVE_ENOUGH_DATA || !video.videoWidth) return;
+
+      const scale = Math.min(1, SCAN_MAX_DIMENSION / Math.max(video.videoWidth, video.videoHeight));
+      canvas.width = Math.round(video.videoWidth * scale);
+      canvas.height = Math.round(video.videoHeight * scale);
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const image = context.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(image.data, image.width, image.height, { inversionAttempts: "dontInvert" });
+      if (code?.data) {
+        clearInterval(timer);
+        onQrDetected(code.data);
+      }
+    }, SCAN_INTERVAL_MS);
+
+    return () => clearInterval(timer);
+  }, [scanState.kind, error]);
+
+  function resumeScanning() {
+    setScanState({ kind: "scanning" });
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -166,9 +243,70 @@ export default function MagnifierOverlay({ onClose }: { onClose: () => void }) {
         </div>
       </div>
 
+      <ScanResult state={scanState} caseId={caseId} onResume={resumeScanning} />
+    </div>
+  );
+}
+
+function ScanResult({
+  state,
+  caseId,
+  onResume,
+}: {
+  state: ScanState;
+  caseId: StationKey;
+  onResume: () => void;
+}) {
+  if (state.kind === "scanning" || state.kind === "checking") {
+    return (
       <p style={{ color: "white", fontSize: 15, textAlign: "center", maxWidth: 280 }}>
-        レンズの中に現地のQRコードを写してください（読み取り機能は今後実装予定）
+        {state.kind === "scanning" ? "レンズの中に現地のQRコードを写してください" : "調べています..."}
       </p>
+    );
+  }
+
+  let heading: string;
+  if (state.kind === "failed") {
+    heading = state.message;
+  } else if (!state.isNew) {
+    heading = "この手がかりはもう見つけている";
+  } else if (state.clue.caseId !== caseId) {
+    heading = `「${state.caseTitle}」の手がかりを発見！`;
+  } else {
+    heading = "手がかりを発見！";
+  }
+
+  return (
+    <div
+      className="surface-panel"
+      onClick={(e) => e.stopPropagation()}
+      style={{
+        border: "1px solid var(--color-border)",
+        borderRadius: 8,
+        padding: 16,
+        width: "100%",
+        maxWidth: 300,
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        textAlign: "center",
+      }}
+    >
+      <p style={{ fontSize: 16, fontWeight: 700 }}>{heading}</p>
+      {state.kind === "found" && (
+        <>
+          {state.clue.image && (
+            <div style={{ background: "#ffffff", padding: 5, borderRadius: 2 }}>
+              <CluePhoto clue={state.clue} iconSize={64} sizes="300px" />
+            </div>
+          )}
+          <p style={{ color: "var(--color-accent)", fontWeight: 700, fontSize: 16 }}>{state.clue.name}</p>
+          <p style={{ fontSize: 14, lineHeight: 1.7, textAlign: "left" }}>{state.clue.description}</p>
+        </>
+      )}
+      <button className="button-secondary" onClick={onResume}>
+        続けて調べる
+      </button>
     </div>
   );
 }

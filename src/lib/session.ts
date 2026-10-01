@@ -4,8 +4,19 @@ import { createHmac, timingSafeEqual } from "crypto";
 const SESSION_COOKIE_NAME = "session_id";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // ログイン状態を常に保持: 30日
 
-// TODO: 本番運用では環境変数(SESSION_SECRET)を必ず設定する。未設定時は開発用の固定値にフォールバックする。
-const SESSION_SECRET = process.env.SESSION_SECRET ?? "dev-secret-change-me";
+const DEV_SESSION_SECRET = "dev-secret-change-me";
+
+// 本番では環境変数(SESSION_SECRET)を必須とする。開発時のみ固定値にフォールバックする。
+// ビルド時に環境変数がなくても失敗しないよう、モジュール読み込み時ではなく署名時に確認する。
+function getSessionSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (secret) return secret;
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET が設定されていません。本番環境では必ず設定してください。");
+  }
+  return DEV_SESSION_SECRET;
+}
 
 type SessionPayload = {
   userId: string;
@@ -13,15 +24,16 @@ type SessionPayload = {
 };
 
 function sign(value: string): string {
-  return createHmac("sha256", SESSION_SECRET).update(value).digest("base64url");
+  return createHmac("sha256", getSessionSecret()).update(value).digest("base64url");
 }
 
-function encodeToken(payload: SessionPayload): string {
+// セッション以外のCookie（手がかりの発見記録など）でも改ざん検知に使う
+export function encodeToken<T>(payload: T): string {
   const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString("base64url");
   return `${payloadBase64}.${sign(payloadBase64)}`;
 }
 
-function decodeToken(token: string): SessionPayload | null {
+export function decodeToken<T>(token: string): T | null {
   const [payloadBase64, signature] = token.split(".");
   if (!payloadBase64 || !signature) return null;
 
@@ -32,7 +44,7 @@ function decodeToken(token: string): SessionPayload | null {
   }
 
   try {
-    return JSON.parse(Buffer.from(payloadBase64, "base64url").toString("utf-8")) as SessionPayload;
+    return JSON.parse(Buffer.from(payloadBase64, "base64url").toString("utf-8")) as T;
   } catch {
     return null;
   }
@@ -40,7 +52,7 @@ function decodeToken(token: string): SessionPayload | null {
 
 export async function createSession(userId: string): Promise<void> {
   const exp = Math.floor(Date.now() / 1000) + SESSION_MAX_AGE_SECONDS;
-  const token = encodeToken({ userId, exp });
+  const token = encodeToken<SessionPayload>({ userId, exp });
 
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE_NAME, token, {
@@ -64,7 +76,7 @@ export async function getSessionUserId(): Promise<string | null> {
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
   if (!token) return null;
 
-  const payload = decodeToken(token);
+  const payload = decodeToken<SessionPayload>(token);
   if (!payload) return null;
 
   if (payload.exp < Math.floor(Date.now() / 1000)) return null;
