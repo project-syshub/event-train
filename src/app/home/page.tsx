@@ -2,7 +2,7 @@
 //
 // 【変更すると】
 //  - 説明文（「路線図上の駅マーカーを押すと…」）… ホームの案内文が変わる
-//  - マーカーの色 … cases.ts の status / statusColor で決まる
+//  - 吹き出しの事件名・場所名 … cases.ts の mapTitleLines / place
 //  - 駅の位置 … stations.ts、路線図の描き方 … TramMap.tsx
 //
 // 【注意】対象駅（stations.ts の targetStationKeys）に事件（cases.ts）がないとエラーで表示できなくなる。
@@ -10,8 +10,8 @@
 import { redirect } from "next/navigation";
 import { getSessionUserId } from "@/lib/session";
 import { findUserById } from "@/lib/users";
-import { stations } from "@/lib/stations";
-import { mockCases, statusColor } from "@/lib/cases";
+import { targetStationKeys } from "@/lib/stations";
+import { mockCases } from "@/lib/cases";
 import TramMap, { type MapMarker } from "./TramMap";
 import AccountMenu from "./AccountMenu";
 
@@ -26,19 +26,17 @@ export default async function HomePage() {
     redirect("/login");
   }
 
-  const markers: MapMarker[] = stations.map((station) => {
-    const caseInfo = mockCases.find((c) => c.stationKey === station.key);
+  const markers: MapMarker[] = targetStationKeys.map((stationKey) => {
+    const caseInfo = mockCases.find((c) => c.stationKey === stationKey);
     if (!caseInfo) {
-      throw new Error(`事件データが見つかりません: ${station.key}`);
+      throw new Error(`事件データが見つかりません: ${stationKey}`);
     }
 
     return {
-      key: station.key,
-      name: station.name,
-      x: station.x,
-      y: station.y,
+      stationKey,
       caseId: caseInfo.id,
-      color: statusColor[caseInfo.status],
+      titleLines: caseInfo.mapTitleLines,
+      place: caseInfo.place,
     };
   });
 
@@ -60,16 +58,8 @@ export default async function HomePage() {
       <p style={{ fontSize: 17, fontWeight: 600, color: "var(--color-text)", lineHeight: 1.7 }}>
         路線図上の駅マーカーを押すと、その付近で起きた事件の捜査がはじまります。
       </p>
-      <div
-        className="surface-panel"
-        style={{
-          border: "1px solid var(--color-border)",
-          borderRadius: 8,
-          padding: "20px 24px 44px",
-        }}
-      >
-        <TramMap markers={markers} />
-      </div>
+      {/* 路線図はパネルに入れず、背景の上に直接描く */}
+      <TramMap markers={markers} />
     </main>
   );
 }

@@ -41,11 +41,11 @@ type ClueDefinition = ClueItem & {
 //     image: "/clues/nishi15-5.jpg",   ← 画像がなければこの行ごと消す
 //   },
 export const mockClues: ClueDefinition[] = [
-  // ===== 車庫から消えた1両（電車事業所前） caseId: "densha-jigyosho-mae" =====
+  // ===== 白いもの盗難事件（電車事業所前） caseId: "densha-jigyosho-mae" =====
 
-  // ===== 公園通りの目撃者（中島公園通） caseId: "nakajima-koen-dori" =====
+  // ===== 夜空から消えたシリウス事件（中島公園通） caseId: "nakajima-koen-dori" =====
 
-  // ===== 深夜の停留所の悲鳴（西15丁目） caseId: "nishi-15-choume" =====
+  // ===== 恐怖！謎のびしょ濡れ事件（西15丁目） caseId: "nishi-15-choume" =====
   {
     id: "nishi15-1",
     qrCode: "天文台1",

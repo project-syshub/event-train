@@ -1,73 +1,85 @@
-// 【役割】ホームの路線図に描く駅と、事件が起きている駅（対象駅）の定義。
+// 【役割】ホームの路線図に描く駅・線路の形と、事件が起きている駅（対象駅）の定義。
 //
 // 【変更すると】
-//  - allRouteStations の x, y … 路線図上の駅の位置が動く（路線の線もこの順番でつながる）
-//  - allRouteStations の並び順 … 路線の線のつながり方が変わる（ループの1周の順番で書く）
-//  - targetStationKeys … 大きなマーカー（押すと事件ページへ）になる駅。それ以外は小さな点になる
+//  - allRouteStations の x, y … 路線図上の駅の位置が動く（駅は ROUTE_CORNERS の線の上に置く）
+//  - allRouteStations の label … 駅名を丸のどちら側（top / bottom / left / right）に出すか
+//  - ROUTE_CORNERS … 線路の角の位置。ここを結んだ線（角は丸める）が路線になる。
+//    並び順が電車の進行方向になり、駅と駅の間にその向きの矢印が描かれる
+//  - targetStationKeys … 虫眼鏡のマーカーと吹き出し（押すと事件ページへ）を出す駅
 //  - VIEW_WIDTH / VIEW_HEIGHT … 路線図の座標の範囲。x, y はこの範囲内で指定する
 //
 // 【対象駅を増やすとき】StationKey と targetStationKeys の両方に駅のkeyを足し、cases.ts に事件を追加する。
+// 吹き出しの位置は TramMap.tsx の CASE_BUBBLES で決める。
 
 // 事件が紐づく駅のkey。ここにない駅には事件や手がかりを結びつけられない
-export type StationKey ="densha-jigyosho-mae" | "nakajima-koen-dori" | "nishi-15-choume";
+export type StationKey = "densha-jigyosho-mae" | "nakajima-koen-dori" | "nishi-15-choume";
+
+export type LabelSide = "top" | "bottom" | "left" | "right";
 
 export type RouteStation = {
   key: string;
   name: string;
-  // SVG viewBox (0 0 340 468) 上のおおよその座標。6.0インチ程度のモバイル画面幅を想定したサイズ。
-  // 実際の札幌市電の公式路線図（ループ線）をもとにした近似座標。
+  // SVG viewBox (0 0 VIEW_WIDTH VIEW_HEIGHT) 上の座標。札幌市電のループ線の形を、スマホの縦長の画面で
+  // 駅名が読める大きさになるよう縦に伸ばして配置している
   x: number;
   y: number;
+  label: LabelSide;
 };
 
-// 路線図の全駅。ループの並び順（1周する順序）で定義する。
-// SC01(西4丁目)を起点に、SC02→…→SC24(狸小路)→SC01 の順。
-export const allRouteStations: RouteStation[] = [
-  { key: "nishi-4-choume", name: "西4丁目", x: 286, y: 46 },
-  { key: "nishi-8-choume", name: "西8丁目", x: 218, y: 40 },
-  { key: "chuo-kuyakusho-mae", name: "中央区役所前", x: 150, y: 40 },
-  { key: "nishi-15-choume", name: "西15丁目", x: 54, y: 54 },
-  { key: "nishisen-6jo", name: "西線6条", x: 32, y: 117 },
-  { key: "nishisen-9jo-asahiyama-koen-dori", name: "西線9条旭山公園通", x: 32, y: 160 },
-  { key: "nishisen-11jo", name: "西線11条", x: 32, y: 202 },
-  { key: "nishisen-14jo", name: "西線14条", x: 32, y: 245 },
-  { key: "nishisen-16jo", name: "西線16条", x: 32, y: 287 },
-  { key: "ropeway-iriguchi", name: "ロープウェイ入口", x: 32, y: 330 },
-  { key: "densha-jigyosho-mae", name: "電車事業所前", x: 32, y: 377 },
-  { key: "chuo-toshokan-mae", name: "中央図書館前", x: 54, y: 425 },
-  { key: "ishiyama-dori", name: "石山通", x: 96, y: 425 },
-  { key: "higashi-tonden-dori", name: "東屯田通", x: 149, y: 425 },
-  { key: "konan-shogakko-mae", name: "幌南小学校前", x: 210, y: 412 },
-  { key: "yamahana-19jo", name: "山鼻19条", x: 210, y: 380 },
-  { key: "seishugakuen-mae", name: "静修学園前", x: 210, y: 345 },
-  { key: "gyokei-dori", name: "行啓通", x: 208, y: 300 },
-  { key: "nakajima-koen-dori", name: "中島公園通", x: 206, y: 258 },
-  { key: "yamahana-9jo", name: "山鼻9条", x: 204, y: 216 },
-  { key: "higashi-honganji-mae", name: "東本願寺前", x: 210, y: 174 },
-  { key: "shiseikan-shogakko-mae", name: "資生館小学校前", x: 220, y: 130 },
-  { key: "susukino", name: "すすきの", x: 260, y: 110 },
-  { key: "tanuki-koji", name: "狸小路", x: 288, y: 82 },
+export const VIEW_WIDTH = 400;
+export const VIEW_HEIGHT = 572;
+
+// 線路の角（時計回り）。左上 → 右上 → 狸小路の下 → すすきの通りの左端 → 中央の列の下 → 左下
+export const ROUTE_CORNERS: { x: number; y: number }[] = [
+  { x: 140, y: 90 },
+  { x: 390, y: 90 },
+  { x: 390, y: 200 },
+  { x: 300, y: 200 },
+  { x: 300, y: 530 },
+  { x: 140, y: 530 },
 ];
 
-export const VIEW_WIDTH = 340;
-export const VIEW_HEIGHT = 468;
+// 路線図の全駅。電車の進行方向（時計回り）の順に、西15丁目から1周ぶん定義する。
+export const allRouteStations: RouteStation[] = [
+  // 上の列（左 → 右）
+  { key: "nishi-15-choume", name: "西15丁目", x: 185, y: 90, label: "top" },
+  { key: "chuo-kuyakusho-mae", name: "中央区役所前", x: 252, y: 90, label: "top" },
+  { key: "nishi-8-choume", name: "西8丁目", x: 308, y: 90, label: "top" },
+  { key: "nishi-4-choume", name: "西4丁目", x: 356, y: 90, label: "top" },
+  // 右の列（上 → 下）
+  { key: "tanuki-koji", name: "狸小路", x: 390, y: 145, label: "left" },
+  // すすきのの通り（右 → 左）
+  { key: "susukino", name: "すすきの", x: 355, y: 200, label: "bottom" },
+  { key: "shiseikan-shogakko-mae", name: "資生館小学校前", x: 322, y: 200, label: "top" },
+  // 中央の列（上 → 下）
+  { key: "higashi-honganji-mae", name: "東本願寺前", x: 300, y: 240, label: "right" },
+  { key: "yamahana-9jo", name: "山鼻9条", x: 300, y: 283, label: "right" },
+  { key: "nakajima-koen-dori", name: "中島公園通", x: 300, y: 326, label: "right" },
+  { key: "gyokei-dori", name: "行啓通", x: 300, y: 369, label: "right" },
+  { key: "seishugakuen-mae", name: "静修学園前", x: 300, y: 410, label: "right" },
+  { key: "yamahana-19jo", name: "山鼻19条", x: 300, y: 450, label: "right" },
+  { key: "konan-shogakko-mae", name: "幌南小学校前", x: 300, y: 490, label: "right" },
+  // 下の列（右 → 左）
+  { key: "higashi-tonden-dori", name: "東屯田通", x: 268, y: 530, label: "bottom" },
+  { key: "ishiyama-dori", name: "石山通", x: 228, y: 530, label: "bottom" },
+  { key: "chuo-toshokan-mae", name: "中央図書館前", x: 170, y: 530, label: "bottom" },
+  // 左の列（下 → 上）
+  { key: "densha-jigyosho-mae", name: "電車事業所前", x: 140, y: 485, label: "right" },
+  { key: "ropeway-iriguchi", name: "ロープウェイ入口", x: 140, y: 430, label: "left" },
+  { key: "nishisen-16jo", name: "西線16条", x: 140, y: 375, label: "left" },
+  { key: "nishisen-14jo", name: "西線14条", x: 140, y: 320, label: "left" },
+  { key: "nishisen-11jo", name: "西線11条", x: 140, y: 265, label: "left" },
+  { key: "nishisen-9jo-asahiyama-koen-dori", name: "西線9条旭山公園通", x: 140, y: 210, label: "left" },
+  { key: "nishisen-6jo", name: "西線6条", x: 140, y: 152, label: "left" },
+];
 
-// 事件が紐づく対象の駅（狸小路は対象外）
+// 事件が紐づく対象の駅
 export const targetStationKeys: StationKey[] = [
   "densha-jigyosho-mae",
   "nakajima-koen-dori",
   "nishi-15-choume",
 ];
 
-export type Station = {
-  key: StationKey;
-  name: string;
-  x: number;
-  y: number;
-};
-
-export const stations: Station[] = allRouteStations
-  .filter((s): s is RouteStation & { key: StationKey } =>
-    (targetStationKeys as string[]).includes(s.key)
-  )
-  .map((s) => ({ key: s.key, name: s.name, x: s.x, y: s.y }));
+export function isTargetStation(key: string): key is StationKey {
+  return (targetStationKeys as string[]).includes(key);
+}
