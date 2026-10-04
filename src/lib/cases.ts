@@ -3,7 +3,6 @@
 // 【変更すると】
 //  - status    … 事件の状態（unsolved=未解決 / investigating=捜査中 / solved=解決済み）
 //  - title     … 事件ページの見出しと、別の事件の手がかりを見つけたときの「『○○』の手がかりを発見！」に出る
-//  - mapTitleLines … ホームの路線図の吹き出しに出す事件名（1要素が1行）。title と同じ内容で改行位置だけ決める
 //  - place     … 吹き出しの上のタブに出す場所の名前
 //  - clueSlots … 事件ページに並ぶ手がかりの枠（「？」）の数。clues.ts のその事件の手がかりの数と合わせる
 //  - id        … 事件ページのURL（/case/<id>）になる。変えると古いURLは開けなくなる
@@ -21,7 +20,6 @@ export type CaseInfo = {
   id: string;
   stationKey: StationKey;
   title: string;
-  mapTitleLines: string[];
   place: string;
   status: CaseStatus;
   // 事件の要約文（今はどの画面にも表示していない）
@@ -49,7 +47,6 @@ export const mockCases: CaseInfo[] = [
     id: "densha-jigyosho-mae",
     stationKey: "densha-jigyosho-mae",
     title: "白いもの盗難事件",
-    mapTitleLines: ["白いもの盗難事件"],
     place: "電車事業所",
     status: "unsolved",
     summary:
@@ -60,7 +57,6 @@ export const mockCases: CaseInfo[] = [
     id: "nakajima-koen-dori",
     stationKey: "nakajima-koen-dori",
     title: "夜空から消えたシリウス事件",
-    mapTitleLines: ["夜空から消えた", "シリウス事件"],
     place: "中島公園",
     status: "unsolved",
     summary:
@@ -71,7 +67,6 @@ export const mockCases: CaseInfo[] = [
     id: "nishi-15-choume",
     stationKey: "nishi-15-choume",
     title: "恐怖！謎のびしょ濡れ事件",
-    mapTitleLines: ["恐怖！", "謎のびしょ濡れ事件"],
     place: "札幌市資料館",
     status: "unsolved",
     summary:

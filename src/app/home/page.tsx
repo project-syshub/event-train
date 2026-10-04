@@ -2,7 +2,7 @@
 //
 // 【変更すると】
 //  - 説明文（「路線図上の駅マーカーを押すと…」）… ホームの案内文が変わる
-//  - 吹き出しの事件名・場所名 … cases.ts の mapTitleLines / place
+//  - 吹き出しの場所名 … cases.ts の place
 //  - 駅の位置 … stations.ts、路線図の描き方 … TramMap.tsx
 //
 // 【注意】対象駅（stations.ts の targetStationKeys）に事件（cases.ts）がないとエラーで表示できなくなる。
@@ -35,7 +35,6 @@ export default async function HomePage() {
     return {
       stationKey,
       caseId: caseInfo.id,
-      titleLines: caseInfo.mapTitleLines,
       place: caseInfo.place,
     };
   });

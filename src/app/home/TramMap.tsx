@@ -1,4 +1,4 @@
-// 【役割】ホームの路線図（線路・進行方向の矢印・駅・事件の虫眼鏡マーカー・吹き出し）を描く。
+// 【役割】ホームの路線図（線路・進行方向の矢印・駅・事件の虫眼鏡マーカー・場所名の吹き出し）を描く。
 // 虫眼鏡・駅名・吹き出しのどれを押しても、その事件のページへ移動する。
 //
 // 【変更すると】
@@ -7,7 +7,7 @@
 //  - STATION_FONT_SIZE / TARGET_FONT_SIZE … 駅名の文字サイズ（事件のない駅 / 事件のある駅）
 //  - UNDERLINE_COLOR … 事件のある駅名の下線の色
 //  - CASE_BUBBLES … 事件の吹き出しの位置と大きさ（pointer は吹き出しの「しっぽ」の先端）
-//  - 吹き出しの文言は cases.ts の mapTitleLines（事件名）と place（タブの場所名）で変える
+//  - 吹き出しのタブの場所名は cases.ts の place で変える（吹き出しの中は今は空）
 //  - 駅の位置・駅名の向き・線路の角は stations.ts で変える
 
 import Link from "next/link";
@@ -25,7 +25,6 @@ import {
 export type MapMarker = {
   stationKey: StationKey;
   caseId: string;
-  titleLines: string[];
   place: string;
 };
 
@@ -40,7 +39,6 @@ const ARROW_SIZE = 5;
 // 隣り合う駅（または角）の間がこれより狭いときは矢印を描かない
 const ARROW_MIN_GAP = 30;
 
-const BUBBLE_TITLE_FONT_SIZE = 12;
 const BUBBLE_PLACE_FONT_SIZE = 8;
 
 type Bubble = {
@@ -148,9 +146,6 @@ function CaseBubble({ bubble, marker }: { bubble: Bubble; marker: MapMarker }) {
   const { x, y, width, height, pointer } = bubble;
   const tabWidth = estimateTextWidth(marker.place, BUBBLE_PLACE_FONT_SIZE) + 12;
   const tabHeight = 13;
-  const lineHeight = BUBBLE_TITLE_FONT_SIZE * 1.45;
-  const firstBaseline =
-    y + height / 2 - ((marker.titleLines.length - 1) * lineHeight) / 2 + BUBBLE_TITLE_FONT_SIZE * 0.38;
   // しっぽの付け根（吹き出しの右端の、先端と同じ高さ付近）
   const baseY = Math.min(Math.max(pointer.y, y + 12), y + height - 12);
 
@@ -179,19 +174,6 @@ function CaseBubble({ bubble, marker }: { bubble: Bubble; marker: MapMarker }) {
       >
         {marker.place}
       </text>
-
-      {marker.titleLines.map((line, i) => (
-        <text
-          key={line}
-          x={x + 10}
-          y={firstBaseline + i * lineHeight}
-          fontSize={BUBBLE_TITLE_FONT_SIZE}
-          fontWeight={900}
-          fill="#ffffff"
-        >
-          {line}
-        </text>
-      ))}
     </g>
   );
 }
