@@ -143,19 +143,19 @@ export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
               gap: 14,
             }}
           >
+            {/* タイトルは写真の白枠の外、茶色のパネルの上部に置く */}
+            <p
+              style={{
+                color: "var(--color-text)",
+                fontWeight: 800,
+                fontSize: 18,
+                lineHeight: 1.3,
+                textAlign: "center",
+              }}
+            >
+              {selected.name}
+            </p>
             <div style={{ background: "#ffffff", padding: 5, borderRadius: 2 }}>
-              <p
-                style={{
-                  color: "var(--color-accent)",
-                  fontWeight: 700,
-                  fontSize: 16,
-                  lineHeight: 1.3,
-                  padding: "2px 2px 8px",
-                  textAlign: "center",
-                }}
-              >
-                {selected.name}
-              </p>
               <CluePhoto clue={selected} iconSize={64} sizes="300px" />
             </div>
             {/* 説明文の \n（clues.ts）をそのまま改行として表示する */}
