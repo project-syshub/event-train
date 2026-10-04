@@ -2,7 +2,6 @@
 //
 // 【変更すると】
 //  - 各アイコンの size の初期値 … 大きさを指定せずに使った場所のアイコンの大きさ
-//  - GoldMagnifierIcon の色（金縁・水色レンズ）… 事件ページ右下の虫眼鏡ボタンの見た目
 //  - PuzzleIcon … 画像のない手がかりのカードに出るアイコン
 //
 // 丸ボタンの中でずれないよう、左右上下対称なviewBoxのSVGアイコンとして定義する。
@@ -24,58 +23,6 @@ export function MagnifierIcon({ size = 26 }: { size?: number }) {
     >
       <circle cx="10.5" cy="10.5" r="6.5" />
       <path d="M15.4 15.4 21 21" />
-    </svg>
-  );
-}
-
-// フローティングボタン用の、金縁＋水色レンズ（グリッド柄）の虫眼鏡アイコン。
-// currentColorには依存せず、単独で色が決まった装飾アイコン。
-export function GoldMagnifierIcon({ size = 32 }: { size?: number }) {
-  const clipId = "gold-magnifier-lens-clip";
-
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 32 32"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <defs>
-        <clipPath id={clipId}>
-          <circle cx="12" cy="12" r="8.4" />
-        </clipPath>
-      </defs>
-
-      {/* 持ち手 */}
-      <line
-        x1="17.6"
-        y1="17.6"
-        x2="25.5"
-        y2="25.5"
-        stroke="#8a5a35"
-        strokeWidth={4.2}
-        strokeLinecap="round"
-      />
-
-      {/* レンズ（水色ガラス） */}
-      <circle cx="12" cy="12" r="8.4" fill="#8fd3f4" />
-
-      {/* グリッド柄（すりガラス風） */}
-      <g clipPath={`url(#${clipId})`} stroke="#ffffff" strokeWidth={0.8} opacity={0.55}>
-        <line x1="4" y1="7.5" x2="20" y2="7.5" />
-        <line x1="4" y1="12" x2="20" y2="12" />
-        <line x1="4" y1="16.5" x2="20" y2="16.5" />
-        <line x1="7.5" y1="4" x2="7.5" y2="20" />
-        <line x1="12" y1="4" x2="12" y2="20" />
-        <line x1="16.5" y1="4" x2="16.5" y2="20" />
-      </g>
-
-      {/* ハイライト */}
-      <ellipse cx="9" cy="8.6" rx="3" ry="1.6" fill="#ffffff" opacity={0.45} />
-
-      {/* 金縁 */}
-      <circle cx="12" cy="12" r="8.4" fill="none" stroke="#e8b923" strokeWidth={2.4} />
     </svg>
   );
 }

@@ -4,12 +4,15 @@
 //
 // 【変更すると】
 //  - right / bottom … ボタンの位置（画面の右下からの距離）
-//  - width / height … ボタンの大きさ。中のアイコンの大きさは GoldMagnifierIcon の size
+//  - width / height … ボタンの大きさ。中のアイコンの大きさは ICON_SIZE
+//  - アイコンの画像 … public/icons/magnifier.png（差し替えるときはファイル名も変える。古い画像が残ることがあるため）
 
 import { useState, type CSSProperties } from "react";
-import { GoldMagnifierIcon } from "@/components/icons";
+import Image from "next/image";
 import type { StationKey } from "@/lib/stations";
 import MagnifierOverlay from "./MagnifierOverlay";
+
+const ICON_SIZE = 46;
 
 // 画面右下に浮かせる丸ボタン
 const floatingButtonStyle: CSSProperties = {
@@ -33,7 +36,7 @@ export default function SolveTools({ caseId }: { caseId: StationKey }) {
   return (
     <>
       <button style={floatingButtonStyle} onClick={() => setOpen(true)} aria-label="虫眼鏡で調べる">
-        <GoldMagnifierIcon size={40} />
+        <Image src="/icons/magnifier.png" alt="" width={ICON_SIZE} height={ICON_SIZE} preload />
       </button>
 
       {open && <MagnifierOverlay caseId={caseId} onClose={() => setOpen(false)} />}
