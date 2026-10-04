@@ -15,6 +15,7 @@
 //  - LENS_SIZE … レンズの大きさ（大きくしすぎても、画面に収まるよう全体が自動で縮む）
 //  - HANDLE_ANGLE_DEG … 持ち手の角度（90で真下。大きいほど横に張り出さず、レンズを大きく見せられる）
 //  - getLensMessage の文言 … レンズの中に出るメッセージ（「手がかりを発見！」など）
+//  - GUIDE_FONT_SIZE / LENS_MESSAGE_FONT_SIZE / LENS_MESSAGE_EMPHASIS_FONT_SIZE … 案内文とレンズの中の文字の大きさ
 //  - 下の案内文（「レンズの中に現地のQRコードを写してください」）… 読み取り中の説明
 //
 // 【注意】カメラは https:// か localhost でしか起動しない（スマホから http://IPアドレス で開くと使えない）。
@@ -66,6 +67,11 @@ const HOLD_DURATION_MS = 3000;
 const LOST_GRACE_MS = 600;
 // レンズの縁を一周するゲージの色
 const GAUGE_COLOR = "#f5c518";
+
+// 文字の大きさ。レンズの中の文字は虫眼鏡ごと縮小されるため、画面の狭い端末では少し小さく見える
+const GUIDE_FONT_SIZE = 18; // 虫眼鏡の下の案内文（「レンズの中に…」「そのまま動かさないで…」）
+const LENS_MESSAGE_FONT_SIZE = 22; // レンズの中のメッセージ（「調べています...」など）
+const LENS_MESSAGE_EMPHASIS_FONT_SIZE = 28; // レンズの中の「手がかりを発見！」（大きくしすぎると2行に折り返す）
 
 // 読み取り結果をレンズに表示しておく時間（ミリ秒。1000で1秒）
 const FOUND_CLOSE_DELAY_MS = 1500;
@@ -361,7 +367,9 @@ export default function MagnifierOverlay({
               }}
             >
               {error ? (
-                <p style={{ color: "white", fontSize: 14, padding: 12, textAlign: "center" }}>{error}</p>
+                <p style={{ color: "white", fontSize: 18, fontWeight: 700, padding: 32, textAlign: "center", lineHeight: 1.5 }}>
+                  {error}
+                </p>
               ) : (
                 <video
                   ref={videoRef}
@@ -400,8 +408,8 @@ export default function MagnifierOverlay({
                     padding: 24,
                     background: "rgba(0, 0, 0, 0.55)",
                     color: "white",
-                    fontSize: lensMessage.emphasis ? 22 : 15,
-                    fontWeight: 700,
+                    fontSize: lensMessage.emphasis ? LENS_MESSAGE_EMPHASIS_FONT_SIZE : LENS_MESSAGE_FONT_SIZE,
+                    fontWeight: 900,
                     lineHeight: 1.4,
                     textAlign: "center",
                     textShadow: "0 1px 3px rgba(0, 0, 0, 0.8)",
@@ -477,13 +485,17 @@ export default function MagnifierOverlay({
       <p
         style={{
           color: "white",
-          fontSize: 15,
+          fontSize: GUIDE_FONT_SIZE,
+          fontWeight: 700,
+          lineHeight: 1.5,
           textAlign: "center",
-          maxWidth: 280,
+          maxWidth: 340,
+          whiteSpace: "pre-line",
           visibility: scanState.kind === "scanning" && !error ? "visible" : "hidden",
         }}
       >
-        {holding ? "そのまま動かさないで…" : "レンズの中に現地のQRコードを写してください"}
+        {/* \n の位置で改行する（言葉の途中で折り返さないように） */}
+        {holding ? "そのまま動かさないで…" : "レンズの中に現地のQRコードを\n写してください"}
       </p>
     </div>
   );
