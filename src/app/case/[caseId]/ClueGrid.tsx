@@ -4,7 +4,7 @@
 //
 // 【変更すると】
 //  - gridTemplateColumns の "1fr 1fr" … 1行に並ぶカードの数（"1fr 1fr 1fr" で3列）
-//  - CAPTION_FONT_SIZE … カードの下の手がかり名の文字サイズ
+//  - CAPTION_FONT_SIZE … カードの上の手がかり名の文字サイズ
 //  - 未発見の枠の「？」の fontSize … 「？」の大きさ。文字を変えれば「？？？」などにもできる
 //  - 詳細ポップアップの maxWidth … 詳細の横幅
 //  - 写真の表示方法は CluePhoto.tsx で変える
@@ -63,14 +63,15 @@ function ClueCardBody({ clue }: { clue: ClueItem | null }) {
           borderRadius: 2,
         }}
       >
+        {/* 手がかりの名前は写真の上に表示する */}
+        <p style={{ ...captionStyle, visibility: found ? "visible" : "hidden" }}>
+          {found ? clue.name : " "}
+        </p>
         {found ? (
           <CluePhoto clue={clue} iconSize={40} sizes="200px" />
         ) : (
           <div style={photoStyle} />
         )}
-        <p style={{ ...captionStyle, visibility: found ? "visible" : "hidden" }}>
-          {found ? clue.name : " "}
-        </p>
       </div>
 
       {!found && (
@@ -143,19 +144,19 @@ export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
             }}
           >
             <div style={{ background: "#ffffff", padding: 5, borderRadius: 2 }}>
-              <CluePhoto clue={selected} iconSize={64} sizes="300px" />
               <p
                 style={{
                   color: "var(--color-accent)",
                   fontWeight: 700,
                   fontSize: 16,
                   lineHeight: 1.3,
-                  padding: "8px 2px 2px",
+                  padding: "2px 2px 8px",
                   textAlign: "center",
                 }}
               >
                 {selected.name}
               </p>
+              <CluePhoto clue={selected} iconSize={64} sizes="300px" />
             </div>
             {/* 説明文の \n（clues.ts）をそのまま改行として表示する */}
             <p style={{ fontSize: 15, lineHeight: 1.7, whiteSpace: "pre-line" }}>{selected.description}</p>
