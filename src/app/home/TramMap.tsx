@@ -15,6 +15,8 @@ import {
   ROUTE_CORNERS,
   VIEW_HEIGHT,
   VIEW_WIDTH,
+  VIEW_X,
+  VIEW_Y,
   type LabelSide,
   type RouteStation,
   type StationKey,
@@ -124,8 +126,10 @@ function MapMagnifier({ x, y }: { x: number; y: number }) {
 export default function TramMap({ markers }: { markers: MapMarker[] }) {
   return (
     <svg
-      viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
-      style={{ width: "100%", height: "auto", display: "block" }}
+      viewBox={`${VIEW_X} ${VIEW_Y} ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
+      // 親要素の幅と高さに収まる最大の大きさで、上寄せで表示する（"xMidYMid meet" にすると上下中央）
+      preserveAspectRatio="xMidYMin meet"
+      style={{ width: "100%", height: "100%", display: "block" }}
       role="img"
       aria-label="札幌市電の路線図"
     >

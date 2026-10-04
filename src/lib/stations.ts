@@ -6,7 +6,8 @@
 //  - ROUTE_CORNERS … 線路の角の位置。ここを結んだ線（角は丸める）が路線になる。
 //    並び順が電車の進行方向になり、駅と駅の間にその向きの矢印が描かれる
 //  - targetStationKeys … 虫眼鏡のマーカー（押すと事件ページへ）を出す駅
-//  - VIEW_WIDTH / VIEW_HEIGHT … 路線図の座標の範囲。x, y はこの範囲内で指定する
+//  - VIEW_X / VIEW_Y / VIEW_WIDTH / VIEW_HEIGHT … 画面に表示する範囲（左上の座標と幅・高さ）。
+//    駅や駅名がはみ出したら広げ、余白が目立つなら狭める（狭めるほど路線図が大きく表示される）
 //
 // 【対象駅を増やすとき】StationKey と targetStationKeys の両方に駅のkeyを足し、cases.ts に事件を追加する。
 
@@ -18,15 +19,18 @@ export type LabelSide = "top" | "bottom" | "left" | "right";
 export type RouteStation = {
   key: string;
   name: string;
-  // SVG viewBox (0 0 VIEW_WIDTH VIEW_HEIGHT) 上の座標。札幌市電のループ線の形を、スマホの縦長の画面で
+  // SVGの座標（VIEW_X〜VIEW_X+VIEW_WIDTH、VIEW_Y〜VIEW_Y+VIEW_HEIGHT の範囲が表示される）。札幌市電のループ線の形を、スマホの縦長の画面で
   // 駅名が読める大きさになるよう縦に伸ばして配置している
   x: number;
   y: number;
   label: LabelSide;
 };
 
-export const VIEW_WIDTH = 400;
-export const VIEW_HEIGHT = 572;
+// 駅名や虫眼鏡まで含めて、路線図の絵がある部分だけを表示する範囲
+export const VIEW_X = 30;
+export const VIEW_Y = 56;
+export const VIEW_WIDTH = 372;
+export const VIEW_HEIGHT = 504;
 
 // 線路の角（時計回り）。左上 → 右上 → 狸小路の下 → すすきの通りの左端 → 中央の列の下 → 左下
 export const ROUTE_CORNERS: { x: number; y: number }[] = [
