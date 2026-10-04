@@ -1,8 +1,8 @@
 "use client";
 
 // 【役割】虫眼鏡の画面。カメラ映像をレンズの中に映し、同じQRコードを3秒映し続けたら（縁のゲージが一周したら）
-// /api/clues/discover で照合する。結果をレンズの中央に表示し、手がかりなら虫眼鏡を閉じる
-// （別の事件の手がかりならその事件ページへ移動）。
+// /api/clues/discover で照合する。結果をレンズの中央に表示し、手がかりなら虫眼鏡を閉じて、
+// その手がかりの詳細ポップアップを開く（別の事件の手がかりならその事件ページへ移動してから開く）。
 //
 // 【変更すると】
 //  - HOLD_DURATION_MS … 読み取り確定までにQRを映し続ける時間（ゲージが一周する時間）
@@ -10,7 +10,7 @@
 //  - GAUGE_COLOR … ゲージの色（太さは金属の縁 RIM_THICKNESS と同じ）
 //  - SCAN_INTERVAL_MS … QRを探す間隔。短くすると反応が速くなるが、スマホの電池や発熱が増える
 //  - SCAN_MAX_DIMENSION … 解析する映像の大きさ。大きくすると遠くの小さなQRも読めるが、処理が重くなる
-//  - FOUND_CLOSE_DELAY_MS … 「手がかりを発見！」を表示してから閉じるまでの時間
+//  - FOUND_CLOSE_DELAY_MS … 「手がかりを発見！」を表示してから閉じて詳細ポップアップを出すまでの時間
 //  - FAILED_RESUME_DELAY_MS … 対象外のQRのメッセージを表示してから読み取りを再開するまでの時間
 //  - LENS_SIZE … レンズの大きさ（大きくしすぎても、画面に収まるよう全体が自動で縮む）
 //  - HANDLE_ANGLE_DEG … 持ち手の角度（90で真下。大きいほど横に張り出さず、レンズを大きく見せられる）
@@ -168,10 +168,6 @@ export default function MagnifierOverlay({
       casePath: data.casePath ?? null,
       isNew: data.isNew,
     });
-    if (data.isNew && data.clue.caseId === caseId) {
-      // 背後の手がかり一覧を最新の発見状況で描画し直す
-      router.refresh();
-    }
   });
 
   // 映像のフレームを定期的に切り出してQRコードを探し、同じQRを HOLD_DURATION_MS 映し続けたら確定する
@@ -267,10 +263,16 @@ export default function MagnifierOverlay({
     };
   }, [scanState.kind, error]);
 
-  // 虫眼鏡を閉じ、別の事件の手がかりだったらその事件のページへ移動する
+  // 虫眼鏡を閉じ、読み取った手がかりの事件ページで詳細ポップアップを開く（?found= を付けて移動する）。
+  // 同じ事件ならページを置き換えて手がかり一覧を最新にし、別の事件ならその事件のページへ移動する
   const finishWithClue = useEffectEvent(() => {
-    if (scanState.kind === "found" && scanState.clue.caseId !== caseId && scanState.casePath) {
-      router.push(scanState.casePath);
+    if (scanState.kind === "found" && scanState.casePath) {
+      const url = `${scanState.casePath}?found=${encodeURIComponent(scanState.clue.id)}`;
+      if (scanState.clue.caseId === caseId) {
+        router.replace(url, { scroll: false });
+      } else {
+        router.push(url);
+      }
     }
     onClose();
   });

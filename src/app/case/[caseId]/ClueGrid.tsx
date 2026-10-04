@@ -1,6 +1,6 @@
 "use client";
 
-// 【役割】事件ページの手がかり一覧（2列のカード）と、カードを押したときの詳細ポップアップ。
+// 【役割】事件ページの手がかり一覧（2列のカード）と、カードを押したとき・虫眼鏡で読み取ったときの詳細ポップアップ。
 //
 // 【変更すると】
 //  - gridTemplateColumns の "1fr 1fr" … 1行に並ぶカードの数（"1fr 1fr 1fr" で3列）
@@ -10,7 +10,8 @@
 //  - 詳細ポップアップのタイトルの fontSize … 詳細の上に出る手がかり名の大きさ（全ての手がかりで共通）
 //  - 写真の表示方法は CluePhoto.tsx で変える
 
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import type { ClueItem, ClueSlot } from "@/lib/clues";
 import { CloseIcon } from "@/components/icons";
 import { overlayStyle, closeButtonStyle } from "./overlayStyles";
@@ -88,8 +89,23 @@ function ClueCardBody({ clue }: { clue: ClueItem | null }) {
   );
 }
 
-export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
+export default function ClueGrid({ slots, openClueId }: { slots: ClueSlot[]; openClueId?: string }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [selected, setSelected] = useState<ClueItem | null>(null);
+
+  // 虫眼鏡で読み取った手がかり（URLの ?found=）の詳細を自動で開く。同じidで何度も開き直さないよう、開いたidを覚えておく
+  const [openedClueId, setOpenedClueId] = useState<string | undefined>();
+  if (openClueId && openClueId !== openedClueId) {
+    setOpenedClueId(openClueId);
+    const clue = slots.find((slot) => slot.found && slot.clue.id === openClueId);
+    if (clue?.found) setSelected(clue.clue);
+  }
+
+  // 開いたら URL から ?found= を外す（再読み込みや戻る操作で、またポップアップが開かないように）
+  useEffect(() => {
+    if (openClueId) router.replace(pathname, { scroll: false });
+  }, [openClueId, pathname, router]);
 
   return (
     <>

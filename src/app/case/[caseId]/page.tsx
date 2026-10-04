@@ -4,6 +4,9 @@
 //  - 「すべての手がかりを見つけよう！」… 見出しの下の案内文
 //  - main の maxWidth … ページの最大幅（PCで開いたときの横幅）
 //  - 事件名や手がかりの枠の数は cases.ts、手がかりの中身は clues.ts で変える
+//
+// URLに ?found=<手がかりのid> が付いていると、その手がかりの詳細ポップアップを開いた状態で表示する
+// （虫眼鏡で手がかりを読み取ったあとに使う）
 
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
@@ -17,8 +20,10 @@ import SolveTools from "./SolveTools";
 
 export default async function CasePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ caseId: string }>;
+  searchParams: Promise<{ found?: string | string[] }>;
 }) {
   const userId = await getSessionUserId();
   if (!userId) {
@@ -33,6 +38,8 @@ export default async function CasePage({
 
   const foundClueIds = await getFoundClueIds(userId);
   const slots = getClueSlotsForCase(caseInfo.stationKey, caseInfo.clueSlots, foundClueIds);
+  const { found } = await searchParams;
+  const openClueId = typeof found === "string" ? found : undefined;
 
   return (
     <main
@@ -61,7 +68,7 @@ export default async function CasePage({
         <p style={{ fontSize: 15 }}>すべての手がかりを見つけよう！</p>
       </div>
 
-      <ClueGrid slots={slots} />
+      <ClueGrid slots={slots} openClueId={openClueId} />
 
       <SolveTools caseId={caseInfo.stationKey} />
     </main>
