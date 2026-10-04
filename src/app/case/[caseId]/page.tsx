@@ -37,6 +37,8 @@ export default async function CasePage({
   return (
     <main
       style={{
+        // body が flex のため、width を指定しないと事件名の長さで横幅が変わってしまう
+        width: "100%",
         maxWidth: 420,
         margin: "24px auto",
         padding: "0 16px 96px",

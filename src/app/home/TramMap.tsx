@@ -6,6 +6,7 @@
 //  - STATION_RADIUS … 駅の白丸の大きさ
 //  - STATION_FONT_SIZE / TARGET_FONT_SIZE … 駅名の文字サイズ（事件のない駅 / 事件のある駅）
 //  - UNDERLINE_COLOR … 事件のある駅名の下線の色
+//  - TARGET_TOP_LABEL_GAP … 事件のある駅名を上に出すときの、虫眼鏡からの離れ具合
 //  - 駅の位置・駅名の向き・線路の角は stations.ts で変える
 
 import Link from "next/link";
@@ -34,6 +35,8 @@ const STATION_RADIUS = 8;
 const STATION_FONT_SIZE = 10.5;
 const TARGET_FONT_SIZE = 13;
 const UNDERLINE_COLOR = "#f5c518";
+// 事件のある駅で、駅名を上に出すときの駅の中心から文字のベースラインまでの距離
+const TARGET_TOP_LABEL_GAP = 27;
 const ARROW_SIZE = 5;
 // 隣り合う駅（または角）の間がこれより狭いときは矢印を描かない
 const ARROW_MIN_GAP = 30;
@@ -171,7 +174,8 @@ export default function TramMap({ markers }: { markers: MapMarker[] }) {
         const station = allRouteStations.find((s) => s.key === marker.stationKey);
         if (!station) return null;
 
-        const label = labelPosition(station, station.label, 19);
+        // 上側の駅名は下線が虫眼鏡に重ならないよう、ほかの向きより離す
+        const label = labelPosition(station, station.label, station.label === "top" ? TARGET_TOP_LABEL_GAP : 19);
         const fontSize = TARGET_FONT_SIZE;
         const textWidth = estimateTextWidth(station.name, fontSize);
         const underlineStart =

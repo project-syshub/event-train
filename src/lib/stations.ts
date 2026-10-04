@@ -28,9 +28,9 @@ export type RouteStation = {
 
 // 駅名や虫眼鏡まで含めて、路線図の絵がある部分だけを表示する範囲
 export const VIEW_X = 30;
-export const VIEW_Y = 56;
+export const VIEW_Y = 48;
 export const VIEW_WIDTH = 372;
-export const VIEW_HEIGHT = 504;
+export const VIEW_HEIGHT = 512;
 
 // 線路の角（時計回り）。左上 → 右上 → 狸小路の下 → すすきの通りの左端 → 中央の列の下 → 左下
 export const ROUTE_CORNERS: { x: number; y: number }[] = [
