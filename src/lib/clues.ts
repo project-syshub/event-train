@@ -1,7 +1,8 @@
 // 【役割】手がかりの一覧（QRコードの文字列 → 手がかりの対応表）と、その照合処理。
 //
 // 【手がかりを追加・変更するとき】下の mockClues に1件ずつ書く。
-//  - qrCode      … QRコードに入れた文字列とまったく同じにする（1文字でも違うと「手がかりではない」になる）
+//  - qrCode      … QRコードに入れた文字列と同じにする（1文字でも違うと「手がかりではない」になる。
+//                  全角・半角の違い（「天文台１」と「天文台1」）は同じものとして扱う）
 //  - caseId      … どの事件の手がかりか（cases.ts の stationKey と同じ値）。変えると表示される事件が変わる
 //  - name        … カードと詳細に出る名前
 //  - description … カードを押したときの詳細に出る説明文
@@ -25,7 +26,7 @@ export type ClueItem = {
 // QRコードの値はクライアントに渡さない（未発見の手がかりを推測できないようにする）
 type ClueDefinition = ClueItem & {
   // 現地に貼るQRコードに埋め込む文字列そのもの。読み取った文字列と完全一致で照合する
-  // （前後の空白は無視する。大文字・小文字は区別する）
+  // （前後の空白と、全角・半角の違いは無視する。大文字・小文字は区別する）
   qrCode: string;
 };
 
@@ -39,7 +40,7 @@ export const mockClues: ClueDefinition[] = [
   // ===== 深夜の停留所の悲鳴（西15丁目） caseId: "nishi-15-choume" =====
   // {
   //   id: "nishi15-1",
-  //   qrCode: "a8Kx2mQ7pZ",
+  //   qrCode: "天文台1",
   //   caseId: "nishi-15-choume",
   //   name: "古びた鍵",
   //   description: "停留所のベンチの下に落ちていた。",
@@ -47,14 +48,20 @@ export const mockClues: ClueDefinition[] = [
   // },
 ];
 
+// QRを作るときの入力の揺れで一致しなくならないよう、全角の英数字を半角にそろえ、前後の空白を除く
+// （例：「天文台１」と「天文台1」を同じものとして扱う）
+function normalizeQrText(text: string): string {
+  return text.normalize("NFKC").trim();
+}
+
 function toClueItem({ id, caseId, name, description, image }: ClueDefinition): ClueItem {
   return { id, caseId, name, description, image };
 }
 
 // 読み取ったQRコードの文字列から手がかりを引く。手がかり用でなければnull
 export function findClueByQrText(text: string): ClueItem | null {
-  const code = text.trim();
-  const clue = mockClues.find((c) => c.qrCode === code);
+  const code = normalizeQrText(text);
+  const clue = mockClues.find((c) => normalizeQrText(c.qrCode) === code);
   return clue ? toClueItem(clue) : null;
 }
 
