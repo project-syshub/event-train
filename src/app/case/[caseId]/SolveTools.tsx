@@ -5,6 +5,7 @@
 // 【変更すると】
 //  - right / bottom … ボタンの位置（画面の右下からの距離）
 //  - ICON_SIZE … 虫眼鏡の絵（ボタン）の大きさ
+//  - ICON_ROTATE_DEG … 虫眼鏡の絵の傾き（プラスで時計回り）
 //  - filter の drop-shadow … 虫眼鏡の絵の影
 //  - アイコンの画像 … public/icons/magnifier.png（差し替えるときはファイル名も変える。古い画像が残ることがあるため）
 
@@ -14,6 +15,8 @@ import type { StationKey } from "@/lib/stations";
 import MagnifierOverlay from "./MagnifierOverlay";
 
 const ICON_SIZE = 68;
+// 虫眼鏡の絵の傾き（度。プラスで時計回り）
+const ICON_ROTATE_DEG = 5;
 
 // 画面右下に浮かせるボタン。背景（赤い丸）は付けず、虫眼鏡の絵だけを表示する
 const floatingButtonStyle: CSSProperties = {
@@ -40,7 +43,14 @@ export default function SolveTools({ caseId }: { caseId: StationKey }) {
   return (
     <>
       <button style={floatingButtonStyle} onClick={() => setOpen(true)} aria-label="虫眼鏡で調べる">
-        <Image src="/icons/magnifier.png" alt="" width={ICON_SIZE} height={ICON_SIZE} preload />
+        <Image
+          src="/icons/magnifier.png"
+          alt=""
+          width={ICON_SIZE}
+          height={ICON_SIZE}
+          preload
+          style={{ transform: `rotate(${ICON_ROTATE_DEG}deg)` }}
+        />
       </button>
 
       {open && <MagnifierOverlay caseId={caseId} onClose={() => setOpen(false)} />}
