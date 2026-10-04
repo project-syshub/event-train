@@ -5,11 +5,10 @@
 //  - allRouteStations の label … 駅名を丸のどちら側（top / bottom / left / right）に出すか
 //  - ROUTE_CORNERS … 線路の角の位置。ここを結んだ線（角は丸める）が路線になる。
 //    並び順が電車の進行方向になり、駅と駅の間にその向きの矢印が描かれる
-//  - targetStationKeys … 虫眼鏡のマーカーと場所名（押すと事件ページへ）を出す駅
+//  - targetStationKeys … 虫眼鏡のマーカー（押すと事件ページへ）を出す駅
 //  - VIEW_WIDTH / VIEW_HEIGHT … 路線図の座標の範囲。x, y はこの範囲内で指定する
 //
 // 【対象駅を増やすとき】StationKey と targetStationKeys の両方に駅のkeyを足し、cases.ts に事件を追加する。
-// 場所名のラベルの位置は TramMap.tsx の PLACE_LABELS で決める。
 
 // 事件が紐づく駅のkey。ここにない駅には事件や手がかりを結びつけられない
 export type StationKey = "densha-jigyosho-mae" | "nakajima-koen-dori" | "nishi-15-choume";

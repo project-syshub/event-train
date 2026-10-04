@@ -1,14 +1,11 @@
-// 【役割】ホームの路線図（線路・進行方向の矢印・駅・事件の虫眼鏡マーカー・場所名のラベル）を描く。
-// 虫眼鏡・駅名・場所名のどれを押しても、その事件のページへ移動する。
+// 【役割】ホームの路線図（線路・進行方向の矢印・駅・事件の虫眼鏡マーカー）を描く。
+// 事件のある駅の虫眼鏡・駅名を押すと、その事件のページへ移動する。
 //
 // 【変更すると】
 //  - ROUTE_COLOR / ROUTE_WIDTH / CORNER_RADIUS … 線路の色・太さ・角の丸み
 //  - STATION_RADIUS … 駅の白丸の大きさ
 //  - STATION_FONT_SIZE / TARGET_FONT_SIZE … 駅名の文字サイズ（事件のない駅 / 事件のある駅）
 //  - UNDERLINE_COLOR … 事件のある駅名の下線の色
-//  - PLACE_LABELS … 事件の場所名のラベルを置く位置（ラベルの中心）
-//  - PLACE_FONT_SIZE … 場所名の文字サイズ
-//  - 場所名の文言は cases.ts の place で変える
 //  - 駅の位置・駅名の向き・線路の角は stations.ts で変える
 
 import Link from "next/link";
@@ -26,7 +23,6 @@ import {
 export type MapMarker = {
   stationKey: StationKey;
   caseId: string;
-  place: string;
 };
 
 const ROUTE_COLOR = "#ffffff";
@@ -39,15 +35,6 @@ const UNDERLINE_COLOR = "#f5c518";
 const ARROW_SIZE = 5;
 // 隣り合う駅（または角）の間がこれより狭いときは矢印を描かない
 const ARROW_MIN_GAP = 30;
-
-const PLACE_FONT_SIZE = 9;
-
-// 事件の場所名のラベルの中心位置（stations.ts の座標系）
-const PLACE_LABELS: Record<StationKey, { x: number; y: number }> = {
-  "nishi-15-choume": { x: 90, y: 62 },
-  "nakajima-koen-dori": { x: 245, y: 300 },
-  "densha-jigyosho-mae": { x: 90, y: 468 },
-};
 
 // 角を丸めた閉じた線のSVGパス
 function roundedLoopPath(points: { x: number; y: number }[], radius: number): string {
@@ -134,28 +121,6 @@ function MapMagnifier({ x, y }: { x: number; y: number }) {
   );
 }
 
-// 事件の場所名（白地にオレンジ文字のラベル）
-function PlaceLabel({ x, y, text }: { x: number; y: number; text: string }) {
-  const width = estimateTextWidth(text, PLACE_FONT_SIZE) + 14;
-  const height = PLACE_FONT_SIZE + 7;
-
-  return (
-    <g>
-      <rect x={x - width / 2} y={y - height / 2} width={width} height={height} fill="#ffffff" />
-      <text
-        x={x}
-        y={y + PLACE_FONT_SIZE * 0.36}
-        textAnchor="middle"
-        fontSize={PLACE_FONT_SIZE}
-        fontWeight={700}
-        fill="var(--color-bg)"
-      >
-        {text}
-      </text>
-    </g>
-  );
-}
-
 export default function TramMap({ markers }: { markers: MapMarker[] }) {
   return (
     <svg
@@ -197,7 +162,7 @@ export default function TramMap({ markers }: { markers: MapMarker[] }) {
           );
         })}
 
-      {/* 事件のある駅：虫眼鏡・下線付きの駅名・場所名（押すと事件ページへ） */}
+      {/* 事件のある駅：虫眼鏡・下線付きの駅名（押すと事件ページへ） */}
       {markers.map((marker) => {
         const station = allRouteStations.find((s) => s.key === marker.stationKey);
         if (!station) return null;
@@ -212,7 +177,6 @@ export default function TramMap({ markers }: { markers: MapMarker[] }) {
         return (
           <Link key={marker.stationKey} href={`/case/${marker.caseId}`} aria-label={`${station.name}の事件を調べる`}>
             <g style={{ cursor: "pointer" }}>
-              <PlaceLabel {...PLACE_LABELS[marker.stationKey]} text={marker.place} />
               <MapMagnifier x={station.x} y={station.y} />
               <line
                 x1={underlineStart}
