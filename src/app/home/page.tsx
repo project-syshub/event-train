@@ -61,8 +61,9 @@ export default async function HomePage() {
         路線図上の駅マーカーを押すと、その付近で起きた事件の捜査がはじまります。
       </p>
       {/* 路線図はパネルに入れず、背景の上に直接描く。見出しと説明文の残りの高さいっぱいに表示する */}
-      {/* 左右の余白を半分（8px）に減らして、路線図を横にも大きく見せる */}
-      <div style={{ flex: 1, minHeight: 0, margin: "0 -8px" }}>
+      {/* 左右の余白を減らして路線図を横にも大きく見せる。左右の数値の差で左寄せの具合を決める
+          （左を大きくするほど左に寄る。一番左の駅名が画面の端に付かない程度にする） */}
+      <div style={{ flex: 1, minHeight: 0, margin: "0 -2px 0 -14px" }}>
         <TramMap markers={markers} />
       </div>
     </main>
