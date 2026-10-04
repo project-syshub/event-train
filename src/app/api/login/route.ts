@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const user = findUserByLoginId(loginId);
+  const user = await findUserByLoginId(loginId);
   const passwordMatches = user ? verifyPassword(user, password) : false;
 
   if (!user || !passwordMatches) {

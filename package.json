@@ -9,9 +9,12 @@
     "lint": "eslint",
     "qr": "node scripts/generate-qr.mts",
     "postinstall": "node scripts/copy-zxing-wasm.mjs",
-    "hash-password": "node scripts/hash-password.mts"
+    "hash-password": "node scripts/hash-password.mts",
+    "db:setup": "node --env-file-if-exists=.env.local scripts/db-setup.mts",
+    "db:set-user": "node --env-file-if-exists=.env.local scripts/db-set-user.mts"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
     "bcryptjs": "^3.0.3",
     "next": "16.3.5",
     "react": "19.2.8",

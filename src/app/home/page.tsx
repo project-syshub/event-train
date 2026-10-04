@@ -23,7 +23,7 @@ export default async function HomePage() {
     redirect("/login");
   }
 
-  const user = findUserById(userId);
+  const user = await findUserById(userId);
   if (!user) {
     redirect("/login");
   }
