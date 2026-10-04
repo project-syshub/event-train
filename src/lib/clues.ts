@@ -33,54 +33,54 @@ type ClueDefinition = ClueItem & {
 // TODO: PostgreSQLのcluesテーブルに置き換える。現時点ではここに直接書く。
 // 追加するときは、下の見本か既存の1件をコピーして、該当する事件の見出しの下に貼る。
 //   {
-//     id: "nishi15-5",                 ← 他と重ならない値
+//     id: "nakajima-5",                ← 他と重ならない値
 //     qrCode: "天文台5",                ← QRに入れる文字列
-//     caseId: "nishi-15-choume",       ← 見出しの caseId をコピー
+//     caseId: "nakajima-koen-dori",    ← 見出しの caseId をコピー
 //     name: "古びた鍵",
 //     description: "1行目\n2行目",     ← \n で改行
-//     image: "/clues/nishi15-5.jpg",   ← 画像がなければこの行ごと消す
+//     image: "/clues/nakajima-5.jpg",  ← 画像がなければこの行ごと消す
 //   },
 export const mockClues: ClueDefinition[] = [
   // ===== 白いもの盗難事件（電車事業所前） caseId: "densha-jigyosho-mae" =====
 
   // ===== 夜空から消えたシリウス事件（中島公園通） caseId: "nakajima-koen-dori" =====
-
-  // ===== 恐怖！謎のびしょ濡れ事件（西15丁目） caseId: "nishi-15-choume" =====
   {
-    id: "nishi15-1",
+    id: "nakajima-1",
     qrCode: "天文台1",
-    caseId: "nishi-15-choume",
+    caseId: "nakajima-koen-dori",
     name: "上下分離の図",
     description:
       "市電の運行を安定して続けていくため、仕事を「上下」に分けています。“上”は市電を走らせる仕事、“下”は車両や線路などを支える仕事です。",
     image: "/clues/joge-bunri.jpg",
   },
   {
-    id: "nishi15-2",
+    id: "nakajima-2",
     qrCode: "天文台2",
-    caseId: "nishi-15-choume",
+    caseId: "nakajima-koen-dori",
     name: "A1200形のデータ",
     // \n の位置で改行して表示する
     description: "運行開始した年：2013年\n定員：71人\n座席数：27席\n低床車両\n愛称：ポラリス",
     image: "/clues/a1200-polaris.jpg",
   },
   {
-    id: "nishi15-3",
+    id: "nakajima-3",
     qrCode: "天文台3",
-    caseId: "nishi-15-choume",
+    caseId: "nakajima-koen-dori",
     name: "A1210形のデータ",
     description: "運行開始した年：2025年\n定員：75人\n座席数：27席\n低床車両\n愛称：ポラリスⅡ",
     image: "/clues/a1210-polaris2.jpg",
   },
   {
-    id: "nishi15-4",
+    id: "nakajima-4",
     qrCode: "天文台4",
-    caseId: "nishi-15-choume",
+    caseId: "nakajima-koen-dori",
     name: "1100形の愛称",
     description:
       "「シリウス」は、太陽を除いて地球から最も明るく見える星。街中をさっそうと走る姿と、「明るい都市・札幌」をイメージして名付けられました。",
     image: "/clues/1100-sirius.jpg",
   },
+
+  // ===== 恐怖！謎のびしょ濡れ事件（西15丁目） caseId: "nishi-15-choume" =====
 ];
 
 // QRを作るときの入力の揺れで一致しなくならないよう、全角の英数字を半角にそろえ、前後の空白を除く
