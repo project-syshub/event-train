@@ -7,6 +7,7 @@
 //  - name        … カードと詳細に出る名前
 //  - description … カードを押したときの詳細に出る説明文
 //  - image       … 画像を public/clues/ に置き、"/clues/ファイル名.jpg" と書く。省略するとパズルのアイコンになる
+//  - references  … 参考文献のURL（複数可）。詳細の一番下に表示する（リンクにはしない）。省略すると表示しない
 //  - slot        … 事件ページで表示する枠の番号（1=左上 2=右上 3=左下 4=右下）。見つける前はその枠に「？」が出る
 //  - id          … 発見記録はこのidで保存している。一度公開したら変えない（変えるとその手がかりが未発見に戻る）
 //
@@ -22,6 +23,8 @@ export type ClueItem = {
   description: string;
   // 手がかりの写真（public/ からのパス）。ない場合はアイコンを表示する
   image?: string;
+  // 参考文献のURL。詳細ポップアップの一番下に、押しても移動しない文字として表示する
+  references?: string[];
 };
 
 // QRコードの値はクライアントに渡さない（未発見の手がかりを推測できないようにする）
@@ -43,6 +46,7 @@ type ClueDefinition = ClueItem & {
 //     name: "古びた鍵",
 //     description: "1行目\n2行目",     ← \n で改行
 //     image: "/clues/nakajima-5.jpg",  ← 画像がなければこの行ごと消す
+//     references: ["https://..."],     ← 参考文献のURL（なければこの行ごと消す）
 //   },
 export const mockClues: ClueDefinition[] = [
   // ===== 白いもの盗難事件（電車事業所前） caseId: "densha-jigyosho-mae" =====
@@ -57,6 +61,7 @@ export const mockClues: ClueDefinition[] = [
     description:
       "市電の運行を安定して続けていくため、仕事を「上下」に分けています。“上”は市電を走らせる仕事、“下”は車両や線路などを支える仕事です。",
     image: "/clues/joge-bunri.jpg",
+    references: ["https://www.city.sapporo.jp/st/shiden/jyougebunri.html"],
   },
   {
     id: "nakajima-2",
@@ -67,6 +72,10 @@ export const mockClues: ClueDefinition[] = [
     // \n の位置で改行して表示する
     description: "運行開始した年：2013年\n定員：71人\n座席数：27席\n低床車両\n愛称：ポラリス",
     image: "/clues/a1200-polaris.jpg",
+    references: [
+      "https://www.stsp.or.jp/museum/a1200%E5%BD%A2/",
+      "https://www.city.sapporo.jp/shimin/bunkazai/documents/bunkazaisanpo_romendensya.pdf",
+    ],
   },
   {
     id: "nakajima-3",
@@ -76,6 +85,10 @@ export const mockClues: ClueDefinition[] = [
     name: "A1210形のデータ",
     description: "運行開始した年：2025年\n定員：75人\n座席数：27席\n低床車両\n愛称：ポラリスⅡ",
     image: "/clues/a1210-polaris2.jpg",
+    references: [
+      "https://www.stsp.or.jp/museum/a1210%e5%bd%a2/",
+      "https://www.city.sapporo.jp/shimin/bunkazai/documents/bunkazaisanpo_romendensya.pdf",
+    ],
   },
   {
     id: "nakajima-4",
@@ -86,6 +99,7 @@ export const mockClues: ClueDefinition[] = [
     description:
       "「シリウス」は、太陽を除いて地球から最も明るく見える星。街中をさっそうと走る姿と、「明るい都市・札幌」をイメージして名付けられました。",
     image: "/clues/1100-sirius.jpg",
+    references: ["https://railf.jp/news/2018/09/29/200500.html"],
   },
 
   // ===== 恐怖！謎のびしょ濡れ事件（西15丁目） caseId: "nishi-15-choume" =====
@@ -97,8 +111,8 @@ function normalizeQrText(text: string): string {
   return text.normalize("NFKC").trim();
 }
 
-function toClueItem({ id, caseId, name, description, image }: ClueDefinition): ClueItem {
-  return { id, caseId, name, description, image };
+function toClueItem({ id, caseId, name, description, image, references }: ClueDefinition): ClueItem {
+  return { id, caseId, name, description, image, references };
 }
 
 // 読み取ったQRコードの文字列から手がかりを引く。手がかり用でなければnull
