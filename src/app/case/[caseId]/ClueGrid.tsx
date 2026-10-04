@@ -193,11 +193,15 @@ export default function ClueGrid({ slots, openClueId }: { slots: ClueSlot[]; ope
                 }}
               >
                 <p style={{ fontWeight: 700, marginBottom: 4 }}>参考文献</p>
-                {selected.references.map((url) => (
-                  <p key={url} style={{ overflowWrap: "anywhere" }}>
-                    {readableUrl(url)}
-                  </p>
-                ))}
+                {selected.references.map((reference) => {
+                  const { url, source } = typeof reference === "string" ? { url: reference, source: null } : reference;
+                  return (
+                    <div key={url} style={{ marginBottom: 4 }}>
+                      <p style={{ overflowWrap: "anywhere" }}>{readableUrl(url)}</p>
+                      {source && <p>出典：{source}</p>}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

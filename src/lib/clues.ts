@@ -8,6 +8,7 @@
 //  - description … カードを押したときの詳細に出る説明文
 //  - image       … 画像を public/clues/ に置き、"/clues/ファイル名.jpg" と書く。省略するとパズルのアイコンになる
 //  - references  … 参考文献のURL（複数可）。詳細の一番下に表示する（リンクにはしない）。省略すると表示しない
+//                  出典を添えるときは { url: "https://...", source: "出典の説明" } と書く（URLの下に「出典：〜」と出る）
 //  - slot        … 事件ページで表示する枠の番号（1=左上 2=右上 3=左下 4=右下）。見つける前はその枠に「？」が出る
 //  - id          … 発見記録はこのidで保存している。一度公開したら変えない（変えるとその手がかりが未発見に戻る）
 //
@@ -24,8 +25,11 @@ export type ClueItem = {
   // 手がかりの写真（public/ からのパス）。ない場合はアイコンを表示する
   image?: string;
   // 参考文献のURL。詳細ポップアップの一番下に、押しても移動しない文字として表示する
-  references?: string[];
+  references?: ClueReference[];
 };
+
+// 参考文献。URLだけなら文字列で、出典を添えるなら { url, source } で書く
+export type ClueReference = string | { url: string; source: string };
 
 // QRコードの値はクライアントに渡さない（未発見の手がかりを推測できないようにする）
 type ClueDefinition = ClueItem & {
@@ -46,7 +50,7 @@ type ClueDefinition = ClueItem & {
 //     name: "古びた鍵",
 //     description: "1行目\n2行目",     ← \n で改行
 //     image: "/clues/nakajima-5.jpg",  ← 画像がなければこの行ごと消す
-//     references: ["https://..."],     ← 参考文献のURL（なければこの行ごと消す）
+//     references: ["https://..."],     ← 参考文献のURL（なければこの行ごと消す。出典付きは { url, source }）
 //   },
 export const mockClues: ClueDefinition[] = [
   // ===== 白いもの盗難事件（電車事業所前） caseId: "densha-jigyosho-mae" =====
@@ -96,10 +100,14 @@ export const mockClues: ClueDefinition[] = [
     slot: 4,
     caseId: "nakajima-koen-dori",
     name: "1100形の愛称",
-    description:
-      "「シリウス」は、太陽を除いて地球から最も明るく見える星。街中をさっそうと走る姿と、「明るい都市・札幌」をイメージして名付けられました。",
+    description: "この車両の愛称は、太陽を除いて地球から最も明るく見える星の名前。\n来場者の投票で選ばれました。",
     image: "/clues/1100-sirius.jpg",
-    references: ["https://railf.jp/news/2018/09/29/200500.html"],
+    references: [
+      {
+        url: "https://x.com/sapporokotsu_PR/status/1054599031970615297",
+        source: "札幌市交通局 公式X（2018年10月23日投稿）",
+      },
+    ],
   },
 
   // ===== 恐怖！謎のびしょ濡れ事件（西15丁目） caseId: "nishi-15-choume" =====
