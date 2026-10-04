@@ -7,6 +7,7 @@
 //  - name        … カードと詳細に出る名前
 //  - description … カードを押したときの詳細に出る説明文
 //  - image       … 画像を public/clues/ に置き、"/clues/ファイル名.jpg" と書く。省略するとパズルのアイコンになる
+//  - slot        … 事件ページで表示する枠の番号（1=左上 2=右上 3=左下 4=右下）。見つける前はその枠に「？」が出る
 //  - id          … 発見記録はこのidで保存している。一度公開したら変えない（変えるとその手がかりが未発見に戻る）
 //
 // 【注意】1つの事件の手がかりの数を増減したら、cases.ts の clueSlots（「？」の枠の数）も合わせる。
@@ -28,6 +29,8 @@ type ClueDefinition = ClueItem & {
   // 現地に貼るQRコードに埋め込む文字列そのもの。読み取った文字列と完全一致で照合する
   // （前後の空白と、全角・半角の違いは無視する。大文字・小文字は区別する）
   qrCode: string;
+  // 事件ページの何番目の枠に表示するか（1から数える。2列なので 1=左上 2=右上 3=左下 4=右下）
+  slot: number;
 };
 
 // TODO: PostgreSQLのcluesテーブルに置き換える。現時点ではここに直接書く。
@@ -35,6 +38,7 @@ type ClueDefinition = ClueItem & {
 //   {
 //     id: "nakajima-5",                ← 他と重ならない値
 //     qrCode: "天文台5",                ← QRに入れる文字列
+//     slot: 5,                         ← 表示する枠の番号（1=左上 2=右上 3=左下 4=右下）
 //     caseId: "nakajima-koen-dori",    ← 見出しの caseId をコピー
 //     name: "古びた鍵",
 //     description: "1行目\n2行目",     ← \n で改行
@@ -47,6 +51,7 @@ export const mockClues: ClueDefinition[] = [
   {
     id: "nakajima-1",
     qrCode: "天文台1",
+    slot: 1,
     caseId: "nakajima-koen-dori",
     name: "上下分離の図",
     description:
@@ -56,6 +61,7 @@ export const mockClues: ClueDefinition[] = [
   {
     id: "nakajima-2",
     qrCode: "天文台2",
+    slot: 2,
     caseId: "nakajima-koen-dori",
     name: "A1200形のデータ",
     // \n の位置で改行して表示する
@@ -65,6 +71,7 @@ export const mockClues: ClueDefinition[] = [
   {
     id: "nakajima-3",
     qrCode: "天文台3",
+    slot: 3,
     caseId: "nakajima-koen-dori",
     name: "A1210形のデータ",
     description: "運行開始した年：2025年\n定員：75人\n座席数：27席\n低床車両\n愛称：ポラリスⅡ",
@@ -73,6 +80,7 @@ export const mockClues: ClueDefinition[] = [
   {
     id: "nakajima-4",
     qrCode: "天文台4",
+    slot: 4,
     caseId: "nakajima-koen-dori",
     name: "1100形の愛称",
     description:
@@ -102,19 +110,18 @@ export function findClueByQrText(text: string): ClueItem | null {
 
 export type ClueSlot = { found: true; clue: ClueItem } | { found: false };
 
-// 見つけた手がかりを先頭に並べ、残りを未発見の枠（「？」）で埋める。
-// 並び順は mockClues に書いた順。決まった位置で「？」を中身に変えたい場合はここを変える
+// 各手がかりを slot で決めた枠に置く。見つけた手がかりはその枠に中身を、まだのものや
+// 手がかりが割り当てられていない枠には「？」を出す（見つけた順に詰めて並べることはしない）
 export function getClueSlotsForCase(
   caseId: StationKey,
   slotCount: number,
   foundClueIds: string[]
 ): ClueSlot[] {
-  const found = mockClues.filter((clue) => clue.caseId === caseId && foundClueIds.includes(clue.id));
-  const slots: ClueSlot[] = found.map((clue) => ({ found: true, clue: toClueItem(clue) }));
+  const caseClues = mockClues.filter((clue) => clue.caseId === caseId);
+  const count = Math.max(slotCount, ...caseClues.map((clue) => clue.slot));
 
-  while (slots.length < slotCount) {
-    slots.push({ found: false });
-  }
-
-  return slots;
+  return Array.from({ length: count }, (_, index): ClueSlot => {
+    const clue = caseClues.find((c) => c.slot === index + 1 && foundClueIds.includes(c.id));
+    return clue ? { found: true, clue: toClueItem(clue) } : { found: false };
+  });
 }
