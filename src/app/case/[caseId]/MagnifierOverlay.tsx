@@ -17,7 +17,7 @@
 
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import jsQR from "jsqr";
+import { prepareZXingModule, readBarcodes, type ReaderOptions } from "zxing-wasm/reader";
 import type { ClueItem } from "@/lib/clues";
 import type { StationKey } from "@/lib/stations";
 import { CloseIcon } from "@/components/icons";
@@ -26,6 +26,35 @@ import { overlayStyle, closeButtonStyle } from "./overlayStyles";
 // 読み取りの間隔と、解析用に縮小する映像の最大辺（端末の負荷を抑えるため）
 const SCAN_INTERVAL_MS = 250;
 const SCAN_MAX_DIMENSION = 640;
+
+// QRの読み取りには ZXing（zxing-wasm）を使う。角の丸いデザインのQRや、
+// 暗い背景に白で印刷したQR（色の反転したQR）も読めるようにしている。
+//  - tryInvert … 色の反転したQRも探す（外すと、紺地に白のQRなどが読めなくなる）
+//  - tryHarder / tryRotate … 時間をかけて、傾いたQRも探す（1回数ミリ秒程度で軽い）
+const READER_OPTIONS: ReaderOptions = {
+  formats: ["QRCode"],
+  tryHarder: true,
+  tryInvert: true,
+  tryRotate: true,
+  maxNumberOfSymbols: 1,
+};
+
+// 読み取り処理の本体（.wasm）は外部のCDNではなく、このアプリの /zxing/ から読み込む
+// （scripts/copy-zxing-wasm.mjs が npm install 時に public/zxing/ へコピーする）
+let zxingPrepared = false;
+function prepareReader() {
+  if (zxingPrepared) return;
+  zxingPrepared = true;
+  prepareZXingModule({
+    overrides: {
+      locateFile: (path: string, prefix: string) => (path.endsWith(".wasm") ? `/zxing/${path}` : prefix + path),
+    },
+    fireImmediately: true,
+  }).catch(() => {
+    // 読み込みに失敗したら、次に虫眼鏡を開いたときにもう一度試す
+    zxingPrepared = false;
+  });
+}
 
 // 読み取り結果をレンズに表示しておく時間（ミリ秒。1000で1秒）
 const FOUND_CLOSE_DELAY_MS = 1500;
@@ -128,24 +157,37 @@ export default function MagnifierOverlay({
     const context = canvas.getContext("2d", { willReadFrequently: true });
     if (!context) return;
 
-    const timer = setInterval(() => {
+    prepareReader();
+    let stopped = false;
+    // 前の読み取りが終わる前に次を始めないようにする（読み取りは非同期のため）
+    let busy = false;
+
+    const timer = setInterval(async () => {
       const video = videoRef.current;
-      if (!video || video.readyState < video.HAVE_ENOUGH_DATA || !video.videoWidth) return;
+      if (busy || !video || video.readyState < video.HAVE_ENOUGH_DATA || !video.videoWidth) return;
 
       const scale = Math.min(1, SCAN_MAX_DIMENSION / Math.max(video.videoWidth, video.videoHeight));
       canvas.width = Math.round(video.videoWidth * scale);
       canvas.height = Math.round(video.videoHeight * scale);
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
       const image = context.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(image.data, image.width, image.height, { inversionAttempts: "dontInvert" });
-      if (code?.data) {
+
+      busy = true;
+      const results = await readBarcodes(image, READER_OPTIONS).catch(() => []);
+      busy = false;
+
+      const text = results.find((result) => result.isValid)?.text;
+      if (text && !stopped) {
+        stopped = true;
         clearInterval(timer);
-        onQrDetected(code.data);
+        onQrDetected(text);
       }
     }, SCAN_INTERVAL_MS);
 
-    return () => clearInterval(timer);
+    return () => {
+      stopped = true;
+      clearInterval(timer);
+    };
   }, [scanState.kind, error]);
 
   // 虫眼鏡を閉じ、別の事件の手がかりだったらその事件のページへ移動する
