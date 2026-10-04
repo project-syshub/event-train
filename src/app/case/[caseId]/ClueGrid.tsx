@@ -4,7 +4,7 @@
 //
 // 【変更すると】
 //  - gridTemplateColumns の "1fr 1fr" … 1行に並ぶカードの数（"1fr 1fr 1fr" で3列）
-//  - CAPTION_FONT_SIZE … カードの上の手がかり名の文字サイズ
+//  - CAPTION_FONT_SIZE … カードの上（写真の白枠の外）の手がかり名の文字サイズ
 //  - 未発見の枠の「？」の fontSize … 「？」の大きさ。文字を変えれば「？？？」などにもできる
 //  - 詳細ポップアップの maxWidth … 詳細の横幅
 //  - 詳細ポップアップのタイトルの fontSize … 詳細の上に出る手がかり名の大きさ（全ての手がかりで共通）
@@ -37,13 +37,14 @@ const photoStyle: CSSProperties = {
   aspectRatio: "1",
 };
 
+// カードのタイトル（写真の白枠の外、茶色のカードの上部に白い文字で置く。詳細ポップアップと同じ配置）
 const captionStyle: CSSProperties = {
-  color: "var(--color-accent)",
-  fontWeight: 700,
+  color: "var(--color-text)",
+  fontWeight: 800,
   fontSize: CAPTION_FONT_SIZE,
   lineHeight: CAPTION_LINE_HEIGHT,
   height: CAPTION_HEIGHT,
-  padding: "2px 4px",
+  padding: "0 2px 6px",
   overflow: "hidden",
   display: "flex",
   alignItems: "center",
@@ -57,6 +58,7 @@ function ClueCardBody({ clue }: { clue: ClueItem | null }) {
 
   return (
     <>
+      <p style={{ ...captionStyle, visibility: found ? "visible" : "hidden" }}>{found ? clue.name : ""}</p>
       <div
         style={{
           background: found ? "#ffffff" : "transparent",
@@ -64,15 +66,7 @@ function ClueCardBody({ clue }: { clue: ClueItem | null }) {
           borderRadius: 2,
         }}
       >
-        {/* 手がかりの名前は写真の上に表示する */}
-        <p style={{ ...captionStyle, visibility: found ? "visible" : "hidden" }}>
-          {found ? clue.name : " "}
-        </p>
-        {found ? (
-          <CluePhoto clue={clue} iconSize={40} sizes="200px" />
-        ) : (
-          <div style={photoStyle} />
-        )}
+        {found ? <CluePhoto clue={clue} iconSize={40} sizes="200px" /> : <div style={photoStyle} />}
       </div>
 
       {!found && (
