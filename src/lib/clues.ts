@@ -1,7 +1,8 @@
 // 【役割】手がかりの一覧（QRコードの文字列 → 手がかりの対応表）と、その照合処理。
 //
 // 【手がかりを追加・変更するとき】下の mockClues に1件ずつ書く。
-//  - qrCode      … QRコードに入れた文字列と同じにする（1文字でも違うと「手がかりではない」になる。
+//  - qrCode      … QRコードに入れた文字列と同じにする。まだ決まっていなければ省略できる（読み取りでは見つからない）
+//                  （1文字でも違うと「手がかりではない」になる。
 //                  全角・半角の違い（「天文台１」と「天文台1」）は同じものとして扱う）
 //  - caseId      … どの事件の手がかりか（cases.ts の stationKey と同じ値）。変えると表示される事件が変わる
 //  - name        … カードと詳細に出る名前
@@ -35,7 +36,8 @@ export type ClueReference = string | { url: string; source: string };
 type ClueDefinition = ClueItem & {
   // 現地に貼るQRコードに埋め込む文字列そのもの。読み取った文字列と完全一致で照合する
   // （前後の空白と、全角・半角の違いは無視する。大文字・小文字は区別する）
-  qrCode: string;
+  // まだQRが決まっていない手がかりは省略する（読み取りでは見つからず、ずっと「？」のまま）
+  qrCode?: string;
   // 事件ページの何番目の枠に表示するか（1から数える。2列なので 1=左上 2=右上 3=左下 4=右下）
   slot: number;
 };
@@ -110,7 +112,48 @@ export const mockClues: ClueDefinition[] = [
     ],
   },
 
-  // ===== 恐怖！謎のびしょ濡れ事件（西15丁目） caseId: "nishi-15-choume" =====
+  // ===== 恐怖！謎のびしょ濡れ事件（西15丁目・札幌市資料館） caseId: "nishi-15-choume" =====
+  // QRの文字列・画像・参考文献はまだ決まっていない
+  {
+    id: "nishi15-1",
+    slot: 1,
+    caseId: "nishi-15-choume",
+    name: "公園",
+    description:
+      "【ポイント】\n1871年（明治4年）、札幌で最初の公園がつくられました。\n現在の北海道大学の南側につくられた公園です。",
+  },
+  {
+    id: "nishi15-2",
+    slot: 2,
+    caseId: "nishi-15-choume",
+    name: "創成川",
+    description:
+      "【ポイント】\n札幌の街を東西に分ける人工の川です。\n① 1874年（明治7年）「創成川」と名づけられる\n② 大友亀太郎が開いた人工の川",
+  },
+  {
+    id: "nishi15-3",
+    slot: 3,
+    caseId: "nishi-15-choume",
+    name: "鉄道",
+    description:
+      "【ポイント】\n石炭や石材を運ぶために、鉄道がつくられました。\n① 1880年（明治13年）小樽（手宮）〜札幌で鉄道が開通\n② 国内で3番目の鉄道",
+  },
+  {
+    id: "nishi15-4",
+    slot: 4,
+    caseId: "nishi-15-choume",
+    name: "石山通",
+    description:
+      "【ポイント】\n札幌軟石を運ぶ道として発展しました。\n① 1909年（明治42年）石山通に馬車鉄道が通る\n② 石材だけでなく、人も利用した",
+  },
+  {
+    id: "nishi15-5",
+    slot: 5,
+    caseId: "nishi-15-choume",
+    name: "市電",
+    description:
+      "【ポイント】\n札幌で電車の運転が始まり、まちの大切な交通手段になりました。\n① 1918年（大正7年）電車の運転が始まる\n② 1927年（昭和2年）市電事業が市営化",
+  },
 ];
 
 // QRを作るときの入力の揺れで一致しなくならないよう、全角の英数字を半角にそろえ、前後の空白を除く
@@ -126,7 +169,7 @@ function toClueItem({ id, caseId, name, description, image, references }: ClueDe
 // 読み取ったQRコードの文字列から手がかりを引く。手がかり用でなければnull
 export function findClueByQrText(text: string): ClueItem | null {
   const code = normalizeQrText(text);
-  const clue = mockClues.find((c) => normalizeQrText(c.qrCode) === code);
+  const clue = mockClues.find((c) => c.qrCode !== undefined && normalizeQrText(c.qrCode) === code);
   return clue ? toClueItem(clue) : null;
 }
 

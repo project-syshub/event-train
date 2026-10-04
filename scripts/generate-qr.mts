@@ -13,8 +13,9 @@ const OUTPUT_DIR = "qr-codes";
 
 await mkdir(OUTPUT_DIR, { recursive: true });
 
-for (const clue of mockClues) {
+// QRの文字列がまだ決まっていない手がかりは飛ばす
+for (const clue of mockClues.filter((c) => c.qrCode !== undefined)) {
   const fileName = `${OUTPUT_DIR}/${clue.id}.png`;
-  await QRCode.toFile(fileName, clue.qrCode, { width: 600, margin: 2 });
+  await QRCode.toFile(fileName, clue.qrCode!, { width: 600, margin: 2 });
   console.log(`${fileName}  ${clue.name}`);
 }

@@ -66,6 +66,6 @@ export const mockCases: CaseInfo[] = [
     status: "unsolved",
     summary:
       "西15丁目停留所付近で深夜に悲鳴が聞かれたが、現場には誰もいなかった。目撃情報を募集中。",
-    clueSlots: 4,
+    clueSlots: 5,
   },
 ];
