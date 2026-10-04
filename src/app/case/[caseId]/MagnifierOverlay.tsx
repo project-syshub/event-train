@@ -1,9 +1,13 @@
 "use client";
 
-// 【役割】虫眼鏡の画面。カメラ映像をレンズの中に映し、QRコードを見つけたら /api/clues/discover で照合する。
-// 結果をレンズの中央に表示し、手がかりなら虫眼鏡を閉じる（別の事件の手がかりならその事件ページへ移動）。
+// 【役割】虫眼鏡の画面。カメラ映像をレンズの中に映し、同じQRコードを3秒映し続けたら（縁のゲージが一周したら）
+// /api/clues/discover で照合する。結果をレンズの中央に表示し、手がかりなら虫眼鏡を閉じる
+// （別の事件の手がかりならその事件ページへ移動）。
 //
 // 【変更すると】
+//  - HOLD_DURATION_MS … 読み取り確定までにQRを映し続ける時間（ゲージが一周する時間）
+//  - LOST_GRACE_MS … QRが一瞬見えなくなってもゲージを戻さずに待つ時間。短くすると手ぶれでやり直しになりやすい
+//  - GAUGE_COLOR / GAUGE_WIDTH … ゲージの色と太さ
 //  - SCAN_INTERVAL_MS … QRを探す間隔。短くすると反応が速くなるが、スマホの電池や発熱が増える
 //  - SCAN_MAX_DIMENSION … 解析する映像の大きさ。大きくすると遠くの小さなQRも読めるが、処理が重くなる
 //  - FOUND_CLOSE_DELAY_MS … 「手がかりを発見！」を表示してから閉じるまでの時間
@@ -56,6 +60,14 @@ function prepareReader() {
   });
 }
 
+// 同じQRをこの時間映し続けたら読み取り確定（狙っていないQRを一瞬映しただけで読まないようにする）
+const HOLD_DURATION_MS = 3000;
+// 手ぶれなどでQRが一瞬見えなくなっても、この時間以内に戻ればゲージを戻さずに続ける
+const LOST_GRACE_MS = 600;
+// レンズの縁を一周するゲージの色と太さ
+const GAUGE_COLOR = "#f5c518";
+const GAUGE_WIDTH = 10;
+
 // 読み取り結果をレンズに表示しておく時間（ミリ秒。1000で1秒）
 const FOUND_CLOSE_DELAY_MS = 1500;
 const FAILED_RESUME_DELAY_MS = 2000;
@@ -100,6 +112,10 @@ const ICON_HEIGHT = Math.ceil(HANDLE_TIP_Y + LENS_LEFT);
 const SIDE_PADDING = 16;
 const RESERVED_HEIGHT = 200;
 
+// ゲージは金属の縁の太さの真ん中を通る円として描く
+const GAUGE_RADIUS = LENS_RADIUS - RIM_THICKNESS / 2;
+const GAUGE_CIRCUMFERENCE = 2 * Math.PI * GAUGE_RADIUS;
+
 export default function MagnifierOverlay({
   caseId,
   onClose,
@@ -112,6 +128,9 @@ export default function MagnifierOverlay({
   const streamRef = useRef<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [scanState, setScanState] = useState<ScanState>({ kind: "scanning" });
+  // QRを映し続けている最中か（案内文の切り替えに使う。ゲージ自体は毎フレーム直接書き換える）
+  const [holding, setHolding] = useState(false);
+  const gaugeRef = useRef<SVGCircleElement>(null);
   // 虫眼鏡は開いたときにだけ描画されるため、初期化時に画面サイズを参照できる
   const [iconScale] = useState(() =>
     Math.min(
@@ -149,7 +168,7 @@ export default function MagnifierOverlay({
     }
   });
 
-  // 映像のフレームを定期的に切り出してQRコードを探す
+  // 映像のフレームを定期的に切り出してQRコードを探し、同じQRを HOLD_DURATION_MS 映し続けたら確定する
   useEffect(() => {
     if (scanState.kind !== "scanning" || error) return;
 
@@ -161,32 +180,84 @@ export default function MagnifierOverlay({
     let stopped = false;
     // 前の読み取りが終わる前に次を始めないようにする（読み取りは非同期のため）
     let busy = false;
+    // 映し続けているQRの文字列・映し始めた時刻・最後に見えた時刻
+    let holdText: string | null = null;
+    let holdStart = 0;
+    let lastSeen = 0;
+
+    const setGauge = (progress: number) => {
+      gaugeRef.current?.setAttribute("stroke-dashoffset", String(GAUGE_CIRCUMFERENCE * (1 - progress)));
+    };
+    const resetHold = () => {
+      holdText = null;
+      setGauge(0);
+      setHolding(false);
+    };
+    resetHold();
 
     const timer = setInterval(async () => {
       const video = videoRef.current;
       if (busy || !video || video.readyState < video.HAVE_ENOUGH_DATA || !video.videoWidth) return;
 
-      const scale = Math.min(1, SCAN_MAX_DIMENSION / Math.max(video.videoWidth, video.videoHeight));
-      canvas.width = Math.round(video.videoWidth * scale);
-      canvas.height = Math.round(video.videoHeight * scale);
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const image = context.getImageData(0, 0, canvas.width, canvas.height);
+      // レンズに見えている範囲（映像の中央の正方形）だけを解析する。レンズの外に写り込んだQRは読まない
+      const side = Math.min(video.videoWidth, video.videoHeight);
+      const size = Math.min(side, SCAN_MAX_DIMENSION);
+      canvas.width = size;
+      canvas.height = size;
+      context.drawImage(
+        video,
+        (video.videoWidth - side) / 2,
+        (video.videoHeight - side) / 2,
+        side,
+        side,
+        0,
+        0,
+        size,
+        size
+      );
+      const image = context.getImageData(0, 0, size, size);
 
       busy = true;
       const results = await readBarcodes(image, READER_OPTIONS).catch(() => []);
       busy = false;
+      if (stopped) return;
 
+      const now = performance.now();
       const text = results.find((result) => result.isValid)?.text;
-      if (text && !stopped) {
-        stopped = true;
-        clearInterval(timer);
-        onQrDetected(text);
+      if (text) {
+        // 別のQRに変わったら最初から数え直す
+        if (text !== holdText) {
+          holdText = text;
+          holdStart = now;
+          setHolding(true);
+        }
+        lastSeen = now;
+      } else if (holdText && now - lastSeen > LOST_GRACE_MS) {
+        resetHold();
       }
     }, SCAN_INTERVAL_MS);
+
+    // ゲージは毎フレーム滑らかに進め、満タンになったら読み取りを確定する
+    let frame = requestAnimationFrame(function tick() {
+      if (stopped) return;
+      if (holdText) {
+        const progress = Math.min(1, (performance.now() - holdStart) / HOLD_DURATION_MS);
+        setGauge(progress);
+        if (progress >= 1) {
+          stopped = true;
+          clearInterval(timer);
+          setHolding(false);
+          onQrDetected(holdText);
+          return;
+        }
+      }
+      frame = requestAnimationFrame(tick);
+    });
 
     return () => {
       stopped = true;
       clearInterval(timer);
+      cancelAnimationFrame(frame);
     };
   }, [scanState.kind, error]);
 
@@ -342,6 +413,29 @@ export default function MagnifierOverlay({
             </div>
           </div>
 
+          {/* 読み取りゲージ（レンズの縁の上を、真上から時計回りに一周する） */}
+          <svg
+            width={LENS_SIZE}
+            height={LENS_SIZE}
+            style={{ position: "absolute", top: LENS_TOP, left: LENS_LEFT, pointerEvents: "none" }}
+            aria-hidden="true"
+          >
+            <circle
+              ref={gaugeRef}
+              cx={LENS_RADIUS}
+              cy={LENS_RADIUS}
+              r={GAUGE_RADIUS}
+              fill="none"
+              stroke={GAUGE_COLOR}
+              strokeWidth={GAUGE_WIDTH}
+              strokeLinecap="round"
+              strokeDasharray={GAUGE_CIRCUMFERENCE}
+              strokeDashoffset={GAUGE_CIRCUMFERENCE}
+              transform={`rotate(-90 ${LENS_RADIUS} ${LENS_RADIUS})`}
+              style={{ filter: `drop-shadow(0 0 4px ${GAUGE_COLOR})` }}
+            />
+          </svg>
+
           {/*
             持ち手（金の接続部 + 木製グリップ）。
             transform-originを回転の不動点にできるよう、要素の左上をあらかじめ
@@ -389,7 +483,7 @@ export default function MagnifierOverlay({
           visibility: scanState.kind === "scanning" && !error ? "visible" : "hidden",
         }}
       >
-        レンズの中に現地のQRコードを写してください
+        {holding ? "そのまま動かさないで…" : "レンズの中に現地のQRコードを写してください"}
       </p>
     </div>
   );
