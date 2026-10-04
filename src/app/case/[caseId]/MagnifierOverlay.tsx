@@ -7,7 +7,7 @@
 // 【変更すると】
 //  - HOLD_DURATION_MS … 読み取り確定までにQRを映し続ける時間（ゲージが一周する時間）
 //  - LOST_GRACE_MS … QRが一瞬見えなくなってもゲージを戻さずに待つ時間。短くすると手ぶれでやり直しになりやすい
-//  - GAUGE_COLOR / GAUGE_WIDTH … ゲージの色と太さ
+//  - GAUGE_COLOR … ゲージの色（太さは金属の縁 RIM_THICKNESS と同じ）
 //  - SCAN_INTERVAL_MS … QRを探す間隔。短くすると反応が速くなるが、スマホの電池や発熱が増える
 //  - SCAN_MAX_DIMENSION … 解析する映像の大きさ。大きくすると遠くの小さなQRも読めるが、処理が重くなる
 //  - FOUND_CLOSE_DELAY_MS … 「手がかりを発見！」を表示してから閉じるまでの時間
@@ -64,9 +64,8 @@ function prepareReader() {
 const HOLD_DURATION_MS = 3000;
 // 手ぶれなどでQRが一瞬見えなくなっても、この時間以内に戻ればゲージを戻さずに続ける
 const LOST_GRACE_MS = 600;
-// レンズの縁を一周するゲージの色と太さ
+// レンズの縁を一周するゲージの色
 const GAUGE_COLOR = "#f5c518";
-const GAUGE_WIDTH = 10;
 
 // 読み取り結果をレンズに表示しておく時間（ミリ秒。1000で1秒）
 const FOUND_CLOSE_DELAY_MS = 1500;
@@ -112,7 +111,8 @@ const ICON_HEIGHT = Math.ceil(HANDLE_TIP_Y + LENS_LEFT);
 const SIDE_PADDING = 16;
 const RESERVED_HEIGHT = 200;
 
-// ゲージは金属の縁の太さの真ん中を通る円として描く
+// ゲージは金属の縁と同じ太さで、縁の太さの真ん中を通る円として描く（縁にぴったり重なる）
+const GAUGE_WIDTH = RIM_THICKNESS;
 const GAUGE_RADIUS = LENS_RADIUS - RIM_THICKNESS / 2;
 const GAUGE_CIRCUMFERENCE = 2 * Math.PI * GAUGE_RADIUS;
 

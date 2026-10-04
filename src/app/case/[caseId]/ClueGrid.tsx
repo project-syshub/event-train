@@ -7,6 +7,7 @@
 //  - CAPTION_FONT_SIZE … カードの上の手がかり名の文字サイズ
 //  - 未発見の枠の「？」の fontSize … 「？」の大きさ。文字を変えれば「？？？」などにもできる
 //  - 詳細ポップアップの maxWidth … 詳細の横幅
+//  - 詳細ポップアップのタイトルの fontSize … 詳細の上に出る手がかり名の大きさ（全ての手がかりで共通）
 //  - 写真の表示方法は CluePhoto.tsx で変える
 
 import { useState, type CSSProperties } from "react";
@@ -148,7 +149,7 @@ export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
               style={{
                 color: "var(--color-text)",
                 fontWeight: 800,
-                fontSize: 18,
+                fontSize: 20,
                 lineHeight: 1.3,
                 textAlign: "center",
               }}
