@@ -1,13 +1,14 @@
-// 【役割】ホームの路線図（線路・進行方向の矢印・駅・事件の虫眼鏡マーカー・場所名の吹き出し）を描く。
-// 虫眼鏡・駅名・吹き出しのどれを押しても、その事件のページへ移動する。
+// 【役割】ホームの路線図（線路・進行方向の矢印・駅・事件の虫眼鏡マーカー・場所名のラベル）を描く。
+// 虫眼鏡・駅名・場所名のどれを押しても、その事件のページへ移動する。
 //
 // 【変更すると】
 //  - ROUTE_COLOR / ROUTE_WIDTH / CORNER_RADIUS … 線路の色・太さ・角の丸み
 //  - STATION_RADIUS … 駅の白丸の大きさ
 //  - STATION_FONT_SIZE / TARGET_FONT_SIZE … 駅名の文字サイズ（事件のない駅 / 事件のある駅）
 //  - UNDERLINE_COLOR … 事件のある駅名の下線の色
-//  - CASE_BUBBLES … 事件の吹き出しの位置と大きさ（pointer は吹き出しの「しっぽ」の先端）
-//  - 吹き出しのタブの場所名は cases.ts の place で変える（吹き出しの中は今は空）
+//  - PLACE_LABELS … 事件の場所名のラベルを置く位置（ラベルの中心）
+//  - PLACE_FONT_SIZE … 場所名の文字サイズ
+//  - 場所名の文言は cases.ts の place で変える
 //  - 駅の位置・駅名の向き・線路の角は stations.ts で変える
 
 import Link from "next/link";
@@ -39,22 +40,13 @@ const ARROW_SIZE = 5;
 // 隣り合う駅（または角）の間がこれより狭いときは矢印を描かない
 const ARROW_MIN_GAP = 30;
 
-const BUBBLE_PLACE_FONT_SIZE = 8;
+const PLACE_FONT_SIZE = 9;
 
-type Bubble = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  // 吹き出しの右端から出る「しっぽ」の先端の位置
-  pointer: { x: number; y: number };
-};
-
-// 事件の吹き出しの配置（stations.ts の座標系）
-const CASE_BUBBLES: Record<StationKey, Bubble> = {
-  "nishi-15-choume": { x: 6, y: 32, width: 124, height: 60, pointer: { x: 142, y: 62 } },
-  "nakajima-koen-dori": { x: 158, y: 268, width: 114, height: 58, pointer: { x: 284, y: 302 } },
-  "densha-jigyosho-mae": { x: 4, y: 446, width: 112, height: 44, pointer: { x: 127, y: 468 } },
+// 事件の場所名のラベルの中心位置（stations.ts の座標系）
+const PLACE_LABELS: Record<StationKey, { x: number; y: number }> = {
+  "nishi-15-choume": { x: 90, y: 62 },
+  "nakajima-koen-dori": { x: 245, y: 300 },
+  "densha-jigyosho-mae": { x: 90, y: 468 },
 };
 
 // 角を丸めた閉じた線のSVGパス
@@ -142,37 +134,23 @@ function MapMagnifier({ x, y }: { x: number; y: number }) {
   );
 }
 
-function CaseBubble({ bubble, marker }: { bubble: Bubble; marker: MapMarker }) {
-  const { x, y, width, height, pointer } = bubble;
-  const tabWidth = estimateTextWidth(marker.place, BUBBLE_PLACE_FONT_SIZE) + 12;
-  const tabHeight = 13;
-  // しっぽの付け根（吹き出しの右端の、先端と同じ高さ付近）
-  const baseY = Math.min(Math.max(pointer.y, y + 12), y + height - 12);
+// 事件の場所名（白地にオレンジ文字のラベル）
+function PlaceLabel({ x, y, text }: { x: number; y: number; text: string }) {
+  const width = estimateTextWidth(text, PLACE_FONT_SIZE) + 14;
+  const height = PLACE_FONT_SIZE + 7;
 
   return (
     <g>
-      <rect x={x} y={y} width={width} height={height} rx={8} fill="rgba(255, 255, 255, 0.06)" stroke="#ffffff" strokeWidth={1.6} />
-      {/* しっぽ（右端の枠線を背景色で消してから、くの字を描く） */}
-      <line x1={x + width} y1={baseY - 5} x2={x + width} y2={baseY + 5} stroke="var(--color-bg)" strokeWidth={2.4} />
-      <polyline
-        points={`${x + width},${baseY - 5} ${pointer.x},${pointer.y} ${x + width},${baseY + 5}`}
-        fill="none"
-        stroke="#ffffff"
-        strokeWidth={1.6}
-        strokeLinejoin="round"
-      />
-
-      {/* 場所名のタブ */}
-      <rect x={x + width / 2 - tabWidth / 2} y={y - tabHeight / 2} width={tabWidth} height={tabHeight} fill="#ffffff" />
+      <rect x={x - width / 2} y={y - height / 2} width={width} height={height} fill="#ffffff" />
       <text
-        x={x + width / 2}
-        y={y + BUBBLE_PLACE_FONT_SIZE * 0.36}
+        x={x}
+        y={y + PLACE_FONT_SIZE * 0.36}
         textAnchor="middle"
-        fontSize={BUBBLE_PLACE_FONT_SIZE}
+        fontSize={PLACE_FONT_SIZE}
         fontWeight={700}
         fill="var(--color-bg)"
       >
-        {marker.place}
+        {text}
       </text>
     </g>
   );
@@ -219,7 +197,7 @@ export default function TramMap({ markers }: { markers: MapMarker[] }) {
           );
         })}
 
-      {/* 事件のある駅：虫眼鏡・下線付きの駅名・吹き出し（押すと事件ページへ） */}
+      {/* 事件のある駅：虫眼鏡・下線付きの駅名・場所名（押すと事件ページへ） */}
       {markers.map((marker) => {
         const station = allRouteStations.find((s) => s.key === marker.stationKey);
         if (!station) return null;
@@ -234,7 +212,7 @@ export default function TramMap({ markers }: { markers: MapMarker[] }) {
         return (
           <Link key={marker.stationKey} href={`/case/${marker.caseId}`} aria-label={`${station.name}の事件を調べる`}>
             <g style={{ cursor: "pointer" }}>
-              <CaseBubble bubble={CASE_BUBBLES[marker.stationKey]} marker={marker} />
+              <PlaceLabel {...PLACE_LABELS[marker.stationKey]} text={marker.place} />
               <MapMagnifier x={station.x} y={station.y} />
               <line
                 x1={underlineStart}

@@ -3,7 +3,7 @@
 // 【変更すると】
 //  - status    … 事件の状態（unsolved=未解決 / investigating=捜査中 / solved=解決済み）
 //  - title     … 事件ページの見出しと、別の事件の手がかりを見つけたときの「『○○』の手がかりを発見！」に出る
-//  - place     … 吹き出しの上のタブに出す場所の名前
+//  - place     … ホームの路線図で、事件のある駅の近くに出す場所の名前
 //  - clueSlots … 事件ページに並ぶ手がかりの枠（「？」）の数。clues.ts のその事件の手がかりの数と合わせる
 //  - id        … 事件ページのURL（/case/<id>）になる。変えると古いURLは開けなくなる
 //  - stationKey… 路線図のどの駅の事件か（stations.ts の targetStationKeys に入っている必要がある）
