@@ -4,7 +4,8 @@
 //
 // 【変更すると】
 //  - right / bottom … ボタンの位置（画面の右下からの距離）
-//  - width / height … ボタンの大きさ。中のアイコンの大きさは ICON_SIZE
+//  - ICON_SIZE … 虫眼鏡の絵（ボタン）の大きさ
+//  - filter の drop-shadow … 虫眼鏡の絵の影
 //  - アイコンの画像 … public/icons/magnifier.png（差し替えるときはファイル名も変える。古い画像が残ることがあるため）
 
 import { useState, type CSSProperties } from "react";
@@ -12,21 +13,24 @@ import Image from "next/image";
 import type { StationKey } from "@/lib/stations";
 import MagnifierOverlay from "./MagnifierOverlay";
 
-const ICON_SIZE = 46;
+const ICON_SIZE = 68;
 
-// 画面右下に浮かせる丸ボタン
+// 画面右下に浮かせるボタン。背景（赤い丸）は付けず、虫眼鏡の絵だけを表示する
 const floatingButtonStyle: CSSProperties = {
   position: "fixed",
-  right: 18,
-  bottom: 18,
-  width: 62,
-  height: 62,
+  right: 14,
+  bottom: 14,
+  width: ICON_SIZE,
+  height: ICON_SIZE,
   padding: 0,
-  borderRadius: "50%",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.18)",
+  background: "none",
+  border: "none",
+  boxShadow: "none",
+  // 背景のオレンジに埋もれないよう、絵の形に沿った影を付ける
+  filter: "drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45))",
   zIndex: 50,
 };
 
