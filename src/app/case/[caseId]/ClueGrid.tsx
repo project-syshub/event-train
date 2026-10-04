@@ -157,7 +157,8 @@ export default function ClueGrid({ slots }: { slots: ClueSlot[] }) {
                 {selected.name}
               </p>
             </div>
-            <p style={{ fontSize: 15, lineHeight: 1.7 }}>{selected.description}</p>
+            {/* 説明文の \n（clues.ts）をそのまま改行として表示する */}
+            <p style={{ fontSize: 15, lineHeight: 1.7, whiteSpace: "pre-line" }}>{selected.description}</p>
           </div>
         </div>
       )}
