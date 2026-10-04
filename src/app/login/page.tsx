@@ -1,5 +1,12 @@
 "use client";
 
+// 【役割】ログイン画面（/login）。IDとパスワードを /api/login に送り、成功したらホームへ移動する。
+//
+// 【変更すると】
+//  - router.push("/home") … ログイン後に移動するページ
+//  - 見出し・ラベルの文言 … 画面の表示が変わる
+//  - アカウント自体は users.ts、エラー文言は api/login/route.ts で変える
+
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 

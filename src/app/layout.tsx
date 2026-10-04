@@ -1,3 +1,10 @@
+// 【役割】全ページ共通の外枠（ページタイトル・フォント・ブラウザのアドレスバーの色）。
+//
+// 【変更すると】
+//  - metadata.title / description … ブラウザのタブや検索結果に出るサイト名と説明
+//  - themeColor … スマホのアドレスバーの色。globals.css の --color-bg と同じ色にしておく（違うと境目が見える）
+//  - Google Fonts のURL … 全ページのフォントが変わる（globals.css の font-family も合わせる）
+
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 

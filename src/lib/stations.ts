@@ -1,4 +1,15 @@
-export type StationKey = "densha-jigyosho-mae" | "nakajima-koen-dori" | "nishi-15-choume";
+// 【役割】ホームの路線図に描く駅と、事件が起きている駅（対象駅）の定義。
+//
+// 【変更すると】
+//  - allRouteStations の x, y … 路線図上の駅の位置が動く（路線の線もこの順番でつながる）
+//  - allRouteStations の並び順 … 路線の線のつながり方が変わる（ループの1周の順番で書く）
+//  - targetStationKeys … 大きなマーカー（押すと事件ページへ）になる駅。それ以外は小さな点になる
+//  - VIEW_WIDTH / VIEW_HEIGHT … 路線図の座標の範囲。x, y はこの範囲内で指定する
+//
+// 【対象駅を増やすとき】StationKey と targetStationKeys の両方に駅のkeyを足し、cases.ts に事件を追加する。
+
+// 事件が紐づく駅のkey。ここにない駅には事件や手がかりを結びつけられない
+export type StationKey ="densha-jigyosho-mae" | "nakajima-koen-dori" | "nishi-15-choume";
 
 export type RouteStation = {
   key: string;

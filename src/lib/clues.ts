@@ -1,3 +1,16 @@
+// 【役割】手がかりの一覧（QRコードの文字列 → 手がかりの対応表）と、その照合処理。
+//
+// 【手がかりを追加・変更するとき】下の mockClues に1件ずつ書く。
+//  - qrCode      … QRコードに入れた文字列とまったく同じにする（1文字でも違うと「手がかりではない」になる）
+//  - caseId      … どの事件の手がかりか（cases.ts の stationKey と同じ値）。変えると表示される事件が変わる
+//  - name        … カードと詳細に出る名前
+//  - description … カードを押したときの詳細に出る説明文
+//  - image       … 画像を public/clues/ に置き、"/clues/ファイル名.jpg" と書く。省略するとパズルのアイコンになる
+//  - id          … 発見記録はこのidで保存している。一度公開したら変えない（変えるとその手がかりが未発見に戻る）
+//
+// 【注意】1つの事件の手がかりの数を増減したら、cases.ts の clueSlots（「？」の枠の数）も合わせる。
+// 画像は public/ に置くため、URLを知っていれば発見前でも直接開ける。
+
 import type { StationKey } from "./stations";
 
 export type ClueItem = {
@@ -12,6 +25,7 @@ export type ClueItem = {
 // QRコードの値はクライアントに渡さない（未発見の手がかりを推測できないようにする）
 type ClueDefinition = ClueItem & {
   // 現地に貼るQRコードに埋め込む文字列そのもの。読み取った文字列と完全一致で照合する
+  // （前後の空白は無視する。大文字・小文字は区別する）
   qrCode: string;
 };
 
@@ -123,7 +137,8 @@ export function findClueByQrText(text: string): ClueItem | null {
 
 export type ClueSlot = { found: true; clue: ClueItem } | { found: false };
 
-// 見つけた手がかりを先頭に並べ、残りを未発見の枠（「？」）で埋める
+// 見つけた手がかりを先頭に並べ、残りを未発見の枠（「？」）で埋める。
+// 並び順は mockClues に書いた順。決まった位置で「？」を中身に変えたい場合はここを変える
 export function getClueSlotsForCase(
   caseId: StationKey,
   slotCount: number,

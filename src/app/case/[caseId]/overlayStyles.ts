@@ -1,3 +1,9 @@
+// 【役割】画面全体を覆うポップアップ（虫眼鏡・手がかりの詳細）の共通スタイル。
+//
+// 【変更すると】
+//  - overlayStyle の background … 後ろの画面を暗くする濃さ（最後の 0.85 を小さくすると薄くなる）
+//  - closeButtonStyle の top / right … 右上の「×」ボタンの位置
+
 import type { CSSProperties } from "react";
 
 export const overlayStyle: CSSProperties = {

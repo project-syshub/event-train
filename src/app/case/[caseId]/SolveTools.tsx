@@ -1,5 +1,11 @@
 "use client";
 
+// 【役割】事件ページ右下の虫眼鏡ボタン。押すと虫眼鏡（QR読み取り画面）を開く。
+//
+// 【変更すると】
+//  - right / bottom … ボタンの位置（画面の右下からの距離）
+//  - width / height … ボタンの大きさ。中のアイコンの大きさは GoldMagnifierIcon の size
+
 import { useState, type CSSProperties } from "react";
 import { GoldMagnifierIcon } from "@/components/icons";
 import type { StationKey } from "@/lib/stations";

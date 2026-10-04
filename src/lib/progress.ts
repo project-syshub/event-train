@@ -1,9 +1,19 @@
+// 【役割】参加者ごとの「どの手がかりを見つけたか」の記録（保存・読み出し・リセット）。
+// 記録はサーバーではなく、参加者のブラウザのCookieに改ざんできない形（署名付き）で保存している。
+//
+// 【変更すると】
+//  - FOUND_CLUES_COOKIE_NAME … 名前を変えると、全参加者の発見記録が一斉にリセットされる
+//  - FOUND_CLUES_MAX_AGE_SECONDS … 発見記録が残る期間（過ぎると自動で消える）
+//  - SESSION_SECRET（環境変数）を変えても、署名が合わなくなって全員の記録が消える
+//
+// 【注意】ブラウザごとの記録なので、別のスマホやブラウザでログインすると記録は引き継がれない。
+
 import { cookies } from "next/headers";
 import { decodeToken, encodeToken } from "./session";
 
 // 名前を変えると以前のCookieを読まなくなり、全員の発見記録がリセットされる
 const FOUND_CLUES_COOKIE_NAME = "found_clues_v2";
-const FOUND_CLUES_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
+const FOUND_CLUES_MAX_AGE_SECONDS = 60 * 60 * 24 * 365; // 1年
 
 // 別のユーザーで同じブラウザからログインしたときに記録が混ざらないよう、userIdも署名に含める
 type FoundCluesPayload = {

@@ -1,3 +1,16 @@
+// 【役割】事件の一覧（タイトル・状態・要約・手がかりの枠の数）。
+//
+// 【変更すると】
+//  - status    … ホームの路線図のマーカーの色が変わる（unsolved=未解決 / investigating=捜査中 / solved=解決済み）
+//  - title     … 事件ページの見出しと、別の事件の手がかりを見つけたときの「『○○』の手がかりを発見！」に出る
+//  - clueSlots … 事件ページに並ぶ手がかりの枠（「？」）の数。clues.ts のその事件の手がかりの数と合わせる
+//  - id        … 事件ページのURL（/case/<id>）になる。変えると古いURLは開けなくなる
+//  - stationKey… 路線図のどの駅の事件か（stations.ts の targetStationKeys に入っている必要がある）
+//  - statusColor … 状態ごとのマーカーの色
+//
+// 【事件を増やすとき】stations.ts の StationKey と targetStationKeys に駅を足してから、ここに1件追加する。
+// 対象駅に事件がないと、ホーム画面がエラーになる。
+
 import type { StationKey } from "./stations";
 
 export type CaseStatus = "unsolved" | "investigating" | "solved";

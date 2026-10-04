@@ -1,3 +1,9 @@
+// 【役割】ログイン画面から送られたIDとパスワードを確認し、正しければログイン状態にする（POST /api/login）。
+//
+// 【変更すると】
+//  - エラー文言 … ログイン画面の赤字のメッセージが変わる
+//  - アカウント自体（ID・パスワード）は users.ts で変える
+
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { findUserByLoginId } from "@/lib/users";

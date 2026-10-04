@@ -1,5 +1,14 @@
 "use client";
 
+// 【役割】事件ページの手がかり一覧（2列のカード）と、カードを押したときの詳細ポップアップ。
+//
+// 【変更すると】
+//  - gridTemplateColumns の "1fr 1fr" … 1行に並ぶカードの数（"1fr 1fr 1fr" で3列）
+//  - CAPTION_FONT_SIZE … カードの下の手がかり名の文字サイズ
+//  - 未発見の枠の「？」の fontSize … 「？」の大きさ。文字を変えれば「？？？」などにもできる
+//  - 詳細ポップアップの maxWidth … 詳細の横幅
+//  - 写真の表示方法は CluePhoto.tsx で変える
+
 import { useState, type CSSProperties } from "react";
 import type { ClueItem, ClueSlot } from "@/lib/clues";
 import { CloseIcon } from "@/components/icons";

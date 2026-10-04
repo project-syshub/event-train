@@ -1,3 +1,10 @@
+// 【役割】事件ページ（/case/<事件のid>）。事件名・手がかり一覧・右下の虫眼鏡ボタンを表示する。
+//
+// 【変更すると】
+//  - 「すべての手がかりを見つけよう！」… 見出しの下の案内文
+//  - main の maxWidth … ページの最大幅（PCで開いたときの横幅）
+//  - 事件名や手がかりの枠の数は cases.ts、手がかりの中身は clues.ts で変える
+
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getSessionUserId } from "@/lib/session";

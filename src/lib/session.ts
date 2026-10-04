@@ -1,3 +1,11 @@
+// 【役割】ログイン状態の管理（ログイン時にCookieを発行し、各ページでログイン中か確認する）。
+//
+// 【変更すると】
+//  - SESSION_MAX_AGE_SECONDS … ログインが続く期間。短くすると、その期間ごとにログインし直しが必要になる
+//  - SESSION_SECRET（Vercelの環境変数）… 変えると全員がログアウトされ、手がかりの発見記録も消える。
+//    本番で未設定だとログインがエラーになる（ローカル開発時は DEV_SESSION_SECRET が使われる）
+//  - SESSION_COOKIE_NAME … 変えると全員がログアウトされる
+
 import { cookies } from "next/headers";
 import { createHmac, timingSafeEqual } from "crypto";
 

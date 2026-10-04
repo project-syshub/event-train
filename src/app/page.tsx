@@ -1,3 +1,5 @@
+// 【役割】トップページ（/）。ログイン中ならホームへ、未ログインならログイン画面へ自動で移動する。
+
 import { redirect } from "next/navigation";
 import { getSessionUserId } from "@/lib/session";
 

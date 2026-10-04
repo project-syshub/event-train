@@ -1,3 +1,12 @@
+// 【役割】ホームの路線図（線・駅の点・事件のマーカー・駅名）を描く。マーカーか駅名を押すと事件ページへ。
+//
+// 【変更すると】
+//  - path の stroke / strokeWidth … 路線の線の色と太さ
+//  - 対象外の駅の circle の r / fill … 小さな駅の点の大きさと色
+//  - マーカーの circle の r … 事件マーカーの大きさ（押しやすさにも影響する）
+//  - 駅名の transform の 24px … マーカーから駅名までの距離
+//  - 駅の位置そのものは stations.ts で変える
+
 import Link from "next/link";
 import { allRouteStations, targetStationKeys, VIEW_WIDTH, VIEW_HEIGHT } from "@/lib/stations";
 

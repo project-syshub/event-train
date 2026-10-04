@@ -1,3 +1,11 @@
+// 【役割】手がかりの写真（カード・詳細で共通）。clues.ts で image を指定した手がかりは画像、
+// 指定していない手がかりはパズルのアイコンを表示する。
+//
+// 【変更すると】
+//  - objectFit: "contain" … 画像全体が枠に収まる（余白が出ることがある）。"cover" にすると枠いっぱいに
+//    広げて、はみ出した部分を切り取る
+//  - aspectRatio: "1" … 写真の枠の縦横比（"4 / 3" などで横長に）
+
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import type { ClueItem } from "@/lib/clues";

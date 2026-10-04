@@ -1,5 +1,20 @@
 "use client";
 
+// 【役割】虫眼鏡の画面。カメラ映像をレンズの中に映し、QRコードを見つけたら /api/clues/discover で照合する。
+// 結果をレンズの中央に表示し、手がかりなら虫眼鏡を閉じる（別の事件の手がかりならその事件ページへ移動）。
+//
+// 【変更すると】
+//  - SCAN_INTERVAL_MS … QRを探す間隔。短くすると反応が速くなるが、スマホの電池や発熱が増える
+//  - SCAN_MAX_DIMENSION … 解析する映像の大きさ。大きくすると遠くの小さなQRも読めるが、処理が重くなる
+//  - FOUND_CLOSE_DELAY_MS … 「手がかりを発見！」を表示してから閉じるまでの時間
+//  - FAILED_RESUME_DELAY_MS … 対象外のQRのメッセージを表示してから読み取りを再開するまでの時間
+//  - LENS_SIZE … レンズの大きさ（大きくしすぎても、画面に収まるよう全体が自動で縮む）
+//  - HANDLE_ANGLE_DEG … 持ち手の角度（90で真下。大きいほど横に張り出さず、レンズを大きく見せられる）
+//  - getLensMessage の文言 … レンズの中に出るメッセージ（「手がかりを発見！」など）
+//  - 下の案内文（「レンズの中に現地のQRコードを写してください」）… 読み取り中の説明
+//
+// 【注意】カメラは https:// か localhost でしか起動しない（スマホから http://IPアドレス で開くと使えない）。
+
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import jsQR from "jsqr";
@@ -12,7 +27,7 @@ import { overlayStyle, closeButtonStyle } from "./overlayStyles";
 const SCAN_INTERVAL_MS = 250;
 const SCAN_MAX_DIMENSION = 640;
 
-// 読み取り結果をレンズに表示しておく時間
+// 読み取り結果をレンズに表示しておく時間（ミリ秒。1000で1秒）
 const FOUND_CLOSE_DELAY_MS = 1500;
 const FAILED_RESUME_DELAY_MS = 2000;
 

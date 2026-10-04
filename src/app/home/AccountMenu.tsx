@@ -1,5 +1,12 @@
 "use client";
 
+// 【役割】ホーム右上の設定（歯車）メニュー。ログイン中のID・手がかりリセット・ログアウトを表示する。
+//
+// 【変更すると】
+//  - パネルの width … メニューの幅
+//  - 確認ダイアログの文言（window.confirm）… リセット前に出るメッセージ
+//  - ボタンを追加 … このパネルの中にボタンを並べれば設定項目を増やせる
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiSettings } from "react-icons/fi";
