@@ -53,7 +53,7 @@ export const mockClues: ClueDefinition[] = [
     name: "上下分離の図",
     description:
       "市電の運行を安定して続けていくため、仕事を「上下」に分けています。“上”は市電を走らせる仕事、“下”は車両や線路などを支える仕事です。",
-    image: "/clues/nishi15-1.jpg",
+    image: "/clues/joge-bunri.jpg",
   },
   {
     id: "nishi15-2",
@@ -62,6 +62,7 @@ export const mockClues: ClueDefinition[] = [
     name: "A1200形のデータ",
     // \n の位置で改行して表示する
     description: "運行開始した年：2013年\n定員：71人\n座席数：27席\n低床車両\n愛称：ポラリス",
+    image: "/clues/a1200-polaris.jpg",
   },
   {
     id: "nishi15-3",
@@ -69,6 +70,7 @@ export const mockClues: ClueDefinition[] = [
     caseId: "nishi-15-choume",
     name: "A1210形のデータ",
     description: "運行開始した年：2025年\n定員：75人\n座席数：27席\n低床車両\n愛称：ポラリスⅡ",
+    image: "/clues/a1210-polaris2.jpg",
   },
   {
     id: "nishi15-4",
@@ -77,6 +79,7 @@ export const mockClues: ClueDefinition[] = [
     name: "1100形の愛称",
     description:
       "「シリウス」は、太陽を除いて地球から最も明るく見える星。街中をさっそうと走る姿と、「明るい都市・札幌」をイメージして名付けられました。",
+    image: "/clues/1100-sirius.jpg",
   },
 ];
 
