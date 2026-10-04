@@ -62,6 +62,10 @@ export default function LoginPage() {
               value={loginId}
               onChange={(event) => setLoginId(event.target.value)}
               autoComplete="username"
+              // スマホが先頭を大文字にしたり、自動修正したりしないようにする
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               required
             />
           </div>
@@ -75,6 +79,9 @@ export default function LoginPage() {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               autoComplete="current-password"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               required
             />
           </div>

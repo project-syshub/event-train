@@ -2,11 +2,10 @@
 //
 // 【変更すると】
 //  - エラー文言 … ログイン画面の赤字のメッセージが変わる
-//  - アカウント自体（ID・パスワード）は users.ts で変える
+//  - アカウント自体（ID・パスワード）と、入力の揺れの許し方は users.ts で変える
 
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { findUserByLoginId } from "@/lib/users";
+import { findUserByLoginId, verifyPassword } from "@/lib/users";
 import { createSession } from "@/lib/session";
 
 export async function POST(request: NextRequest) {
@@ -22,7 +21,7 @@ export async function POST(request: NextRequest) {
   }
 
   const user = findUserByLoginId(loginId);
-  const passwordMatches = user ? bcrypt.compareSync(password, user.passwordHash) : false;
+  const passwordMatches = user ? verifyPassword(user, password) : false;
 
   if (!user || !passwordMatches) {
     return NextResponse.json(

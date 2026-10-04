@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "qr": "node scripts/generate-qr.mts",
-    "postinstall": "node scripts/copy-zxing-wasm.mjs"
+    "postinstall": "node scripts/copy-zxing-wasm.mjs",
+    "hash-password": "node scripts/hash-password.mts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
