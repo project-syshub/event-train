@@ -8,8 +8,8 @@
 //  - name        … カードと詳細に出る名前
 //  - description … カードを押したときの詳細に出る説明文
 //  - image       … 画像を public/clues/ に置き、"/clues/ファイル名.jpg" と書く。省略するとパズルのアイコンになる
-//  - references  … 参考文献のURL（複数可）。詳細の一番下に表示する（リンクにはしない）。省略すると表示しない
-//                  出典を添えるときは { url: "https://...", source: "出典の説明" } と書く（URLの下に「出典：〜」と出る）
+//  - references  … 参考文献（複数可）。{ title: "日本語の名前", url: "https://..." } と書く。
+//                  詳細の一番下に title だけを表示する（URLは記録として残すだけで、画面には出さない）。省略すると表示しない
 //  - slot        … 事件ページで表示する枠の番号（1=左上 2=右上 3=左下 4=右下）。見つける前はその枠に「？」が出る
 //  - id          … 発見記録はこのidで保存している。一度公開したら変えない（変えるとその手がかりが未発見に戻る）
 //
@@ -25,12 +25,12 @@ export type ClueItem = {
   description: string;
   // 手がかりの写真（public/ からのパス）。ない場合はアイコンを表示する
   image?: string;
-  // 参考文献のURL。詳細ポップアップの一番下に、押しても移動しない文字として表示する
+  // 参考文献。詳細ポップアップの一番下に、日本語の名前（title）だけを表示する
   references?: ClueReference[];
 };
 
-// 参考文献。URLだけなら文字列で、出典を添えるなら { url, source } で書く
-export type ClueReference = string | { url: string; source: string };
+// 参考文献。title は画面に出す日本語の名前、url は元の資料の場所（画面には出さない）
+export type ClueReference = { title: string; url: string };
 
 // QRコードの値はクライアントに渡さない（未発見の手がかりを推測できないようにする）
 type ClueDefinition = ClueItem & {
@@ -52,7 +52,7 @@ type ClueDefinition = ClueItem & {
 //     name: "古びた鍵",
 //     description: "1行目\n2行目",     ← \n で改行
 //     image: "/clues/nakajima-5.jpg",  ← 画像がなければこの行ごと消す
-//     references: ["https://..."],     ← 参考文献のURL（なければこの行ごと消す。出典付きは { url, source }）
+//     references: [{ title: "資料の名前", url: "https://..." }],  ← 参考文献（なければこの行ごと消す）
 //   },
 export const mockClues: ClueDefinition[] = [
   // ===== 白いもの盗難事件（電車事業所前） caseId: "densha-jigyosho-mae" =====
@@ -67,7 +67,12 @@ export const mockClues: ClueDefinition[] = [
     description:
       "市電の運行を安定して続けていくため、仕事を「上下」に分けています。“上”は市電を走らせる仕事、“下”は車両や線路などを支える仕事です。",
     image: "/clues/joge-bunri.jpg",
-    references: ["https://www.city.sapporo.jp/st/shiden/jyougebunri.html"],
+    references: [
+      {
+        title: "札幌市交通局「路面電車事業における上下分離について」",
+        url: "https://www.city.sapporo.jp/st/shiden/jyougebunri.html",
+      },
+    ],
   },
   {
     id: "nakajima-2",
@@ -79,8 +84,14 @@ export const mockClues: ClueDefinition[] = [
     description: "運行開始した年：2013年\n定員：71人\n座席数：27席\n低床車両\n愛称：ポラリス",
     image: "/clues/a1200-polaris.jpg",
     references: [
-      "https://www.stsp.or.jp/museum/a1200%E5%BD%A2/",
-      "https://www.city.sapporo.jp/shimin/bunkazai/documents/bunkazaisanpo_romendensya.pdf",
+      {
+        title: "一般財団法人 札幌市交通事業振興公社「A1200形」",
+        url: "https://www.stsp.or.jp/museum/a1200%E5%BD%A2/",
+      },
+      {
+        title: "札幌市歴史文化のまちづくり推進協議会「さっぽろ文化財散歩【札幌の路面電車編】」",
+        url: "https://www.city.sapporo.jp/shimin/bunkazai/documents/bunkazaisanpo_romendensya.pdf",
+      },
     ],
   },
   {
@@ -92,8 +103,14 @@ export const mockClues: ClueDefinition[] = [
     description: "運行開始した年：2025年\n定員：75人\n座席数：27席\n低床車両\n愛称：ポラリスⅡ",
     image: "/clues/a1210-polaris2.jpg",
     references: [
-      "https://www.stsp.or.jp/museum/a1210%e5%bd%a2/",
-      "https://www.city.sapporo.jp/shimin/bunkazai/documents/bunkazaisanpo_romendensya.pdf",
+      {
+        title: "一般財団法人 札幌市交通事業振興公社「A1210形」",
+        url: "https://www.stsp.or.jp/museum/a1210%e5%bd%a2/",
+      },
+      {
+        title: "札幌市歴史文化のまちづくり推進協議会「さっぽろ文化財散歩【札幌の路面電車編】」",
+        url: "https://www.city.sapporo.jp/shimin/bunkazai/documents/bunkazaisanpo_romendensya.pdf",
+      },
     ],
   },
   {
@@ -106,8 +123,8 @@ export const mockClues: ClueDefinition[] = [
     image: "/clues/1100-sirius.jpg",
     references: [
       {
+        title: "札幌市交通局 公式X（2018年10月23日投稿）",
         url: "https://x.com/sapporokotsu_PR/status/1054599031970615297",
-        source: "札幌市交通局 公式X（2018年10月23日投稿）",
       },
     ],
   },

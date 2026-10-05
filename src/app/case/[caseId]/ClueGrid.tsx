@@ -7,7 +7,7 @@
 //  - CAPTION_FONT_SIZE … カードの上（写真の白枠の外）の手がかり名の文字サイズ
 //  - 未発見の枠の「？」の fontSize … 「？」の大きさ。文字を変えれば「？？？」などにもできる
 //  - 詳細ポップアップの maxWidth … 詳細の横幅
-//  - 参考文献の fontSize … 詳細の一番下に出る参考文献のURLの文字の大きさ
+//  - 参考文献の fontSize … 詳細の一番下に出る参考文献の文字の大きさ
 //  - 詳細ポップアップのタイトルの fontSize … 詳細の上に出る手がかり名の大きさ（全ての手がかりで共通）
 //  - 写真の表示方法は CluePhoto.tsx で変える
 
@@ -88,15 +88,6 @@ function ClueCardBody({ clue }: { clue: ClueItem | null }) {
       )}
     </>
   );
-}
-
-// URLの中の %E5%BD%A2 のような部分を、読める文字（「形」など）に戻して表示する
-function readableUrl(url: string): string {
-  try {
-    return decodeURI(url);
-  } catch {
-    return url;
-  }
 }
 
 export default function ClueGrid({ slots, openClueId }: { slots: ClueSlot[]; openClueId?: string }) {
@@ -181,7 +172,7 @@ export default function ClueGrid({ slots, openClueId }: { slots: ClueSlot[]; ope
             </div>
             {/* 説明文の \n（clues.ts）をそのまま改行として表示する */}
             <p style={{ fontSize: 15, lineHeight: 1.7, whiteSpace: "pre-line" }}>{selected.description}</p>
-            {/* 参考文献（リンクにはせず、押しても移動しない文字として出す。長いURLは途中で折り返す） */}
+            {/* 参考文献（日本語の名前だけを、押しても移動しない文字として出す） */}
             {selected.references && selected.references.length > 0 && (
               <div
                 style={{
@@ -193,15 +184,11 @@ export default function ClueGrid({ slots, openClueId }: { slots: ClueSlot[]; ope
                 }}
               >
                 <p style={{ fontWeight: 700, marginBottom: 4 }}>参考文献</p>
-                {selected.references.map((reference) => {
-                  const { url, source } = typeof reference === "string" ? { url: reference, source: null } : reference;
-                  return (
-                    <div key={url} style={{ marginBottom: 4 }}>
-                      <p style={{ overflowWrap: "anywhere" }}>{readableUrl(url)}</p>
-                      {source && <p>出典：{source}</p>}
-                    </div>
-                  );
-                })}
+                {selected.references.map((reference) => (
+                  <p key={reference.url + reference.title} style={{ marginBottom: 2 }}>
+                    {reference.title}
+                  </p>
+                ))}
               </div>
             )}
           </div>
