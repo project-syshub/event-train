@@ -35,7 +35,7 @@ function sign(value: string): string {
   return createHmac("sha256", getSessionSecret()).update(value).digest("base64url");
 }
 
-// セッション以外のCookie（手がかりの発見記録など）でも改ざん検知に使う
+// トークン（Cookieに入れる値）の改ざん検知に使う
 export function encodeToken<T>(payload: T): string {
   const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString("base64url");
   return `${payloadBase64}.${sign(payloadBase64)}`;

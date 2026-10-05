@@ -1,4 +1,5 @@
-// データベースに users テーブルを作り、最初のアカウント（scripts/data/initial-users.ts）を登録する。
+// データベースに users テーブル（アカウント）と found_clues テーブル（手がかりの発見記録）を作り、
+// 最初のアカウント（scripts/data/initial-users.mts）を登録する。
 // npm run db:setup で実行する（接続先は .env.local の DATABASE_URL）。
 // 何度実行しても大丈夫：テーブルがあれば作り直さず、同じIDのアカウントはパスワードを上書きする。
 import { neon } from "@neondatabase/serverless";
@@ -14,6 +15,16 @@ await sql`
     login_id TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )
+`;
+
+// 手がかりの発見記録。同じアカウントの同じ手がかりは1回だけ記録する
+await sql`
+  CREATE TABLE IF NOT EXISTS found_clues (
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    clue_id TEXT NOT NULL,
+    found_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (user_id, clue_id)
   )
 `;
 
