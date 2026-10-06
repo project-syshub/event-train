@@ -5,8 +5,9 @@
 // 狸小路の手がかり一覧で手紙のカードを押したときは、opened を付けて開封済みの便せんから表示する（ClueGrid.tsx）。
 //
 // 【変更すると】
-//  - 手紙の差出人と本文 … clues.ts の LETTER_SENDER / LETTER_BODY（狸小路の手がかり一覧にも同じ文が入る）
+//  - 手紙の差出人と本文 … clues.ts の LETTER_SENDER / LETTER_BODY（**〜** で囲んだ部分は太字になる）
 //  - PAPER_COLOR / INK_COLOR … 便せんの色と文字の色（封筒の絵は icons.tsx の EnvelopeIcon）
+//  - LINE_HEIGHT … 便せんの行の高さ（小さくすると小さな画面でも収まりやすい）
 //  - 「手紙が届いた！」などの文言 … このファイルの中の文字を直接変える
 
 import { useState } from "react";
@@ -16,6 +17,8 @@ import { overlayStyle, closeButtonStyle } from "@/app/case/[caseId]/overlayStyle
 
 const PAPER_COLOR = "#fbf4e4";
 const INK_COLOR = "#3b2a17";
+// 便せんの1行の高さ（罫線の間隔もこれに合わせる）
+const LINE_HEIGHT = 27;
 
 export default function LetterOverlay({
   onClose,
@@ -56,19 +59,41 @@ export default function LetterOverlay({
             background: PAPER_COLOR,
             color: INK_COLOR,
             borderRadius: 4,
-            padding: "28px 24px 24px",
+            padding: "20px 20px 18px",
             width: "100%",
-            maxWidth: 330,
+            maxWidth: 340,
             boxShadow: "0 8px 24px rgba(0, 0, 0, 0.5)",
-            // 便せんの罫線
-            backgroundImage: "repeating-linear-gradient(transparent, transparent 31px, #e6d7b8 31px, #e6d7b8 32px)",
+            // 便せんの罫線（行の高さ LINE_HEIGHT に合わせる。スクロールしても文字と一緒に動く）
+            backgroundImage: `repeating-linear-gradient(transparent, transparent ${LINE_HEIGHT - 1}px, #e6d7b8 ${
+              LINE_HEIGHT - 1
+            }px, #e6d7b8 ${LINE_HEIGHT}px)`,
+            backgroundAttachment: "local",
             display: "flex",
             flexDirection: "column",
-            gap: 16,
+            gap: 10,
+            // 画面に収まらない小さな端末では、便せんの中だけを指でスクロールできるようにする
+            // （ホームは画面全体を固定しているが、ここだけは縦のスクロールを許す）
+            maxHeight: "calc(100dvh - 48px)",
+            overflowY: "auto",
+            overscrollBehavior: "contain",
+            touchAction: "pan-y",
           }}
         >
-          <p style={{ fontSize: 16, fontWeight: 600, lineHeight: "32px", whiteSpace: "pre-line" }}>{LETTER_BODY}</p>
-          <p style={{ fontSize: 16, fontWeight: 700, textAlign: "right", lineHeight: "32px" }}>― {LETTER_SENDER}より</p>
+          <p style={{ fontSize: 15, fontWeight: 500, lineHeight: `${LINE_HEIGHT}px`, whiteSpace: "pre-line" }}>
+            {/* **〜** で囲んだ部分（奇数番目の区切り）だけを太字にする */}
+            {LETTER_BODY.split("**").map((part, i) =>
+              i % 2 === 1 ? (
+                <strong key={i} style={{ fontWeight: 900 }}>
+                  {part}
+                </strong>
+              ) : (
+                part
+              )
+            )}
+          </p>
+          <p style={{ fontSize: 15, fontWeight: 700, textAlign: "right", lineHeight: `${LINE_HEIGHT}px` }}>
+            ― {LETTER_SENDER}より
+          </p>
           <button className="button-secondary" onClick={onClose} style={{ alignSelf: "center", fontSize: 15 }}>
             手紙を閉じる
           </button>

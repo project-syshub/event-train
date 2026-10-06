@@ -47,10 +47,27 @@ type ClueDefinition = ClueItem & {
 //  - LETTER_CLUE_ID … 一周したあとに届く依頼主からの手紙（手紙を閉じると手がかりに入る）
 export const LOOP_CLUE_ID = "tanuki-1";
 export const LETTER_CLUE_ID = "tanuki-2";
-// 手紙の差出人と本文（手紙の画面と、狸小路の手がかり一覧の両方に使う。\n で改行）
+// 手紙の差出人と本文（手紙の画面と、狸小路の手がかり一覧の両方に使う）
+//  - \n で改行、空行は \n\n
+//  - **〜** で囲んだ部分は手紙の画面で太字になる（手がかりの説明文では ** は消して表示する）
 export const LETTER_SENDER = "依頼主";
-export const LETTER_BODY =
-  "探偵さんへ\n\n街をひとめぐりしてくれたあなたに、お願いがあります。\nどうしても解いてほしい事件があるのです。\n\nくわしいことは、会ってお話しします。\nわたしは狸小路で待っています。";
+export const LETTER_BODY = [
+  "見つけてくれてありがとうございます！",
+  "",
+  "札幌に来るのがずいぶん久しぶりで、",
+  "私の知っている頃は、市電はまだループ化していなかったんです。",
+  "",
+  "電車事業所へ向かうつもりだったのですが、",
+  "知らない停留場に着いてしまって、思わず降りてしまいました……。",
+  "",
+  "まさか市電がこんなふうに変わっていたとは！",
+  "",
+  "私は**狸小路停留場の外回り側**にいます！",
+  "報酬を持って待っています。",
+].join("\n");
+
+// 太字の目印（**）を外した本文
+export const LETTER_PLAIN_BODY = LETTER_BODY.replaceAll("**", "");
 
 // TODO: PostgreSQLのcluesテーブルに置き換える。現時点ではここに直接書く。
 // 追加するときは、下の見本か既存の1件をコピーして、該当する事件の見出しの下に貼る。
@@ -155,7 +172,7 @@ export const mockClues: ClueDefinition[] = [
     slot: 2,
     caseId: "tanuki-koji",
     name: "依頼主からの手紙",
-    description: `${LETTER_BODY}\n\n― ${LETTER_SENDER}より`,
+    description: `${LETTER_PLAIN_BODY}\n\n― ${LETTER_SENDER}より`,
   },
 
   // ===== 恐怖！謎のびしょ濡れ事件（西15丁目・札幌市資料館） caseId: "nishi-15-choume" =====
