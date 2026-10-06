@@ -42,6 +42,16 @@ type ClueDefinition = ClueItem & {
   slot: number;
 };
 
+// ループ事件（狸小路）の手がかり。QRではなく、ホームの線路を一周なぞる・手紙を読むことで手に入る
+//  - LOOP_CLUE_ID … 一周なぞった直後に手に入る手がかり（これを見つけるとループ事件が現れる）
+//  - LETTER_CLUE_ID … 一周したあとに届く依頼主からの手紙（手紙を閉じると手がかりに入る）
+export const LOOP_CLUE_ID = "tanuki-1";
+export const LETTER_CLUE_ID = "tanuki-2";
+// 手紙の差出人と本文（手紙の画面と、狸小路の手がかり一覧の両方に使う。\n で改行）
+export const LETTER_SENDER = "依頼主";
+export const LETTER_BODY =
+  "探偵さんへ\n\n街をひとめぐりしてくれたあなたに、お願いがあります。\nどうしても解いてほしい事件があるのです。\n\nくわしいことは、会ってお話しします。\nわたしは狸小路で待っています。";
+
 // TODO: PostgreSQLのcluesテーブルに置き換える。現時点ではここに直接書く。
 // 追加するときは、下の見本か既存の1件をコピーして、該当する事件の見出しの下に貼る。
 //   {
@@ -129,6 +139,24 @@ export const mockClues: ClueDefinition[] = [
     ],
   },
 
+  // ===== ループ事件（狸小路・隠し事件） caseId: "tanuki-koji" =====
+  // QRではなく、ホームの線路を一周なぞる（tanuki-1）・届いた手紙を閉じる（tanuki-2）ことで手に入る
+  {
+    id: LOOP_CLUE_ID,
+    slot: 1,
+    caseId: "tanuki-koji",
+    // 中身はまだ決まっていないので「？」にしている
+    name: "？",
+    description: "？",
+  },
+  {
+    id: LETTER_CLUE_ID,
+    slot: 2,
+    caseId: "tanuki-koji",
+    name: "依頼主からの手紙",
+    description: `${LETTER_BODY}\n\n― ${LETTER_SENDER}より`,
+  },
+
   // ===== 恐怖！謎のびしょ濡れ事件（西15丁目・札幌市資料館） caseId: "nishi-15-choume" =====
   // QRの文字列・画像・参考文献はまだ決まっていない
   {
@@ -181,6 +209,11 @@ function normalizeQrText(text: string): string {
 
 function toClueItem({ id, caseId, name, description, image, references }: ClueDefinition): ClueItem {
   return { id, caseId, name, description, image, references };
+}
+
+export function findClueById(id: string): ClueItem | null {
+  const clue = mockClues.find((c) => c.id === id);
+  return clue ? toClueItem(clue) : null;
 }
 
 // 読み取ったQRコードの文字列から手がかりを引く。手がかり用でなければnull

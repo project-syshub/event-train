@@ -7,6 +7,8 @@
 //  - id        … 事件ページのURL（/case/<id>）になる。変えると古いURLは開けなくなる
 //  - stationKey… 路線図のどの駅の事件か（stations.ts の targetStationKeys に入っている必要がある）
 //  - statusColor … 状態ごとの色（今は路線図では使っていない）
+//  - unlockedByClueId … 隠し事件にするとき、出現の条件になる手がかりのid。その手がかりを見つけるまでは
+//                       路線図に出ず、事件ページも開けない（狸小路のループ事件で使用）
 //
 // 【事件を増やすとき】stations.ts の StationKey と targetStationKeys に駅を足してから、ここに1件追加する。
 // 対象駅に事件がないと、ホーム画面がエラーになる。
@@ -24,7 +26,14 @@ export type CaseInfo = {
   summary: string;
   // この事件で集める手がかりの数（未発見分は「？」の枠として表示する）
   clueSlots: number;
+  // 隠し事件の出現条件（この手がかりを見つけると、路線図に現れて事件ページを開けるようになる）
+  unlockedByClueId?: string;
 };
+
+// その事件がもう現れているか（隠し事件でなければ常に true）
+export function isCaseUnlocked(caseInfo: CaseInfo, foundClueIds: string[]): boolean {
+  return !caseInfo.unlockedByClueId || foundClueIds.includes(caseInfo.unlockedByClueId);
+}
 
 export const statusLabel: Record<CaseStatus, string> = {
   unsolved: "未解決",
@@ -67,5 +76,15 @@ export const mockCases: CaseInfo[] = [
     summary:
       "西15丁目停留所付近で深夜に悲鳴が聞かれたが、現場には誰もいなかった。目撃情報を募集中。",
     clueSlots: 5,
+  },
+  {
+    // 隠し事件：ホームの路線図の線路を一周なぞると、狸小路に現れる
+    id: "tanuki-koji",
+    stationKey: "tanuki-koji",
+    title: "ループ事件",
+    status: "unsolved",
+    summary: "街をひとめぐりした探偵のもとに、狸小路で待つ依頼主から手紙が届いた。",
+    clueSlots: 4,
+    unlockedByClueId: "tanuki-1",
   },
 ];

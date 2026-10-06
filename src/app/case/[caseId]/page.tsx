@@ -11,7 +11,7 @@
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getSessionUserId } from "@/lib/session";
-import { mockCases } from "@/lib/cases";
+import { isCaseUnlocked, mockCases } from "@/lib/cases";
 import { getClueSlotsForCase } from "@/lib/clues";
 import { getFoundClueIds } from "@/lib/progress";
 import { ChevronLeftIcon } from "@/components/icons";
@@ -37,6 +37,10 @@ export default async function CasePage({
   }
 
   const foundClueIds = await getFoundClueIds(userId);
+  // 隠し事件（ループ事件など）は、出現するまでページを開けない
+  if (!isCaseUnlocked(caseInfo, foundClueIds)) {
+    notFound();
+  }
   const slots = getClueSlotsForCase(caseInfo.stationKey, caseInfo.clueSlots, foundClueIds);
   const { found } = await searchParams;
   const openClueId = typeof found === "string" ? found : undefined;

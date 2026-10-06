@@ -11,7 +11,7 @@
 // 【対象駅を増やすとき】StationKey と targetStationKeys の両方に駅のkeyを足し、cases.ts に事件を追加する。
 
 // 事件が紐づく駅のkey。ここにない駅には事件や手がかりを結びつけられない
-export type StationKey = "densha-jigyosho-mae" | "nakajima-koen-dori" | "nishi-15-choume";
+export type StationKey = "densha-jigyosho-mae" | "nakajima-koen-dori" | "nishi-15-choume" | "tanuki-koji";
 
 export type LabelSide = "top" | "bottom" | "left" | "right";
 
@@ -75,11 +75,13 @@ export const allRouteStations: RouteStation[] = [
   { key: "nishisen-6jo", name: "西線6条", x: 140, y: 152, label: "left" },
 ];
 
-// 事件が紐づく対象の駅
+// 事件が紐づく対象の駅。狸小路（ループ事件）は線路を一周なぞると現れる隠し事件で、
+// それまでは普通の駅として表示する（出現の条件は cases.ts の unlockedByClueId）
 export const targetStationKeys: StationKey[] = [
   "densha-jigyosho-mae",
   "nakajima-koen-dori",
   "nishi-15-choume",
+  "tanuki-koji",
 ];
 
 export function isTargetStation(key: string): key is StationKey {

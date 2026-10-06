@@ -6,6 +6,7 @@
 //  - main の padding / gap … 余白。小さくするほど路線図が大きく表示される
 //  - 説明文の fontSize … 小さくするほど、縦の短い端末で路線図が大きく表示される
 //  - 駅の位置 … stations.ts、路線図の描き方 … TramMap.tsx
+//  - 線路を一周なぞったあとの演出（手がかり・手紙）… HomeMap.tsx
 //
 // 【注意】対象駅（stations.ts の targetStationKeys）に事件（cases.ts）がないとエラーで表示できなくなる。
 
@@ -13,8 +14,10 @@ import { redirect } from "next/navigation";
 import { getSessionUserId } from "@/lib/session";
 import { findUserById } from "@/lib/users";
 import { targetStationKeys } from "@/lib/stations";
-import { mockCases } from "@/lib/cases";
-import TramMap, { type MapMarker } from "./TramMap";
+import { isCaseUnlocked, mockCases } from "@/lib/cases";
+import { getFoundClueIds } from "@/lib/progress";
+import { type MapMarker } from "./TramMap";
+import HomeMap from "./HomeMap";
 import AccountMenu from "./AccountMenu";
 
 export default async function HomePage() {
@@ -28,16 +31,16 @@ export default async function HomePage() {
     redirect("/login");
   }
 
-  const markers: MapMarker[] = targetStationKeys.map((stationKey) => {
+  // 隠し事件（ループ事件）は、出現条件の手がかりを見つけるまで路線図に出さない
+  const foundClueIds = await getFoundClueIds(userId);
+  const markers: MapMarker[] = targetStationKeys.flatMap((stationKey) => {
     const caseInfo = mockCases.find((c) => c.stationKey === stationKey);
     if (!caseInfo) {
       throw new Error(`事件データが見つかりません: ${stationKey}`);
     }
+    if (!isCaseUnlocked(caseInfo, foundClueIds)) return [];
 
-    return {
-      stationKey,
-      caseId: caseInfo.id,
-    };
+    return [{ stationKey, caseId: caseInfo.id }];
   });
 
   return (
@@ -64,7 +67,7 @@ export default async function HomePage() {
       {/* 左右の余白を減らして路線図を横にも大きく見せる。左右の数値の差で左寄せの具合を決める
           （左を大きくするほど左に寄る。一番左の駅名が画面の端に付かない程度にする） */}
       <div style={{ flex: 1, minHeight: 0, margin: "0 -2px 0 -14px" }}>
-        <TramMap markers={markers} />
+        <HomeMap markers={markers} />
       </div>
     </main>
   );
