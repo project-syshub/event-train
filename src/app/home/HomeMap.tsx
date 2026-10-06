@@ -12,6 +12,7 @@
 //  - 手がかりのポップアップの上に出る一言 … loopHeading の文言
 //  - 反時計回りのときの文言 … WRONG_DIRECTION_TITLE / WRONG_DIRECTION_TEXT
 //  - WRONG_DIRECTION_MS … 「違うよ」を表示しておく時間（タップしても消える）
+//  - 初めて現れたときの紙吹雪 … Confetti.tsx
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -19,6 +20,7 @@ import type { ClueItem } from "@/lib/clues";
 import ClueDetailPopup from "@/app/case/[caseId]/ClueDetailPopup";
 import TramMap, { type MapMarker } from "./TramMap";
 import LetterOverlay from "./LetterOverlay";
+import Confetti from "./Confetti";
 
 const WRONG_DIRECTION_TITLE = "違うよ…！";
 const WRONG_DIRECTION_TEXT = "なにかが違うみたい";
@@ -119,6 +121,8 @@ export default function HomeMap({ markers }: { markers: MapMarker[] }) {
       {stage.kind === "clue" && (
         <ClueDetailPopup clue={stage.clue} heading={loopHeading(stage.isNew)} onClose={handleClueClose} />
       )}
+      {/* 初めてループ事件が現れたときは、手がかりのポップアップと一緒に紙吹雪を降らせる */}
+      {stage.kind === "clue" && stage.isNew && <Confetti />}
       {stage.kind === "letter" && <LetterOverlay onClose={handleLetterClose} />}
     </>
   );
