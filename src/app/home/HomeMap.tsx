@@ -6,19 +6,27 @@
 //  3. ポップアップを閉じると、依頼主から手紙が届く（LetterOverlay.tsx）
 //  4. 手紙を閉じると、手紙が狸小路の手がかりに入る
 // 2回目以降に一周したときは、手がかりのポップアップだけを出す（手紙はもう受け取っているため）。
+// 反時計回りに一周したときは、事件は出さずに「違うよ」と短く表示する。
 //
 // 【変更すると】
 //  - 手がかりのポップアップの上に出る一言 … loopHeading の文言
+//  - 反時計回りのときの文言 … WRONG_DIRECTION_TITLE / WRONG_DIRECTION_TEXT
+//  - WRONG_DIRECTION_MS … 「違うよ」を表示しておく時間（タップしても消える）
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ClueItem } from "@/lib/clues";
 import ClueDetailPopup from "@/app/case/[caseId]/ClueDetailPopup";
 import TramMap, { type MapMarker } from "./TramMap";
 import LetterOverlay from "./LetterOverlay";
 
+const WRONG_DIRECTION_TITLE = "違うよ…！";
+const WRONG_DIRECTION_TEXT = "なにかが違うみたい";
+const WRONG_DIRECTION_MS = 2200;
+
 type LoopStage =
   | { kind: "idle" }
+  | { kind: "wrong" }
   | { kind: "clue"; clue: ClueItem; isNew: boolean; letterReceived: boolean }
   | { kind: "letter" };
 
@@ -54,6 +62,17 @@ export default function HomeMap({ markers }: { markers: MapMarker[] }) {
     }
   }
 
+  // 「違うよ」は少し表示したら自動で消す
+  useEffect(() => {
+    if (stage.kind !== "wrong") return;
+    const timer = setTimeout(() => setStage({ kind: "idle" }), WRONG_DIRECTION_MS);
+    return () => clearTimeout(timer);
+  }, [stage.kind]);
+
+  function handleWrongDirection() {
+    if (stage.kind === "idle") setStage({ kind: "wrong" });
+  }
+
   async function handleLetterClose() {
     setStage({ kind: "idle" });
     await fetch("/api/loop", {
@@ -66,7 +85,36 @@ export default function HomeMap({ markers }: { markers: MapMarker[] }) {
 
   return (
     <>
-      <TramMap markers={markers} onLoopComplete={handleLoopComplete} />
+      <TramMap markers={markers} onLoopComplete={handleLoopComplete} onWrongDirection={handleWrongDirection} />
+
+      {stage.kind === "wrong" && (
+        <div
+          onClick={() => setStage({ kind: "idle" })}
+          style={{
+            position: "fixed",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 100,
+          }}
+        >
+          <div
+            className="letter-pop"
+            style={{
+              background: "rgba(0, 0, 0, 0.8)",
+              color: "white",
+              borderRadius: 12,
+              padding: "20px 32px",
+              textAlign: "center",
+              boxShadow: "0 6px 20px rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <p style={{ fontSize: 26, fontWeight: 900 }}>{WRONG_DIRECTION_TITLE}</p>
+            <p style={{ fontSize: 15, fontWeight: 700, marginTop: 6 }}>{WRONG_DIRECTION_TEXT}</p>
+          </div>
+        </div>
+      )}
 
       {stage.kind === "clue" && (
         <ClueDetailPopup clue={stage.clue} heading={loopHeading(stage.isNew)} onClose={handleClueClose} />

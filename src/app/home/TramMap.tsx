@@ -2,7 +2,8 @@
 
 // 【役割】ホームの路線図（線路・駅・事件の虫眼鏡マーカー）を描く。
 // 事件のある駅の虫眼鏡・駅名を押すと、その事件のページへ移動する。
-// 線路を指でなぞって一周すると onLoopComplete を呼ぶ（ループ事件。演出は HomeMap.tsx）。
+// 線路を指でなぞって時計回りに一周すると onLoopComplete、反時計回りに一周すると onWrongDirection を呼ぶ
+// （ループ事件。演出は HomeMap.tsx）。
 //
 // 【変更すると】
 //  - ROUTE_COLOR / ROUTE_WIDTH / CORNER_RADIUS … 線路の色・太さ・角の丸み
@@ -11,8 +12,7 @@
 //  - UNDERLINE_COLOR … 事件のある駅名の下線の色
 //  - TARGET_TOP_LABEL_GAP … 事件のある駅名を上に出すときの、虫眼鏡からの離れ具合
 //  - TRACE_TOLERANCE … 線路からどれだけ離れても「なぞっている」とみなすか（大きいほど判定が甘い）
-//  - TRACE_COMPLETE_RATIO … 線路の何割をなぞったら一周とみなすか（時計回りのみ。反時計回りは数えない）
-//  - TRACE_BACKTRACK_TOLERANCE … 手ぶれで反時計回りに戻ってもやり直しにしない距離
+//  - TRACE_COMPLETE_RATIO … 線路の何割をなぞったら一周とみなすか（どちら回りでもなぞれるが、事件が出るのは時計回りだけ）
 //  - TRACE_COLOR / TRACE_WIDTH … なぞった部分の光る線の色と太さ
 //  - 駅の位置・駅名の向き・線路の角は stations.ts で変える
 
@@ -50,8 +50,6 @@ const TRACE_TOLERANCE = 26;
 // 1回の指の動きでこれ以上進んだら、線路を飛ばしたとみなしてやり直し
 const TRACE_MAX_STEP = 60;
 const TRACE_COMPLETE_RATIO = 0.97;
-// 一周は時計回りだけ。手ぶれで少し戻るのは許し、これ以上反時計回りに戻ったらやり直し
-const TRACE_BACKTRACK_TOLERANCE = 20;
 const TRACE_COLOR = "#f5c518";
 const TRACE_WIDTH = 8;
 // 一周したあと、線路全体を光らせておく時間（ミリ秒）
@@ -119,9 +117,13 @@ type Trace = { start: number; last: number; traveled: number };
 export default function TramMap({
   markers,
   onLoopComplete,
+  onWrongDirection,
 }: {
   markers: MapMarker[];
+  // 時計回りに一周なぞったとき
   onLoopComplete?: () => void;
+  // 反時計回りに一周なぞったとき（事件は出さず「違うよ」と出すため）
+  onWrongDirection?: () => void;
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const routeRef = useRef<SVGPathElement>(null);
@@ -203,21 +205,20 @@ export default function TramMap({
     trace.last = nearest.s;
     if (Math.abs(trace.traveled) > 10) suppressClickRef.current = true;
 
-    // 時計回り（線路の点の並び順の向き）だけを数える。反時計回りに戻りすぎたらやり直し
-    if (trace.traveled < -TRACE_BACKTRACK_TOLERANCE) {
-      cancelTrace();
-      return;
-    }
+    // なぞった区間を光らせる（時計回り・反時計回りのどちらでもなぞれる）
+    const length = Math.min(Math.abs(trace.traveled), total);
+    const start = trace.traveled >= 0 ? trace.start : (((trace.start + trace.traveled) % total) + total) % total;
+    setHighlight({ start, length, total });
 
-    // なぞった区間を光らせる
-    setHighlight({ start: trace.start, length: Math.min(Math.max(trace.traveled, 0), total), total });
-
-    if (trace.traveled >= total * TRACE_COMPLETE_RATIO) {
+    // 一周したら、時計回り（線路の点の並び順の向き）なら事件、反時計回りなら「違うよ」
+    if (Math.abs(trace.traveled) >= total * TRACE_COMPLETE_RATIO) {
+      const clockwise = trace.traveled > 0;
       traceRef.current = null;
       setHighlight({ start: 0, length: total, total });
       setTimeout(() => {
         setHighlight(null);
-        onLoopComplete?.();
+        if (clockwise) onLoopComplete?.();
+        else onWrongDirection?.();
       }, TRACE_DONE_FLASH_MS);
     }
   }
