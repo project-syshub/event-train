@@ -81,7 +81,7 @@ export const mockCases: CaseInfo[] = [
     // 隠し事件：ホームの路線図の線路を一周なぞると、狸小路に現れる
     id: "tanuki-koji",
     stationKey: "tanuki-koji",
-    title: "ループ事件",
+    title: "迷子の報酬係を探せ",
     status: "unsolved",
     summary: "街をひとめぐりした探偵のもとに、狸小路で待つ報酬係から手紙が届いた。",
     clueSlots: 2,

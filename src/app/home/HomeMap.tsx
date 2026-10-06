@@ -9,7 +9,7 @@
 // 反時計回りに一周したときは、事件は出さずに「違うよ」と短く表示する。
 //
 // 【変更すると】
-//  - 手がかりのポップアップの上に出る一言 … loopHeading の文言
+//  - 手がかりのポップアップの上に出る一言 … loopHeading の文言（事件名は cases.ts の title から入る）
 //  - 反時計回りのときの文言 … WRONG_DIRECTION_TITLE / WRONG_DIRECTION_TEXT
 //  - WRONG_DIRECTION_MS … 「違うよ」を表示しておく時間（タップしても消える）
 //  - 初めて現れたときの紙吹雪 … Confetti.tsx
@@ -17,6 +17,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ClueItem } from "@/lib/clues";
+import { mockCases } from "@/lib/cases";
 import ClueDetailPopup from "@/app/case/[caseId]/ClueDetailPopup";
 import TramMap, { type MapMarker } from "./TramMap";
 import LetterOverlay from "./LetterOverlay";
@@ -32,8 +33,11 @@ type LoopStage =
   | { kind: "clue"; clue: ClueItem; isNew: boolean; letterReceived: boolean }
   | { kind: "letter" };
 
+// 狸小路の隠し事件の名前（cases.ts の title。変えるとポップアップの一言にも反映される）
+const LOOP_CASE_TITLE = mockCases.find((c) => c.id === "tanuki-koji")?.title ?? "";
+
 function loopHeading(isNew: boolean): string {
-  return isNew ? "狸小路に「ループ事件」が現れた！\n手がかりを発見！" : "この手がかりはもう見つけている";
+  return isNew ? `狸小路に「${LOOP_CASE_TITLE}」が現れた！\n手がかりを発見！` : "この手がかりはもう見つけている";
 }
 
 export default function HomeMap({ markers }: { markers: MapMarker[] }) {
