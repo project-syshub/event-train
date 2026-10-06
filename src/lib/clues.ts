@@ -185,7 +185,7 @@ export const mockClues: ClueDefinition[] = [
     caseId: "nishi-15-choume",
     name: "公園",
     description:
-      "【ポイント】\n1871年（明治4年）、札幌で最初の公園がつくられました。\n現在の北海道大学の南側につくられた公園です。",
+      "1871年（明治4年）、札幌で最初の公園がつくられました。\n現在の北海道大学の南側につくられた公園です。",
     image: "/clues/shiryokan-koen.jpg",
   },
   {
@@ -195,7 +195,7 @@ export const mockClues: ClueDefinition[] = [
     caseId: "nishi-15-choume",
     name: "創成川",
     description:
-      "【ポイント】\n札幌の街を東西に分ける人工の川です。\n① 1874年（明治7年）「創成川」と名づけられる\n② 大友亀太郎が開いた人工の川",
+      "札幌の街を東西に分ける人工の川です。\n・1874年（明治7年）「創成川」と名づけられる\n・大友亀太郎が開いた人工の川",
     image: "/clues/shiryokan-soseigawa.jpg",
   },
   {
@@ -205,7 +205,7 @@ export const mockClues: ClueDefinition[] = [
     caseId: "nishi-15-choume",
     name: "鉄道",
     description:
-      "【ポイント】\n石炭や石材を運ぶために、鉄道がつくられました。\n① 1880年（明治13年）小樽（手宮）〜札幌で鉄道が開通\n② 国内で3番目の鉄道",
+      "石炭や石材を運ぶために、鉄道がつくられました。\n・1880年（明治13年）小樽（手宮）〜札幌で鉄道が開通\n・国内で3番目の鉄道",
     image: "/clues/shiryokan-tetsudo.jpg",
   },
   {
@@ -215,7 +215,7 @@ export const mockClues: ClueDefinition[] = [
     caseId: "nishi-15-choume",
     name: "石山通",
     description:
-      "【ポイント】\n札幌軟石を運ぶ道として発展しました。\n① 1909年（明治42年）石山通に馬車鉄道が通る\n② 石材だけでなく、人も利用した",
+      "札幌軟石を運ぶ道として発展しました。\n・1909年（明治42年）石山通に馬車鉄道が通る\n・石材だけでなく、人も利用した",
     image: "/clues/shiryokan-ishiyama.jpg",
   },
   {
@@ -225,7 +225,7 @@ export const mockClues: ClueDefinition[] = [
     caseId: "nishi-15-choume",
     name: "市電",
     description:
-      "【ポイント】\n札幌で電車の運転が始まり、まちの大切な交通手段になりました。\n① 1918年（大正7年）電車の運転が始まる\n② 1927年（昭和2年）市電事業が市営化",
+      "札幌で電車の運転が始まり、まちの大切な交通手段になりました。\n・1918年（大正7年）電車の運転が始まる\n・1927年（昭和2年）市電事業が市営化",
     image: "/clues/shiryokan-shiden.jpg",
   },
 ];
