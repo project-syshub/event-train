@@ -29,8 +29,8 @@ export type ClueItem = {
   references?: ClueReference[];
 };
 
-// 参考文献。title は画面に出す日本語の名前、url は元の資料の場所（画面には出さない）
-export type ClueReference = { title: string; url: string };
+// 参考文献。title は画面に出す日本語の名前、url は元の資料の場所（画面には出さない。分からなければ省略できる）
+export type ClueReference = { title: string; url?: string };
 
 // QRコードの値はクライアントに渡さない（未発見の手がかりを推測できないようにする）
 type ClueDefinition = ClueItem & {
@@ -145,9 +145,10 @@ export const mockClues: ClueDefinition[] = [
     id: LOOP_CLUE_ID,
     slot: 1,
     caseId: "tanuki-koji",
-    // 中身はまだ決まっていないので「？」にしている
-    name: "？",
-    description: "？",
+    name: "狸小路",
+    description: "市電のループ化によって、新しい停留場「狸小路」が誕生した。",
+    image: "/clues/tanuki-loop-map.jpg",
+    references: [{ title: "札幌市HP／札幌市路面電車ループ事業" }],
   },
   {
     id: LETTER_CLUE_ID,

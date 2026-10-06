@@ -92,7 +92,7 @@ export default function ClueDetailPopup({
           >
             <p style={{ fontWeight: 700, marginBottom: 4 }}>参考文献</p>
             {clue.references.map((reference) => (
-              <p key={reference.url + reference.title} style={{ marginBottom: 2 }}>
+              <p key={reference.title} style={{ marginBottom: 2 }}>
                 {reference.title}
               </p>
             ))}
