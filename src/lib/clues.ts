@@ -177,7 +177,7 @@ export const mockClues: ClueDefinition[] = [
   },
 
   // ===== 恐怖！謎のびしょ濡れ事件（西15丁目・札幌市資料館） caseId: "nishi-15-choume" =====
-  // QRの文字列・画像・参考文献はまだ決まっていない
+  // QRの文字列・参考文献はまだ決まっていない
   {
     id: "nishi15-1",
     slot: 1,
@@ -185,6 +185,7 @@ export const mockClues: ClueDefinition[] = [
     name: "公園",
     description:
       "【ポイント】\n1871年（明治4年）、札幌で最初の公園がつくられました。\n現在の北海道大学の南側につくられた公園です。",
+    image: "/clues/shiryokan-koen.jpg",
   },
   {
     id: "nishi15-2",
@@ -193,6 +194,7 @@ export const mockClues: ClueDefinition[] = [
     name: "創成川",
     description:
       "【ポイント】\n札幌の街を東西に分ける人工の川です。\n① 1874年（明治7年）「創成川」と名づけられる\n② 大友亀太郎が開いた人工の川",
+    image: "/clues/shiryokan-soseigawa.jpg",
   },
   {
     id: "nishi15-3",
@@ -201,6 +203,7 @@ export const mockClues: ClueDefinition[] = [
     name: "鉄道",
     description:
       "【ポイント】\n石炭や石材を運ぶために、鉄道がつくられました。\n① 1880年（明治13年）小樽（手宮）〜札幌で鉄道が開通\n② 国内で3番目の鉄道",
+    image: "/clues/shiryokan-tetsudo.jpg",
   },
   {
     id: "nishi15-4",
@@ -209,6 +212,7 @@ export const mockClues: ClueDefinition[] = [
     name: "石山通",
     description:
       "【ポイント】\n札幌軟石を運ぶ道として発展しました。\n① 1909年（明治42年）石山通に馬車鉄道が通る\n② 石材だけでなく、人も利用した",
+    image: "/clues/shiryokan-ishiyama.jpg",
   },
   {
     id: "nishi15-5",
@@ -217,6 +221,7 @@ export const mockClues: ClueDefinition[] = [
     name: "市電",
     description:
       "【ポイント】\n札幌で電車の運転が始まり、まちの大切な交通手段になりました。\n① 1918年（大正7年）電車の運転が始まる\n② 1927年（昭和2年）市電事業が市営化",
+    image: "/clues/shiryokan-shiden.jpg",
   },
 ];
 
