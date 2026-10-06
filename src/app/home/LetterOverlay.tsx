@@ -8,6 +8,7 @@
 //  - 手紙の差出人と本文 … clues.ts の LETTER_SENDER / LETTER_BODY（**〜** で囲んだ部分は太字になる）
 //  - PAPER_COLOR / INK_COLOR … 便せんの色と文字の色（封筒の絵は icons.tsx の EnvelopeIcon）
 //  - LINE_HEIGHT … 便せんの行の高さ（小さくすると小さな画面でも収まりやすい）
+//  - BODY_FONT_SIZE … 本文の文字の大きさ（狭い画面では、一番長い行が収まるよう自動で小さくなる）
 //  - 「手紙が届いた！」などの文言 … このファイルの中の文字を直接変える
 
 import { useState } from "react";
@@ -19,6 +20,12 @@ const PAPER_COLOR = "#fbf4e4";
 const INK_COLOR = "#3b2a17";
 // 便せんの1行の高さ（罫線の間隔もこれに合わせる）
 const LINE_HEIGHT = 27;
+const PAPER_MAX_WIDTH = 340;
+const PAPER_PADDING_X = 20;
+// 本文の文字の大きさ。本文は自動で折り返さず、書いた改行の位置だけで行を分けるので、
+// 一番長い行（全角16文字）が便せんの幅に収まるよう、狭い画面では文字を小さくする。
+// （便せんの中の幅 ÷ 17文字ぶん。17 は端末ごとの文字幅の違いに備えた余裕。最大は15px）
+const BODY_FONT_SIZE = `min(15px, calc((min(100vw - 64px, ${PAPER_MAX_WIDTH}px) - ${PAPER_PADDING_X * 2}px) / 17))`;
 
 export default function LetterOverlay({
   onClose,
@@ -59,9 +66,9 @@ export default function LetterOverlay({
             background: PAPER_COLOR,
             color: INK_COLOR,
             borderRadius: 4,
-            padding: "20px 20px 18px",
+            padding: `20px ${PAPER_PADDING_X}px 18px`,
             width: "100%",
-            maxWidth: 340,
+            maxWidth: PAPER_MAX_WIDTH,
             boxShadow: "0 8px 24px rgba(0, 0, 0, 0.5)",
             // 便せんの罫線（行の高さ LINE_HEIGHT に合わせる。スクロールしても文字と一緒に動く）
             backgroundImage: `repeating-linear-gradient(transparent, transparent ${LINE_HEIGHT - 1}px, #e6d7b8 ${
@@ -82,7 +89,8 @@ export default function LetterOverlay({
             touchAction: "pan-y",
           }}
         >
-          <p style={{ fontSize: 15, fontWeight: 500, lineHeight: `${LINE_HEIGHT}px`, whiteSpace: "pre-line" }}>
+          {/* 自動で折り返さない（改行は clues.ts の LETTER_BODY に書いた位置だけ） */}
+          <p style={{ fontSize: BODY_FONT_SIZE, fontWeight: 500, lineHeight: `${LINE_HEIGHT}px`, whiteSpace: "pre" }}>
             {/* **〜** で囲んだ部分（奇数番目の区切り）だけを太字にする */}
             {LETTER_BODY.split("**").map((part, i) =>
               i % 2 === 1 ? (
@@ -94,7 +102,7 @@ export default function LetterOverlay({
               )
             )}
           </p>
-          <p style={{ fontSize: 15, fontWeight: 700, textAlign: "right", lineHeight: `${LINE_HEIGHT}px` }}>
+          <p style={{ fontSize: BODY_FONT_SIZE, fontWeight: 700, textAlign: "right", lineHeight: `${LINE_HEIGHT}px` }}>
             ― {LETTER_SENDER}より
           </p>
           <button className="button-secondary" onClick={onClose} style={{ alignSelf: "center", fontSize: 15, marginTop: 12 }}>
