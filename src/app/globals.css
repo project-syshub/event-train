@@ -200,3 +200,17 @@ input[type="password"]:focus {
 .letter-pop {
   animation: letter-pop 0.35s ease-out;
 }
+
+/* ホーム画面の固定（ScreenLock.tsx が html に付ける）。スワイプでスクロール・引っぱって更新・
+   端のバウンド・ピンチでの拡大が起きないよう、画面全体を固定する */
+html.screen-locked,
+html.screen-locked body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+html.screen-locked body {
+  position: fixed;
+  inset: 0;
+  touch-action: none;
+}

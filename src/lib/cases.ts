@@ -84,7 +84,7 @@ export const mockCases: CaseInfo[] = [
     title: "ループ事件",
     status: "unsolved",
     summary: "街をひとめぐりした探偵のもとに、狸小路で待つ依頼主から手紙が届いた。",
-    clueSlots: 4,
+    clueSlots: 2,
     unlockedByClueId: "tanuki-1",
   },
 ];

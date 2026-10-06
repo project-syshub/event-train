@@ -7,6 +7,7 @@
 //  - 説明文の fontSize … 小さくするほど、縦の短い端末で路線図が大きく表示される
 //  - 駅の位置 … stations.ts、路線図の描き方 … TramMap.tsx
 //  - 線路を一周なぞったあとの演出（手がかり・手紙）… HomeMap.tsx
+//  - スワイプで画面が動かないようにする固定 … ScreenLock.tsx（外すと、ホームでもスクロールなどができる）
 //
 // 【注意】対象駅（stations.ts の targetStationKeys）に事件（cases.ts）がないとエラーで表示できなくなる。
 
@@ -19,6 +20,7 @@ import { getFoundClueIds } from "@/lib/progress";
 import { type MapMarker } from "./TramMap";
 import HomeMap from "./HomeMap";
 import AccountMenu from "./AccountMenu";
+import ScreenLock from "./ScreenLock";
 
 export default async function HomePage() {
   const userId = await getSessionUserId();
@@ -56,6 +58,8 @@ export default async function HomePage() {
         gap: 16,
       }}
     >
+      {/* スワイプで画面が動かないよう、ホームを表示している間は画面全体を固定する */}
+      <ScreenLock />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h1>ホーム</h1>
         <AccountMenu loginId={user.loginId} />
