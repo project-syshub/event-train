@@ -1,8 +1,9 @@
-// 【役割】アプリ内で使うアイコン（虫眼鏡・パズル・戻る矢印・閉じる×）。
+// 【役割】アプリ内で使うアイコン（虫眼鏡・パズル・戻る矢印・閉じる×・手紙の封筒）。
 //
 // 【変更すると】
 //  - 各アイコンの size の初期値 … 大きさを指定せずに使った場所のアイコンの大きさ
 //  - PuzzleIcon … 画像のない手がかりのカードに出るアイコン
+//  - EnvelopeIcon … ループ事件の手紙（届いたときの画面と、狸小路の手がかり一覧のカード）に出る封筒の絵
 //
 // 丸ボタンの中でずれないよう、左右上下対称なviewBoxのSVGアイコンとして定義する。
 // 色はstroke="currentColor"で親要素の文字色を継承する。
@@ -79,6 +80,19 @@ export function CloseIcon({ size = 18 }: { size?: number }) {
       focusable="false"
     >
       <path d="M18 6L6 18M6 6l12 12" />
+    </svg>
+  );
+}
+
+// 封筒の絵（クリーム色の封筒に赤い封蝋）。width に合わせて縦横比を保ったまま大きさが変わる
+export function EnvelopeIcon({ width = 180 }: { width?: number }) {
+  return (
+    <svg width={width} height={(width * 130) / 180} viewBox="0 0 180 130" aria-hidden="true" focusable="false">
+      <rect x={4} y={10} width={172} height={114} rx={6} fill="#fbf4e4" stroke="#c9a97a" strokeWidth={3} />
+      <path d="M6 14 L90 76 L174 14" fill="none" stroke="#c9a97a" strokeWidth={3} strokeLinejoin="round" />
+      <path d="M6 120 L70 64 M174 120 L110 64" stroke="#e3d2b0" strokeWidth={2} />
+      <circle cx={90} cy={76} r={15} fill="#b3261e" stroke="#7d1a14" strokeWidth={2} />
+      <path d="M84 76 h12 M90 70 v12" stroke="#f3c7c2" strokeWidth={2} strokeLinecap="round" />
     </svg>
   );
 }

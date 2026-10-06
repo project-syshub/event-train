@@ -6,29 +6,16 @@
 //
 // 【変更すると】
 //  - 手紙の差出人と本文 … clues.ts の LETTER_SENDER / LETTER_BODY（狸小路の手がかり一覧にも同じ文が入る）
-//  - PAPER_COLOR / INK_COLOR … 便せんの色と文字の色
+//  - PAPER_COLOR / INK_COLOR … 便せんの色と文字の色（封筒の絵は icons.tsx の EnvelopeIcon）
 //  - 「手紙が届いた！」などの文言 … このファイルの中の文字を直接変える
 
 import { useState } from "react";
 import { LETTER_BODY, LETTER_SENDER } from "@/lib/clues";
-import { CloseIcon } from "@/components/icons";
+import { CloseIcon, EnvelopeIcon } from "@/components/icons";
 import { overlayStyle, closeButtonStyle } from "@/app/case/[caseId]/overlayStyles";
 
 const PAPER_COLOR = "#fbf4e4";
 const INK_COLOR = "#3b2a17";
-
-// 封筒の絵（クリーム色の封筒に赤い封蝋）
-function EnvelopeIcon() {
-  return (
-    <svg width={180} height={130} viewBox="0 0 180 130" aria-hidden="true">
-      <rect x={4} y={10} width={172} height={114} rx={6} fill={PAPER_COLOR} stroke="#c9a97a" strokeWidth={3} />
-      <path d="M6 14 L90 76 L174 14" fill="none" stroke="#c9a97a" strokeWidth={3} strokeLinejoin="round" />
-      <path d="M6 120 L70 64 M174 120 L110 64" stroke="#e3d2b0" strokeWidth={2} />
-      <circle cx={90} cy={76} r={15} fill="#b3261e" stroke="#7d1a14" strokeWidth={2} />
-      <path d="M84 76 h12 M90 70 v12" stroke="#f3c7c2" strokeWidth={2} strokeLinecap="round" />
-    </svg>
-  );
-}
 
 export default function LetterOverlay({
   onClose,
@@ -53,7 +40,7 @@ export default function LetterOverlay({
           className="letter-pop"
           style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, textAlign: "center" }}
         >
-          <EnvelopeIcon />
+          <EnvelopeIcon width={180} />
           <p style={{ color: "white", fontSize: 24, fontWeight: 900 }}>手紙が届いた！</p>
           <p style={{ color: "white", fontSize: 15, fontWeight: 700, lineHeight: 1.6 }}>
             {LETTER_SENDER}から、一通の手紙が届いたようだ…

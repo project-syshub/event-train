@@ -8,8 +8,8 @@
 
 import Image from "next/image";
 import type { CSSProperties } from "react";
-import type { ClueItem } from "@/lib/clues";
-import { PuzzleIcon } from "@/components/icons";
+import { LETTER_CLUE_ID, type ClueItem } from "@/lib/clues";
+import { EnvelopeIcon, PuzzleIcon } from "@/components/icons";
 
 const photoStyle: CSSProperties = {
   position: "relative",
@@ -23,7 +23,8 @@ const photoStyle: CSSProperties = {
   overflow: "hidden",
 };
 
-// 手がかりの写真。画像が未設定の手がかりはパズルのアイコンで代用する
+// 手がかりの写真。画像が未設定の手がかりはパズルのアイコンで代用する。
+// 依頼主からの手紙（ループ事件）だけは、封筒の絵を出す
 export default function CluePhoto({
   clue,
   iconSize,
@@ -37,6 +38,10 @@ export default function CluePhoto({
     <div style={photoStyle}>
       {clue.image ? (
         <Image src={clue.image} alt={clue.name} fill sizes={sizes} style={{ objectFit: "contain" }} />
+      ) : clue.id === LETTER_CLUE_ID ? (
+        <div style={{ width: "80%", display: "flex", justifyContent: "center" }}>
+          <EnvelopeIcon width={iconSize * 2.6} />
+        </div>
       ) : (
         <PuzzleIcon size={iconSize} />
       )}
