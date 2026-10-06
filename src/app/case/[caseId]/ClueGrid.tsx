@@ -7,7 +7,7 @@
 //  - CAPTION_FONT_SIZE … カードの上（写真の白枠の外）の手がかり名の文字サイズ
 //  - 未発見の枠の「？」の fontSize … 「？」の大きさ。文字を変えれば「？？？」などにもできる
 //  - 写真の表示方法は CluePhoto.tsx、カードを押したときの詳細は ClueDetailPopup.tsx で変える
-//    （依頼主からの手紙だけは、ホームで届いたときと同じ便せん LetterOverlay.tsx で表示する）
+//    （報酬係からの手紙だけは、ホームで届いたときと同じ便せん LetterOverlay.tsx で表示する）
 
 import { useEffect, useState, type CSSProperties } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -128,7 +128,7 @@ export default function ClueGrid({ slots, openClueId }: { slots: ClueSlot[]; ope
         )}
       </div>
 
-      {/* 依頼主からの手紙（ループ事件）は、手がかりの詳細ではなく、届いたときと同じ便せんで表示する */}
+      {/* 報酬係からの手紙（ループ事件）は、手がかりの詳細ではなく、届いたときと同じ便せんで表示する */}
       {selected &&
         (selected.id === LETTER_CLUE_ID ? (
           <LetterOverlay opened onClose={() => setSelected(null)} />

@@ -44,13 +44,13 @@ type ClueDefinition = ClueItem & {
 
 // ループ事件（狸小路）の手がかり。QRではなく、ホームの線路を一周なぞる・手紙を読むことで手に入る
 //  - LOOP_CLUE_ID … 一周なぞった直後に手に入る手がかり（これを見つけるとループ事件が現れる）
-//  - LETTER_CLUE_ID … 一周したあとに届く依頼主からの手紙（手紙を閉じると手がかりに入る）
+//  - LETTER_CLUE_ID … 一周したあとに届く報酬係からの手紙（手紙を閉じると手がかりに入る）
 export const LOOP_CLUE_ID = "tanuki-1";
 export const LETTER_CLUE_ID = "tanuki-2";
 // 手紙の差出人と本文（手紙の画面と、狸小路の手がかり一覧の両方に使う）
 //  - \n で改行、空行は \n\n
 //  - **〜** で囲んだ部分は手紙の画面で太字になる（手がかりの説明文では ** は消して表示する）
-export const LETTER_SENDER = "依頼主";
+export const LETTER_SENDER = "報酬係";
 export const LETTER_BODY = [
   "見つけてくれてありがとうございます！",
   "",
@@ -171,7 +171,7 @@ export const mockClues: ClueDefinition[] = [
     id: LETTER_CLUE_ID,
     slot: 2,
     caseId: "tanuki-koji",
-    name: "依頼主からの手紙",
+    name: `${LETTER_SENDER}からの手紙`,
     description: `${LETTER_PLAIN_BODY}\n\n― ${LETTER_SENDER}より`,
   },
 

@@ -83,7 +83,7 @@ export const mockCases: CaseInfo[] = [
     stationKey: "tanuki-koji",
     title: "ループ事件",
     status: "unsolved",
-    summary: "街をひとめぐりした探偵のもとに、狸小路で待つ依頼主から手紙が届いた。",
+    summary: "街をひとめぐりした探偵のもとに、狸小路で待つ報酬係から手紙が届いた。",
     clueSlots: 2,
     unlockedByClueId: "tanuki-1",
   },

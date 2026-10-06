@@ -24,7 +24,7 @@ const photoStyle: CSSProperties = {
 };
 
 // 手がかりの写真。画像が未設定の手がかりはパズルのアイコンで代用する。
-// 依頼主からの手紙（ループ事件）だけは、封筒の絵を出す
+// 報酬係からの手紙（ループ事件）だけは、封筒の絵を出す
 export default function CluePhoto({
   clue,
   iconSize,
