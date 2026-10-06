@@ -214,27 +214,3 @@ html.screen-locked body {
   inset: 0;
   touch-action: none;
 }
-
-/* 紙吹雪（Confetti.tsx）。上から落ちながら、横に流れて回転し、最後は消える */
-.confetti-piece {
-  position: absolute;
-  top: -20px;
-  opacity: 0;
-  animation-name: confetti-fall;
-  animation-timing-function: cubic-bezier(0.25, 0.4, 0.55, 1);
-  animation-fill-mode: forwards;
-}
-
-@keyframes confetti-fall {
-  0% {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) rotate(0deg);
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(var(--drift), 105vh, 0) rotate(var(--spin));
-  }
-}
