@@ -68,9 +68,12 @@ export default function LetterOverlay({
               LINE_HEIGHT - 1
             }px, #e6d7b8 ${LINE_HEIGHT}px)`,
             backgroundAttachment: "local",
+            // 罫線を文字の行に合わせる（余白の内側＝1行目の文字の上端から数え始め、各行の下に線が来る）
+            backgroundOrigin: "content-box",
             display: "flex",
             flexDirection: "column",
-            gap: 10,
+            // 署名も本文と同じ行の並びに乗るよう、段落の間はあけない
+            gap: 0,
             // 画面に収まらない小さな端末では、便せんの中だけを指でスクロールできるようにする
             // （ホームは画面全体を固定しているが、ここだけは縦のスクロールを許す）
             maxHeight: "calc(100dvh - 48px)",
@@ -94,7 +97,7 @@ export default function LetterOverlay({
           <p style={{ fontSize: 15, fontWeight: 700, textAlign: "right", lineHeight: `${LINE_HEIGHT}px` }}>
             ― {LETTER_SENDER}より
           </p>
-          <button className="button-secondary" onClick={onClose} style={{ alignSelf: "center", fontSize: 15 }}>
+          <button className="button-secondary" onClick={onClose} style={{ alignSelf: "center", fontSize: 15, marginTop: 12 }}>
             手紙を閉じる
           </button>
         </div>
