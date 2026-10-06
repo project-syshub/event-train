@@ -8,11 +8,11 @@
 //  - 手紙の差出人と本文 … clues.ts の LETTER_SENDER / LETTER_BODY（**〜** で囲んだ部分は太字になる）
 //  - PAPER_COLOR / INK_COLOR … 便せんの色と文字の色（封筒の絵は icons.tsx の EnvelopeIcon）
 //  - LINE_HEIGHT … 便せんの行の高さ（小さくすると小さな画面でも収まりやすい）
-//  - BODY_FONT_SIZE … 本文の文字の大きさ（狭い画面では、一番長い行が収まるよう自動で小さくなる）
+//  - BODY_FONT_SIZE … 本文の文字の大きさ（一番長い行が便せんに収まるよう自動で決まる。最大15px）
 //  - 「手紙が届いた！」などの文言 … このファイルの中の文字を直接変える
 
 import { useState } from "react";
-import { LETTER_BODY, LETTER_SENDER } from "@/lib/clues";
+import { LETTER_BODY, LETTER_PLAIN_BODY, LETTER_SENDER } from "@/lib/clues";
 import { CloseIcon, EnvelopeIcon } from "@/components/icons";
 import { overlayStyle, closeButtonStyle } from "@/app/case/[caseId]/overlayStyles";
 
@@ -20,12 +20,15 @@ const PAPER_COLOR = "#fbf4e4";
 const INK_COLOR = "#3b2a17";
 // 便せんの1行の高さ（罫線の間隔もこれに合わせる）
 const LINE_HEIGHT = 27;
-const PAPER_MAX_WIDTH = 340;
-const PAPER_PADDING_X = 20;
+const PAPER_MAX_WIDTH = 360;
+const OVERLAY_PADDING_X = 16;
+const PAPER_PADDING_X = 16;
 // 本文の文字の大きさ。本文は自動で折り返さず、書いた改行の位置だけで行を分けるので、
-// 一番長い行（全角16文字）が便せんの幅に収まるよう、狭い画面では文字を小さくする。
-// （便せんの中の幅 ÷ 17文字ぶん。17 は端末ごとの文字幅の違いに備えた余裕。最大は15px）
-const BODY_FONT_SIZE = `min(15px, calc((min(100vw - 64px, ${PAPER_MAX_WIDTH}px) - ${PAPER_PADDING_X * 2}px) / 17))`;
+// 一番長い行が便せんの幅に収まるよう、文字の大きさを決める。
+// （便せんの中の幅 ÷（一番長い行の文字数＋1）。＋1 は端末ごとの文字幅の違いに備えた余裕。最大は15px）
+const LONGEST_LINE = Math.max(...LETTER_PLAIN_BODY.split("\n").map((line) => [...line].length));
+const PAPER_INNER_WIDTH = `(min(100vw - ${OVERLAY_PADDING_X * 2}px, ${PAPER_MAX_WIDTH}px) - ${PAPER_PADDING_X * 2}px)`;
+const BODY_FONT_SIZE = `min(15px, calc(${PAPER_INNER_WIDTH} / ${LONGEST_LINE + 1}))`;
 
 export default function LetterOverlay({
   onClose,
@@ -38,7 +41,8 @@ export default function LetterOverlay({
   const [opened, setOpened] = useState(initiallyOpened);
 
   return (
-    <div style={overlayStyle}>
+    // 便せんを広く使えるよう、左右の余白は画面の端から OVERLAY_PADDING_X だけにする
+    <div style={{ ...overlayStyle, paddingLeft: OVERLAY_PADDING_X, paddingRight: OVERLAY_PADDING_X }}>
       {opened && (
         <button className="icon-button" onClick={onClose} style={closeButtonStyle} aria-label="手紙を閉じる">
           <CloseIcon />
