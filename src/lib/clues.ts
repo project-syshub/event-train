@@ -177,9 +177,10 @@ export const mockClues: ClueDefinition[] = [
   },
 
   // ===== 恐怖！謎のびしょ濡れ事件（西15丁目・札幌市資料館） caseId: "nishi-15-choume" =====
-  // QRの文字列・参考文献はまだ決まっていない
+  // 参考文献はまだ決まっていない
   {
     id: "nishi15-1",
+    qrCode: "資料館1",
     slot: 1,
     caseId: "nishi-15-choume",
     name: "公園",
@@ -189,6 +190,7 @@ export const mockClues: ClueDefinition[] = [
   },
   {
     id: "nishi15-2",
+    qrCode: "資料館2",
     slot: 2,
     caseId: "nishi-15-choume",
     name: "創成川",
@@ -198,6 +200,7 @@ export const mockClues: ClueDefinition[] = [
   },
   {
     id: "nishi15-3",
+    qrCode: "資料館3",
     slot: 3,
     caseId: "nishi-15-choume",
     name: "鉄道",
@@ -207,6 +210,7 @@ export const mockClues: ClueDefinition[] = [
   },
   {
     id: "nishi15-4",
+    qrCode: "資料館4",
     slot: 4,
     caseId: "nishi-15-choume",
     name: "石山通",
@@ -216,6 +220,7 @@ export const mockClues: ClueDefinition[] = [
   },
   {
     id: "nishi15-5",
+    qrCode: "資料館5",
     slot: 5,
     caseId: "nishi-15-choume",
     name: "市電",
