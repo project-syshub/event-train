@@ -37,7 +37,10 @@ type LoopStage =
 const LOOP_CASE_TITLE = mockCases.find((c) => c.id === "tanuki-koji")?.title ?? "";
 
 function loopHeading(isNew: boolean): string {
-  return isNew ? `狸小路に「${LOOP_CASE_TITLE}」が現れた！\n手がかりを発見！` : "この手がかりはもう見つけている";
+  // ポップアップの幅に収まるよう、言葉の区切りで改行する（\n の位置で改行）
+  return isNew
+    ? `狸小路に\n『${LOOP_CASE_TITLE}』の事件が\n現れた！\n手がかりを発見！`
+    : "この手がかりはもう見つけている";
 }
 
 export default function HomeMap({ markers }: { markers: MapMarker[] }) {
