@@ -3,8 +3,7 @@
 // 【変更すると】
 //  - allRouteStations の x, y … 路線図上の駅の位置が動く（駅は ROUTE_CORNERS の線の上に置く）
 //  - allRouteStations の label … 駅名を丸のどちら側（top / bottom / left / right）に出すか
-//  - ROUTE_CORNERS … 線路の角の位置。ここを結んだ線（角は丸める）が路線になる。
-//    並び順が電車の進行方向になり、駅と駅の間にその向きの矢印が描かれる
+//  - ROUTE_CORNERS … 線路の角の位置。ここを結んだ線（角は丸める）が路線になる
 //  - targetStationKeys … 虫眼鏡のマーカー（押すと事件ページへ）を出す駅
 //  - VIEW_X / VIEW_Y / VIEW_WIDTH / VIEW_HEIGHT … 画面に表示する範囲（左上の座標と幅・高さ）。
 //    駅や駅名がはみ出したら広げ、余白が目立つなら狭める（狭めるほど路線図が大きく表示される）

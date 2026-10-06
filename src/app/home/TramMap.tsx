@@ -1,4 +1,4 @@
-// 【役割】ホームの路線図（線路・進行方向の矢印・駅・事件の虫眼鏡マーカー）を描く。
+// 【役割】ホームの路線図（線路・駅・事件の虫眼鏡マーカー）を描く。
 // 事件のある駅の虫眼鏡・駅名を押すと、その事件のページへ移動する。
 //
 // 【変更すると】
@@ -37,9 +37,6 @@ const TARGET_FONT_SIZE = 13;
 const UNDERLINE_COLOR = "#f5c518";
 // 事件のある駅で、駅名を上に出すときの駅の中心から文字のベースラインまでの距離
 const TARGET_TOP_LABEL_GAP = 27;
-const ARROW_SIZE = 5;
-// 隣り合う駅（または角）の間がこれより狭いときは矢印を描かない
-const ARROW_MIN_GAP = 30;
 
 // 角を丸めた閉じた線のSVGパス
 function roundedLoopPath(points: { x: number; y: number }[], radius: number): string {
@@ -66,35 +63,6 @@ function roundedLoopPath(points: { x: number; y: number }[], radius: number): st
 }
 
 const ROUTE_PATH = roundedLoopPath(ROUTE_CORNERS, CORNER_RADIUS);
-
-// 進行方向の矢印。線路の角をたどりながら、各辺の上にある駅を順に並べ、隣り合う点の中間に置く
-function computeArrows(): { x: number; y: number; angle: number }[] {
-  const arrows: { x: number; y: number; angle: number }[] = [];
-
-  ROUTE_CORNERS.forEach((from, i) => {
-    const to = ROUTE_CORNERS[(i + 1) % ROUTE_CORNERS.length];
-    const onEdge = allRouteStations
-      .filter((s) => (from.x === to.x ? s.x === from.x : s.y === from.y))
-      .filter((s) => Math.min(from.x, to.x) <= s.x && s.x <= Math.max(from.x, to.x))
-      .filter((s) => Math.min(from.y, to.y) <= s.y && s.y <= Math.max(from.y, to.y))
-      .sort((a, b) => Math.hypot(a.x - from.x, a.y - from.y) - Math.hypot(b.x - from.x, b.y - from.y));
-
-    const nodes = [from, ...onEdge, to];
-    const angle = (Math.atan2(to.y - from.y, to.x - from.x) * 180) / Math.PI;
-    // 駅のない辺（角から角まで）には描かない
-    if (onEdge.length === 0) return;
-    for (let j = 0; j < nodes.length - 1; j++) {
-      const a = nodes[j];
-      const b = nodes[j + 1];
-      if (Math.hypot(b.x - a.x, b.y - a.y) < ARROW_MIN_GAP) continue;
-      arrows.push({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, angle });
-    }
-  });
-
-  return arrows;
-}
-
-const ARROWS = computeArrows();
 
 // 文字の幅のおおよその見積もり（下線の長さとタブの幅に使う。全角は1文字=1em、半角は約0.6em）
 function estimateTextWidth(text: string, fontSize: number): number {
@@ -137,15 +105,6 @@ export default function TramMap({ markers }: { markers: MapMarker[] }) {
       aria-label="札幌市電の路線図"
     >
       <path d={ROUTE_PATH} fill="none" stroke={ROUTE_COLOR} strokeWidth={ROUTE_WIDTH} strokeLinejoin="round" />
-
-      {ARROWS.map((arrow, i) => (
-        <polygon
-          key={i}
-          points={`${ARROW_SIZE},0 ${-ARROW_SIZE},${-ARROW_SIZE} ${-ARROW_SIZE},${ARROW_SIZE}`}
-          fill={ROUTE_COLOR}
-          transform={`translate(${arrow.x} ${arrow.y}) rotate(${arrow.angle})`}
-        />
-      ))}
 
       {/* 事件のない駅：白丸と駅名 */}
       {allRouteStations
