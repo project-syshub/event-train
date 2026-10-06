@@ -2,6 +2,7 @@
 
 // 【役割】ループ事件で届く依頼主からの手紙。「手紙が届いた！」→「開封する」→ 手紙の本文、の順に表示する。
 // 手紙を閉じると onClose が呼ばれ、HomeMap.tsx が手紙を狸小路の手がかりに入れる。
+// 狸小路の手がかり一覧で手紙のカードを押したときは、opened を付けて開封済みの便せんから表示する（ClueGrid.tsx）。
 //
 // 【変更すると】
 //  - 手紙の差出人と本文 … clues.ts の LETTER_SENDER / LETTER_BODY（狸小路の手がかり一覧にも同じ文が入る）
@@ -29,8 +30,15 @@ function EnvelopeIcon() {
   );
 }
 
-export default function LetterOverlay({ onClose }: { onClose: () => void }) {
-  const [opened, setOpened] = useState(false);
+export default function LetterOverlay({
+  onClose,
+  opened: initiallyOpened = false,
+}: {
+  onClose: () => void;
+  // true なら「手紙が届いた！」の封筒を飛ばして、最初から便せんを表示する
+  opened?: boolean;
+}) {
+  const [opened, setOpened] = useState(initiallyOpened);
 
   return (
     <div style={overlayStyle}>
