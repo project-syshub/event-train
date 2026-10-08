@@ -1,0 +1,26 @@
+# 【役割】アプリ（Next.js）を VPS で常に動かしておくための systemd の設定。
+# setup-server.sh が __APP_USER__ / __APP_DIR__ を書き換えて /etc/systemd/system/event-train.service に置く。
+# サーバーの再起動やアプリが落ちたときも、自動で立ち上がる。
+#
+# 【操作】
+#   sudo systemctl status event-train    … 動いているか確認
+#   sudo systemctl restart event-train   … 再起動（更新後は deploy/update.sh が自動で行う）
+#   sudo journalctl -u event-train -f    … アプリのログを見る
+
+[Unit]
+Description=event-train (Next.js)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__APP_USER__
+WorkingDirectory=__APP_DIR__
+Environment=NODE_ENV=production
+# nginx からだけ受け付けるよう、サーバーの内側（127.0.0.1）の 3000 番で待ち受ける
+ExecStart=/usr/bin/npm run start -- -H 127.0.0.1 -p 3000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
