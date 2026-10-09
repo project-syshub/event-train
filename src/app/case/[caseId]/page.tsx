@@ -17,6 +17,8 @@ import { getFoundClueIds } from "@/lib/progress";
 import { ChevronLeftIcon } from "@/components/icons";
 import ClueGrid from "./ClueGrid";
 import SolveTools from "./SolveTools";
+import MessageInbox from "@/components/MessageInbox";
+import { findUserById, isAdmin } from "@/lib/users";
 
 export default async function CasePage({
   params,
@@ -36,6 +38,7 @@ export default async function CasePage({
     notFound();
   }
 
+  const user = await findUserById(userId);
   const foundClueIds = await getFoundClueIds(userId);
   // 隠し事件（ループ事件など）は、出現するまでページを開けない
   if (!isCaseUnlocked(caseInfo, foundClueIds)) {
@@ -75,6 +78,9 @@ export default async function CasePage({
       <ClueGrid slots={slots} openClueId={openClueId} />
 
       <SolveTools caseId={caseInfo.stationKey} />
+
+      {/* 運営からの一斉メッセージ（参加者だけに表示） */}
+      <MessageInbox enabled={!(user && isAdmin(user))} />
     </main>
   );
 }

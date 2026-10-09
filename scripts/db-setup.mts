@@ -1,4 +1,5 @@
-// データベースに users テーブル（アカウント）と found_clues テーブル（手がかりの発見記録）を作り、
+// データベースに users テーブル（アカウント）・found_clues テーブル（手がかりの発見記録）・
+// messages / message_reads テーブル（運営からの一斉メッセージと既読の位置）を作り、
 // 最初のアカウント（scripts/data/initial-users.mts）を登録する。
 // npm run db:setup で実行する（接続先は .env.local の DATABASE_URL）。
 // 何度実行しても大丈夫：テーブルがあれば作り直さず、同じIDのアカウントはパスワードを上書きする。
@@ -25,6 +26,23 @@ await sql`
     clue_id TEXT NOT NULL,
     found_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     PRIMARY KEY (user_id, clue_id)
+  )
+`;
+
+// 運営（admin）から参加者全員への一斉メッセージ
+await sql`
+  CREATE TABLE IF NOT EXISTS messages (
+    id SERIAL PRIMARY KEY,
+    body TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )
+`;
+
+// 各アカウントが、どのメッセージまで読んだか（id がこれ以下のメッセージは既読）
+await sql`
+  CREATE TABLE IF NOT EXISTS message_reads (
+    user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    last_read_id INTEGER NOT NULL
   )
 `;
 

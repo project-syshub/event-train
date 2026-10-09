@@ -13,7 +13,7 @@
 
 import { redirect } from "next/navigation";
 import { getSessionUserId } from "@/lib/session";
-import { findUserById } from "@/lib/users";
+import { findUserById, isAdmin } from "@/lib/users";
 import { targetStationKeys } from "@/lib/stations";
 import { isCaseUnlocked, mockCases } from "@/lib/cases";
 import { getFoundClueIds } from "@/lib/progress";
@@ -21,6 +21,7 @@ import { type MapMarker } from "./TramMap";
 import HomeMap from "./HomeMap";
 import AccountMenu from "./AccountMenu";
 import ScreenLock from "./ScreenLock";
+import MessageInbox from "@/components/MessageInbox";
 
 export default async function HomePage() {
   const userId = await getSessionUserId();
@@ -60,9 +61,11 @@ export default async function HomePage() {
     >
       {/* スワイプで画面が動かないよう、ホームを表示している間は画面全体を固定する */}
       <ScreenLock />
+      {/* 運営からの一斉メッセージ（参加者だけに表示） */}
+      <MessageInbox enabled={!isAdmin(user)} />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h1>ホーム</h1>
-        <AccountMenu loginId={user.loginId} />
+        <AccountMenu loginId={user.loginId} isAdmin={isAdmin(user)} />
       </div>
       <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-text)", lineHeight: 1.6 }}>
         路線図上の駅マーカーを押すと、その付近で起きた事件の捜査がはじまります。

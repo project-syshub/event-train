@@ -1,6 +1,7 @@
 "use client";
 
-// 【役割】ホーム右上の設定（歯車）メニュー。ログイン中のID・手がかりリセット・ログアウトを表示する。
+// 【役割】ホーム右上の設定（歯車）メニュー。ログイン中のIDとログアウトを表示する。
+// 運営用アカウント（admin）のときだけ、メッセージ送信・手がかりリセット・全出しのボタンも出す。
 //
 // 【変更すると】
 //  - パネルの width … メニューの幅
@@ -11,10 +12,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiSettings } from "react-icons/fi";
 import { mockCases } from "@/lib/cases";
+import MessageComposer from "./MessageComposer";
 
-export default function AccountMenu({ loginId }: { loginId: string }) {
+// isAdmin が true（運営用アカウント）のときだけ、リセット・全出し・メッセージ送信のボタンを出す
+export default function AccountMenu({ loginId, isAdmin }: { loginId: string; isAdmin: boolean }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [composing, setComposing] = useState(false);
 
   async function handleLogout() {
     await fetch("/api/logout", { method: "POST" });
@@ -88,35 +92,52 @@ export default function AccountMenu({ loginId }: { loginId: string }) {
               ログイン中
             </p>
             <p style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>{loginId}</p>
-            <button
-              className="button-secondary"
-              onClick={handleResetClues}
-              style={{ width: "100%", marginBottom: 8, justifyContent: "center" }}
-            >
-              手がかりをリセット
-            </button>
-            {/* テスト用：事件ごとに手がかりを全部出す（狸小路の隠し事件も現れる） */}
-            {mockCases.map((caseInfo) => (
-              <button
-                key={caseInfo.id}
-                className="button-secondary"
-                onClick={() => handleGrantClues(caseInfo.id, caseInfo.title)}
-                style={{ width: "100%", marginBottom: 8, fontSize: 12, justifyContent: "center", lineHeight: 1.3 }}
-              >
-                {/* 言葉の途中で折り返さないよう、事件名と後半で2行に分ける */}
-                <span style={{ display: "block", textAlign: "center" }}>
-                  {caseInfo.title}
-                  <br />
-                  の手がかりを全部出す
-                </span>
-              </button>
-            ))}
+            {/* 運営用アカウント（admin）だけに出す管理用のボタン */}
+            {isAdmin && (
+              <>
+                <button
+                  className="button-secondary"
+                  onClick={() => {
+                    setOpen(false);
+                    setComposing(true);
+                  }}
+                  style={{ width: "100%", marginBottom: 8, justifyContent: "center" }}
+                >
+                  メッセージを送る
+                </button>
+                <button
+                  className="button-secondary"
+                  onClick={handleResetClues}
+                  style={{ width: "100%", marginBottom: 8, justifyContent: "center" }}
+                >
+                  手がかりをリセット
+                </button>
+                {/* テスト用：事件ごとに手がかりを全部出す（狸小路の隠し事件も現れる） */}
+                {mockCases.map((caseInfo) => (
+                  <button
+                    key={caseInfo.id}
+                    className="button-secondary"
+                    onClick={() => handleGrantClues(caseInfo.id, caseInfo.title)}
+                    style={{ width: "100%", marginBottom: 8, fontSize: 12, justifyContent: "center", lineHeight: 1.3 }}
+                  >
+                    {/* 言葉の途中で折り返さないよう、事件名と後半で2行に分ける */}
+                    <span style={{ display: "block", textAlign: "center" }}>
+                      {caseInfo.title}
+                      <br />
+                      の手がかりを全部出す
+                    </span>
+                  </button>
+                ))}
+              </>
+            )}
             <button onClick={handleLogout} style={{ width: "100%", marginTop: 4 }}>
               ログアウト
             </button>
           </div>
         </>
       )}
+
+      {composing && <MessageComposer onClose={() => setComposing(false)} />}
     </div>
   );
 }
