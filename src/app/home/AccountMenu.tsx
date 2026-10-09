@@ -1,7 +1,7 @@
 "use client";
 
 // 【役割】ホーム右上の設定（歯車）メニュー。ログイン中のIDとログアウトを表示する。
-// 運営用アカウント（admin）のときだけ、メッセージ送信・手がかりリセット・全出しのボタンも出す。
+// 運営用アカウント（admin）のときだけ、メッセージ送信・入手状況・手がかりリセット・全出しのボタンも出す。
 //
 // 【変更すると】
 //  - パネルの width … メニューの幅
@@ -13,12 +13,14 @@ import { useRouter } from "next/navigation";
 import { FiSettings } from "react-icons/fi";
 import { mockCases } from "@/lib/cases";
 import MessageComposer from "./MessageComposer";
+import ProgressViewer from "./ProgressViewer";
 
 // isAdmin が true（運営用アカウント）のときだけ、リセット・全出し・メッセージ送信のボタンを出す
 export default function AccountMenu({ loginId, isAdmin }: { loginId: string; isAdmin: boolean }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [composing, setComposing] = useState(false);
+  const [viewingProgress, setViewingProgress] = useState(false);
 
   async function handleLogout() {
     await fetch("/api/logout", { method: "POST" });
@@ -107,6 +109,16 @@ export default function AccountMenu({ loginId, isAdmin }: { loginId: string; isA
                 </button>
                 <button
                   className="button-secondary"
+                  onClick={() => {
+                    setOpen(false);
+                    setViewingProgress(true);
+                  }}
+                  style={{ width: "100%", marginBottom: 8, justifyContent: "center" }}
+                >
+                  手がかりの入手状況
+                </button>
+                <button
+                  className="button-secondary"
                   onClick={handleResetClues}
                   style={{ width: "100%", marginBottom: 8, justifyContent: "center" }}
                 >
@@ -138,6 +150,7 @@ export default function AccountMenu({ loginId, isAdmin }: { loginId: string; isA
       )}
 
       {composing && <MessageComposer onClose={() => setComposing(false)} />}
+      {viewingProgress && <ProgressViewer onClose={() => setViewingProgress(false)} />}
     </div>
   );
 }
