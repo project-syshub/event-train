@@ -123,9 +123,59 @@ Neon のデータベースは Vercel の連携で作ったものなので、**Ve
 
 ---
 
+## 自動デプロイの設定（プッシュしたら自動で反映）
+
+ここまでで VPS で動くようになったら、次の設定をすると、GitHub の `main` にプッシュするだけで
+VPS に自動で反映されるようになります（`.github/workflows/deploy.yml`）。最初に1回だけ行います。
+
+### A. 再起動の許可（`setup-server.sh` を手順5で実行していれば不要）
+
+古い `setup-server.sh` で準備した場合だけ、VPS で次を実行します。
+
+```bash
+echo "ubuntu ALL=(root) NOPASSWD: /usr/bin/systemctl restart event-train" | sudo tee /etc/sudoers.d/event-train
+sudo chmod 440 /etc/sudoers.d/event-train
+```
+
+### B. 自動デプロイ用の鍵を作る（VPS で実行）
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/github_deploy -N "" -C "github-actions-deploy"
+cat ~/.ssh/github_deploy.pub >> ~/.ssh/authorized_keys
+cat ~/.ssh/github_deploy
+```
+
+最後のコマンドで表示された `-----BEGIN OPENSSH PRIVATE KEY-----` から
+`-----END OPENSSH PRIVATE KEY-----` までを、行ごとすべてコピーします（次の C で使います）。
+**この鍵は VPS に入れる鍵なので、GitHub の Secrets 以外には貼らないでください。**
+
+### C. GitHub に登録する
+
+GitHub のリポジトリ → **Settings** → **Secrets and variables** → **Actions** → **New repository secret** で、
+次の3つを登録します。
+
+| Name | Secret |
+|---|---|
+| `VPS_HOST` | VPS の IPアドレス（またはドメイン） |
+| `VPS_USER` | `ubuntu` |
+| `VPS_SSH_KEY` | B でコピーした鍵（BEGIN〜END の全部） |
+
+### D. 動くか試す
+
+GitHub の **Actions** タブ → **Deploy to Sakura VPS** → **Run workflow** を押します。
+緑のチェックが付けば成功です（数分かかります）。以降は `main` にプッシュするたびに自動で反映されます。
+
+### 自動デプロイを一時的に止める（イベント当日など）
+
+**Settings** → **Secrets and variables** → **Actions** → **Variables** タブ → **New repository variable** で、
+`AUTO_DEPLOY` を `off` にして登録します。再開するときは、この変数を削除するか `on` にします。
+
+---
+
 ## 更新のしかた（2回目以降）
 
-GitHub にプッシュしたあと、VPS で次を実行すると反映されます。
+自動デプロイを設定していれば、`main` にプッシュするだけで反映されます。
+手動で反映したいときは、VPS で次を実行します。
 
 ```bash
 ssh ubuntu@<VPSのIPアドレス>
@@ -153,3 +203,4 @@ bash deploy/update.sh
 | `deploy/update.sh` | 最新のコードを反映する |
 | `deploy/event-train.service` | アプリを常に動かしておく設定（systemd） |
 | `deploy/nginx-event-train.conf` | `https://ドメイン` をアプリにつなぐ設定（nginx） |
+| `.github/workflows/deploy.yml` | `main` へのプッシュで VPS に自動で反映する設定（GitHub Actions） |

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 【役割】さくらのVPS（Ubuntu 24.04）に、このアプリを動かす環境を最初に一度だけ用意する。
 #   Node.js 24・nginx・certbot（HTTPS証明書）・ファイアウォールの設定、アプリのビルド、
-#   常時起動（systemd）と nginx の設定、HTTPS証明書の取得までをまとめて行う。
+#   常時起動（systemd）、自動デプロイ用の再起動の許可、nginx の設定、HTTPS証明書の取得までをまとめて行う。
 #
 # 【使い方】リポジトリを clone し、.env.production を作ってから、リポジトリの中で実行する
 #   sudo bash deploy/setup-server.sh <ドメイン> <メールアドレス>
@@ -59,6 +59,12 @@ sed -e "s#__APP_USER__#$APP_USER#g" -e "s#__APP_DIR__#$APP_DIR#g" \
 systemctl daemon-reload
 systemctl enable event-train
 systemctl restart event-train
+
+echo "== 自動デプロイ（GitHub Actions）が、パスワードなしでアプリを再起動できるようにする"
+# 許可するのは「event-train の再起動」の1つだけ
+echo "$APP_USER ALL=(root) NOPASSWD: /usr/bin/systemctl restart event-train" > /etc/sudoers.d/event-train
+chmod 440 /etc/sudoers.d/event-train
+visudo -cf /etc/sudoers.d/event-train
 
 echo "== nginx を設定する"
 sed -e "s#__DOMAIN__#$DOMAIN#g" "$APP_DIR/deploy/nginx-event-train.conf" > /etc/nginx/sites-available/event-train
