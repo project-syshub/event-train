@@ -102,6 +102,7 @@ export const mockClues: ClueDefinition[] = [
       "",
       "また、車体を新しくするときに、台車と動力装置には330形のものを再利用している。",
     ].join("\n"),
+    image: "/clues/densha-3300.jpg",
   },
   {
     id: "densha-2",
@@ -121,6 +122,7 @@ export const mockClues: ClueDefinition[] = [
       "雪20形は、札幌の冬に活躍するササラ電車の一つでもある。",
       "車体には、細く切った竹を束ねたササラを装備。ササラを回転させ、線路に積もった雪をはね飛ばす仕組み。",
     ].join("\n"),
+    image: "/clues/densha-yuki20.jpg",
   },
   {
     id: "densha-3",
@@ -137,6 +139,7 @@ export const mockClues: ClueDefinition[] = [
       "",
       "また、形式の名前である「8500形」は、製造された年の1985年の末尾2桁を使って名づけられている。",
     ].join("\n"),
+    image: "/clues/densha-8500.jpg",
   },
   {
     id: "densha-4",
@@ -155,6 +158,7 @@ export const mockClues: ClueDefinition[] = [
       "",
       "札幌の市電で長く活躍してきた車両の一つ。",
     ].join("\n"),
+    image: "/clues/densha-250.jpg",
   },
   {
     id: "densha-5",
@@ -168,6 +172,7 @@ export const mockClues: ClueDefinition[] = [
       "",
       "降雪センサー、水分センサー、路面温度センサーなどを利用し、道路の状態に合わせた運転も実施している。",
     ].join("\n"),
+    image: "/clues/densha-road-heating.jpg",
   },
   {
     id: "densha-6",
@@ -183,6 +188,7 @@ export const mockClues: ClueDefinition[] = [
       "",
       "令和4年度には、市内約80カ所を開設。",
     ].join("\n"),
+    image: "/clues/densha-yuki-taisekijo.jpg",
   },
   {
     id: "densha-7",
@@ -197,6 +203,7 @@ export const mockClues: ClueDefinition[] = [
       "",
       "管理は、地域の人たちによる管理運営協議会を中心として行われている。",
     ].join("\n"),
+    image: "/clues/densha-ryusetsuko.jpg",
   },
   {
     id: "densha-8",
