@@ -10,6 +10,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiSettings } from "react-icons/fi";
+import { mockCases } from "@/lib/cases";
 
 export default function AccountMenu({ loginId }: { loginId: string }) {
   const router = useRouter();
@@ -27,6 +28,23 @@ export default function AccountMenu({ loginId }: { loginId: string }) {
     const response = await fetch("/api/clues/reset", { method: "POST" }).catch(() => null);
     if (!response?.ok) {
       window.alert("リセットに失敗しました。もう一度試してください。");
+      return;
+    }
+    setOpen(false);
+    router.refresh();
+  }
+
+  // TODO: テスト用。不要になったらボタンごと削除する（api/clues/grant/route.ts も）
+  async function handleGrantClues(caseId: string, title: string) {
+    if (!window.confirm(`「${title}」の手がかりを全部見つけた状態にします。よろしいですか？`)) return;
+
+    const response = await fetch("/api/clues/grant", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ caseId }),
+    }).catch(() => null);
+    if (!response?.ok) {
+      window.alert("手がかりを出せませんでした。もう一度試してください。");
       return;
     }
     setOpen(false);
@@ -61,7 +79,7 @@ export default function AccountMenu({ loginId }: { loginId: string }) {
               border: "1px solid var(--color-border)",
               borderRadius: 8,
               padding: 16,
-              width: 200,
+              width: 240,
               boxShadow: "0 4px 16px rgba(0, 0, 0, 0.5)",
               zIndex: 20,
             }}
@@ -73,11 +91,27 @@ export default function AccountMenu({ loginId }: { loginId: string }) {
             <button
               className="button-secondary"
               onClick={handleResetClues}
-              style={{ width: "100%", marginBottom: 10 }}
+              style={{ width: "100%", marginBottom: 8, justifyContent: "center" }}
             >
               手がかりをリセット
             </button>
-            <button onClick={handleLogout} style={{ width: "100%" }}>
+            {/* テスト用：事件ごとに手がかりを全部出す（狸小路の隠し事件も現れる） */}
+            {mockCases.map((caseInfo) => (
+              <button
+                key={caseInfo.id}
+                className="button-secondary"
+                onClick={() => handleGrantClues(caseInfo.id, caseInfo.title)}
+                style={{ width: "100%", marginBottom: 8, fontSize: 12, justifyContent: "center", lineHeight: 1.3 }}
+              >
+                {/* 言葉の途中で折り返さないよう、事件名と後半で2行に分ける */}
+                <span style={{ display: "block", textAlign: "center" }}>
+                  {caseInfo.title}
+                  <br />
+                  の手がかりを全部出す
+                </span>
+              </button>
+            ))}
+            <button onClick={handleLogout} style={{ width: "100%", marginTop: 4 }}>
               ログアウト
             </button>
           </div>
