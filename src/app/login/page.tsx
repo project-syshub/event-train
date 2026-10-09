@@ -5,12 +5,11 @@
 // 【変更すると】
 //  - router.push("/home") … ログイン後に移動するページ
 //  - 見出し・ラベルの文言 … 画面の表示が変わる
-//  - イベントのロゴ … public/images/event-logo.png（ログイン欄の下、画面の下部に表示する。大きさは Image の style の width）
+//  - イベントのロゴ … 今は表示していない（画像は public/images/event-logo.png に残してある）
 //  - アカウント自体は users.ts、エラー文言は api/login/route.ts で変える
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,7 +41,7 @@ export default function LoginPage() {
   }
 
   return (
-    // 画面の高さいっぱいを使い、ログイン欄を真ん中あたりに、イベントのロゴを下部に置く
+    // 画面の高さいっぱいを使い、ログイン欄を画面の真ん中に置く
     <main
       style={{
         width: "100%",
@@ -111,18 +110,6 @@ export default function LoginPage() {
           </form>
         </div>
       </div>
-
-      {/* イベントのロゴ（画面の下部） */}
-      <Image
-        src="/images/event-logo.png"
-        alt="親子で挑戦！謎解きイベント かけだし市電探偵！ 2026年10月11日（日）12:30〜"
-        width={1200}
-        height={725}
-        preload
-        sizes="260px"
-        // ロゴの大きさ（width を変えると大きさが変わる。画面の幅の 70% を超えないようにする）
-        style={{ width: "min(260px, 70%)", height: "auto", margin: "24px auto 0" }}
-      />
     </main>
   );
 }
