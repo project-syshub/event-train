@@ -85,10 +85,10 @@ export const LETTER_PLAIN_BODY = LETTER_BODY.replaceAll("**", "");
 //   },
 export const mockClues: ClueDefinition[] = [
   // ===== 白いもの盗難事件（電車事業所前） caseId: "densha-jigyosho-mae" =====
-  // QRは「手がかり1」〜「手がかり8」。{{文字|色}} の部分は詳細で色付きの文字になる（ClueDetailPopup.tsx）
+  // QRは「事業所1」〜「事業所8」。{{文字|色}} の部分は詳細で色付きの文字になる（ClueDetailPopup.tsx）
   {
     id: "densha-1",
-    qrCode: "手がかり1",
+    qrCode: "事業所1",
     slot: 1,
     caseId: "densha-jigyosho-mae",
     name: "3300形",
@@ -106,7 +106,7 @@ export const mockClues: ClueDefinition[] = [
   },
   {
     id: "densha-2",
-    qrCode: "手がかり2",
+    qrCode: "事業所2",
     slot: 2,
     caseId: "densha-jigyosho-mae",
     name: "雪20形（ゆきにじゅうがた）",
@@ -126,7 +126,7 @@ export const mockClues: ClueDefinition[] = [
   },
   {
     id: "densha-3",
-    qrCode: "手がかり3",
+    qrCode: "事業所3",
     slot: 3,
     caseId: "densha-jigyosho-mae",
     name: "8500形",
@@ -143,7 +143,7 @@ export const mockClues: ClueDefinition[] = [
   },
   {
     id: "densha-4",
-    qrCode: "手がかり4",
+    qrCode: "事業所4",
     slot: 4,
     caseId: "densha-jigyosho-mae",
     name: "250形",
@@ -162,7 +162,7 @@ export const mockClues: ClueDefinition[] = [
   },
   {
     id: "densha-5",
-    qrCode: "手がかり5",
+    qrCode: "事業所5",
     slot: 5,
     caseId: "densha-jigyosho-mae",
     name: "ロードヒーティング",
@@ -176,7 +176,7 @@ export const mockClues: ClueDefinition[] = [
   },
   {
     id: "densha-6",
-    qrCode: "手がかり6",
+    qrCode: "事業所6",
     slot: 6,
     caseId: "densha-jigyosho-mae",
     name: "雪堆積場（ゆきたいせきじょう）",
@@ -192,7 +192,7 @@ export const mockClues: ClueDefinition[] = [
   },
   {
     id: "densha-7",
-    qrCode: "手がかり7",
+    qrCode: "事業所7",
     slot: 7,
     caseId: "densha-jigyosho-mae",
     name: "流雪溝",
@@ -207,7 +207,7 @@ export const mockClues: ClueDefinition[] = [
   },
   {
     id: "densha-8",
-    qrCode: "手がかり8",
+    qrCode: "事業所8",
     slot: 8,
     caseId: "densha-jigyosho-mae",
     name: "融雪槽",
