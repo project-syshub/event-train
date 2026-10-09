@@ -57,7 +57,7 @@ export const mockCases: CaseInfo[] = [
     status: "unsolved",
     summary:
       "電車事業所の車庫から車両が1両忽然と消えた。夜間の警備員は「青白い光」を目撃したと証言している。",
-    clueSlots: 4,
+    clueSlots: 8,
   },
   {
     id: "nakajima-koen-dori",
