@@ -215,6 +215,7 @@ export const mockClues: ClueDefinition[] = [
       "融雪槽は、道路そのものをあたためるのではなく、雪を集めてからとかす仕組み。",
       "大きな「槽」に雪を入れ、下水処理水などの熱を利用して雪をとかす。",
     ].join("\n"),
+    image: "/clues/densha-yusetsuso.jpg",
   },
 
 
