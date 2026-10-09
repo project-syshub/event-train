@@ -5,7 +5,7 @@
 // 【変更すると】
 //  - router.push("/home") … ログイン後に移動するページ
 //  - 見出し・ラベルの文言 … 画面の表示が変わる
-//  - イベントのロゴ … public/images/event-logo.png（ログイン欄の下、画面の下部に表示する）
+//  - イベントのロゴ … public/images/event-logo.png（ログイン欄の下、画面の下部に表示する。大きさは Image の style の width）
 //  - アカウント自体は users.ts、エラー文言は api/login/route.ts で変える
 
 import { useState, type FormEvent } from "react";
@@ -119,8 +119,9 @@ export default function LoginPage() {
         width={1200}
         height={725}
         preload
-        sizes="(max-width: 420px) 100vw, 420px"
-        style={{ width: "100%", height: "auto", marginTop: 24 }}
+        sizes="260px"
+        // ロゴの大きさ（width を変えると大きさが変わる。画面の幅の 70% を超えないようにする）
+        style={{ width: "min(260px, 70%)", height: "auto", margin: "24px auto 0" }}
       />
     </main>
   );
