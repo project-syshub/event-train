@@ -31,8 +31,8 @@ const COLOR_NAMES: Record<string, string> = {
   黄: "#e0a800",
 };
 
-// 説明文の {{文字|色}} の部分を色付きの文字に、**文字** の部分を黄色の太字にする。{{文字|色}} は茶色の背景でも黒や紫が見えるよう、
-// 明るい下地を敷いて太字にする
+// 説明文の {{文字|色}} の部分を色付きの文字に（色だけを変え、太字や下地は付けない）、
+// **文字** の部分を黄色の太字にする
 function renderDescription(text: string) {
   return text.split(/(\{\{[^|}]+\|[^}]+\}\}|\*\*[^*]+\*\*)/g).map((part, i) => {
     // **文字** は黄色の太字にする（茶色の背景で目立つ色）
@@ -48,17 +48,7 @@ function renderDescription(text: string) {
     if (!match) return part;
     const [, chars, color] = match;
     return (
-      <span
-        key={i}
-        style={{
-          color: COLOR_NAMES[color] ?? color,
-          background: "#fbf4e4",
-          borderRadius: 3,
-          padding: "0 2px",
-          margin: "0 1px",
-          fontWeight: 900,
-        }}
-      >
+      <span key={i} style={{ color: COLOR_NAMES[color] ?? color }}>
         {chars}
       </span>
     );
