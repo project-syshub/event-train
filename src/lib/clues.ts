@@ -5,9 +5,10 @@
 //                  （1文字でも違うと「手がかりではない」になる。
 //                  全角・半角の違い（「天文台１」と「天文台1」）は同じものとして扱う）
 //  - caseId      … どの事件の手がかりか（cases.ts の stationKey と同じ値）。変えると表示される事件が変わる
-//  - name        … カードと詳細に出る名前
+//  - name        … カードと詳細に出る名前（画面では頭に slot の番号が付く。例：「1. 3300形」）
 //  - description … カードを押したときの詳細に出る説明文。{{文字|色}} と書くと、その文字に色が付く
-//                  （色は 紫・オレンジ・黒・ピンク・赤・青・緑・黄 か、#ff0000 のような色の番号）
+//                  （色は 紫・オレンジ・黒・ピンク・赤・青・緑・黄 か、#ff0000 のような色の番号）。
+//                  **文字** と書くと、その部分が太字になる
 //  - image       … 画像を public/clues/ に置き、"/clues/ファイル名.jpg" と書く。省略するとパズルのアイコンになる
 //  - references  … 参考文献（複数可）。{ title: "日本語の名前", url: "https://..." } と書く。
 //                  詳細の一番下に title だけを表示する（URLは記録として残すだけで、画面には出さない）。省略すると表示しない
@@ -281,7 +282,7 @@ export const mockClues: ClueDefinition[] = [
     slot: 4,
     caseId: "nakajima-koen-dori",
     name: "1100形の愛称",
-    description: "この車両の愛称は、太陽を除いて地球から最も明るく見える星の名前。\n来場者の投票で選ばれました。",
+    description: "この車両の愛称は、太陽を除いて地球から**最も明るく**見える星の名前。\n来場者の投票で選ばれました。",
     image: "/clues/1100-sirius.jpg",
     references: [
       {
@@ -370,8 +371,9 @@ function normalizeQrText(text: string): string {
   return text.normalize("NFKC").trim();
 }
 
-function toClueItem({ id, caseId, name, description, image, references }: ClueDefinition): ClueItem {
-  return { id, caseId, name, description, image, references };
+// 画面に出す名前は、表示する枠の番号を頭に付ける（例：slot 1 の「3300形」→「1. 3300形」）
+function toClueItem({ id, caseId, slot, name, description, image, references }: ClueDefinition): ClueItem {
+  return { id, caseId, name: `${slot}. ${name}`, description, image, references };
 }
 
 export function findClueById(id: string): ClueItem | null {
