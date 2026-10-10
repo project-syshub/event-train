@@ -319,7 +319,7 @@ export const mockClues: ClueDefinition[] = [
     caseId: "nishi-15-choume",
     name: "公園",
     description:
-      "1871年（明治4年）、札幌で最初の公園がつくられました。\n現在の北海道大学の南側につくられた公園です。\n東側には円山公園、西には苗穂公園、南には中島公園、北には偕楽園があります。",
+      "1871年（明治4年）、現在の北海道大学の南側に、札幌で最初の公園がつくられました。\n西側には円山公園、南には中島公園、北には偕楽園があります。",
     image: "/clues/shiryokan-koen.jpg",
   },
   {
