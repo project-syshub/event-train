@@ -9,11 +9,15 @@
 //  - heading … タイトルの上に出す一言（「ループ事件の手がかりを発見！」など。省略すると出ない）
 //  - 参考文献の fontSize … 詳細の一番下に出る参考文献の文字の大きさ
 //  - COLOR_NAMES … 説明文の {{文字|色}} で使える色の名前と、実際の色
+//  - EMPHASIS_COLOR … 説明文の **文字** の色
 
 import type { ClueItem } from "@/lib/clues";
 import { CloseIcon } from "@/components/icons";
 import { overlayStyle, closeButtonStyle } from "./overlayStyles";
 import CluePhoto from "./CluePhoto";
+
+// 説明文の **文字** の色（黄色）
+const EMPHASIS_COLOR = "#f5c518";
 
 // 説明文の {{文字|色}} に使える色の名前（ほかに #ff0000 のような色の番号も書ける）
 const COLOR_NAMES: Record<string, string> = {
@@ -27,15 +31,15 @@ const COLOR_NAMES: Record<string, string> = {
   黄: "#e0a800",
 };
 
-// 説明文の {{文字|色}} の部分を色付きの文字に、**文字** の部分を太字にする。{{文字|色}} は茶色の背景でも黒や紫が見えるよう、
+// 説明文の {{文字|色}} の部分を色付きの文字に、**文字** の部分を黄色の太字にする。{{文字|色}} は茶色の背景でも黒や紫が見えるよう、
 // 明るい下地を敷いて太字にする
 function renderDescription(text: string) {
   return text.split(/(\{\{[^|}]+\|[^}]+\}\}|\*\*[^*]+\*\*)/g).map((part, i) => {
-    // **文字** は太字にする
+    // **文字** は黄色の太字にする（茶色の背景で目立つ色）
     const bold = part.match(/^\*\*([^*]+)\*\*$/);
     if (bold) {
       return (
-        <strong key={i} style={{ fontWeight: 900 }}>
+        <strong key={i} style={{ fontWeight: 900, color: EMPHASIS_COLOR }}>
           {bold[1]}
         </strong>
       );
