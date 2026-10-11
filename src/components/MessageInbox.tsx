@@ -47,12 +47,13 @@ export default function MessageInbox({ enabled = true }: { enabled?: boolean }) 
   }, [enabled]);
 
   async function handleClose() {
-    const upToId = Math.max(...messages.map((message) => message.id));
+    // 表示したメッセージのうち、いちばん遅い届く時刻までを既読にする
+    const upTo = messages.map((message) => message.createdAt).sort().at(-1);
     setMessages([]);
     await fetch("/api/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ upToId }),
+      body: JSON.stringify({ upTo }),
     }).catch(() => null);
   }
 

@@ -1,6 +1,6 @@
 // 【役割】参加者が、運営から届いた一斉メッセージを受け取る。MessageInbox.tsx から呼ばれる。
 //  - GET  /api/messages              … まだ読んでいないメッセージ（古い順）
-//  - POST /api/messages { upToId }   … upToId までのメッセージを既読にする
+//  - POST /api/messages { upTo }     … 届く時刻が upTo（ISO形式の日時）以前のメッセージを既読にする
 // 運営用アカウント（admin）宛てにはメッセージは届かない（いつも空を返す）。
 
 import { NextRequest, NextResponse } from "next/server";
@@ -29,10 +29,10 @@ export async function POST(request: NextRequest) {
   if (id === "admin") return NextResponse.json({ ok: true });
 
   const body = await request.json().catch(() => null);
-  const upToId = Number(body?.upToId);
-  if (!Number.isInteger(upToId) || upToId <= 0) {
+  const upTo = new Date(typeof body?.upTo === "string" ? body.upTo : "");
+  if (Number.isNaN(upTo.getTime())) {
     return NextResponse.json({ error: "不正なリクエストです" }, { status: 400 });
   }
-  await markMessagesRead(id, upToId);
+  await markMessagesRead(id, upTo);
   return NextResponse.json({ ok: true });
 }

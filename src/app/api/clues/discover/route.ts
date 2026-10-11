@@ -8,6 +8,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/session";
+import { findUserById, isAdmin } from "@/lib/users";
+import { isEventOver } from "@/lib/event";
 import { findClueByQrText } from "@/lib/clues";
 import { mockCases } from "@/lib/cases";
 import { addFoundClue } from "@/lib/progress";
@@ -16,6 +18,14 @@ export async function POST(request: NextRequest) {
   const userId = await getSessionUserId();
   if (!userId) {
     return NextResponse.json({ error: "ログインしてください" }, { status: 401 });
+  }
+
+  // イベント終了後は、参加者のQRの読み取りを受け付けない（admin は確認のため使える）
+  if (isEventOver()) {
+    const user = await findUserById(userId);
+    if (!user || !isAdmin(user)) {
+      return NextResponse.json({ error: "イベントは終了しました。ご参加ありがとうございました！" }, { status: 403 });
+    }
   }
 
   const body = await request.json().catch(() => null);

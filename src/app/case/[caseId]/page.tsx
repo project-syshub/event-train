@@ -77,7 +77,7 @@ export default async function CasePage({
 
       <ClueGrid slots={slots} openClueId={openClueId} />
 
-      <SolveTools caseId={caseInfo.stationKey} />
+      <SolveTools caseId={caseInfo.stationKey} isAdmin={!!user && isAdmin(user)} />
 
       {/* 運営からの一斉メッセージ（参加者だけに表示） */}
       <MessageInbox enabled={!(user && isAdmin(user))} />

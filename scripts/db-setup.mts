@@ -46,6 +46,10 @@ await sql`
   )
 `;
 
+// 予約送信のための「届く時刻」と、時刻での既読の記録（あとから追加した列。何度実行しても大丈夫）
+await sql`ALTER TABLE messages ADD COLUMN IF NOT EXISTS visible_at TIMESTAMPTZ NOT NULL DEFAULT now()`;
+await sql`ALTER TABLE message_reads ADD COLUMN IF NOT EXISTS last_read_at TIMESTAMPTZ`;
+
 for (const user of INITIAL_USERS) {
   await sql`
     INSERT INTO users (id, login_id, password_hash)

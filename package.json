@@ -11,7 +11,8 @@
     "postinstall": "node scripts/copy-zxing-wasm.mjs",
     "hash-password": "node scripts/hash-password.mts",
     "db:setup": "node --env-file-if-exists=.env.local scripts/db-setup.mts",
-    "db:set-user": "node --env-file-if-exists=.env.local scripts/db-set-user.mts"
+    "db:set-user": "node --env-file-if-exists=.env.local scripts/db-set-user.mts",
+    "messages:schedule-end": "node --env-file-if-exists=.env.local scripts/schedule-end-messages.mts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",
